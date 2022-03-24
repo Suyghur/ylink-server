@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "/pb";
+
+import "message.proto";
+
+/*
+ 消息通道：
+ 玩家 -> 后端
+ 后端 -> 玩家
+ 客服 -> 后端
+ 后端 -> 客服
+*/
+
+message ClientMsgReq {
+    IdInfo id_info = 3;
+    repeated CommandMsg cmd = 1;
+}
+
+message ClientMsgRes {
+    repeated CommandMsg cmd = 1;
+}
+
+message ServiceMsgReq {
+    IdInfo id_info = 3;
+    repeated CommandMsg cmd = 1;
+}
+
+message ServiceMsgRes {
+    repeated CommandMsg cmd = 1;
+}
+
+service Call {
+    rpc ClientLogin(ClientMsgReq) returns (stream ClientMsgRes) {}
+    rpc ClientCall(ClientMsgReq) returns (ClientMsgRes) {}
+
+    rpc ServiceLogin(ServiceMsgReq) returns (stream ServiceMsgRes) {}
+    rpc ServiceCall(ServiceMsgReq) returns (ServiceMsgRes) {}
+}

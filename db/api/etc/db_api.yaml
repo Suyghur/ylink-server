@@ -1,0 +1,9 @@
+Name: db_api
+Host: 0.0.0.0
+Port: 8888
+
+DbRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: db.rpc

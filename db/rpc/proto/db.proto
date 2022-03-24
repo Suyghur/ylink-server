@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "/pb";
+
+import "db_msg.proto";
+/*
+ 服务
+ */
+service Db {
+    // 客服聊天
+    rpc DbLogin(stream DbMsgReq) returns (stream DbMsgRes) {}
+    rpc DbCall(DbMsgReq) returns (DbMsgRes) {}
+
+    // 游戏聊天
+    // 敏感词库信息获取
+    rpc GetSensitiveWords(SensReq) returns (SensRes) {}
+}
+
+/*
+    客服聊天msg
+ */
+message DbMsgReq {
+    DbCommandMsg cmd = 1;
+}
+message DbMsgRes {
+    DbCommandMsg cmd = 1;
+}
+
+/*
+    敏感词信息msg
+ */
+message SensReq {
+}
+message SensRes {
+    repeated string sens_words = 1;
+    repeated string filter_word = 2;
+}
