@@ -9,7 +9,7 @@ import (
 	"call_center/db/rpc/internal/svc"
 	"call_center/db/rpc/pb"
 
-	"github.com/tal-tech/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type DbCallLogic struct {

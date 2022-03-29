@@ -4,7 +4,7 @@ import (
 	"call_center/db/model"
 	"call_center/db/rpc/internal/config"
 	es "call_center/public/es"
-	"github.com/tal-tech/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ServiceContext struct {
