@@ -9,8 +9,8 @@ import (
 	"call_center/call/rpc/pb"
 	"call_center/demo/data"
 	"context"
-	"github.com/tal-tech/go-zero/core/logx"
-	"github.com/tal-tech/go-zero/zrpc"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/zrpc"
 	"io"
 	"os"
 )

@@ -3,7 +3,7 @@ package svc
 import (
 	"call_center/db/api/internal/config"
 	"call_center/db/rpc/db"
-	"github.com/tal-tech/go-zero/zrpc"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {

@@ -6,7 +6,7 @@ import (
 	"call_center/db/api/internal/logic"
 	"call_center/db/api/internal/svc"
 	"call_center/db/api/internal/types"
-	"github.com/tal-tech/go-zero/rest/httpx"
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 func apiTestHandler(ctx *svc.ServiceContext) http.HandlerFunc {

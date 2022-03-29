@@ -4,7 +4,7 @@ import (
 	"call_center/call/rpc/internal/config"
 	"call_center/call/rpc/internal/interaction"
 	"call_center/db/rpc/db"
-	"github.com/tal-tech/go-zero/zrpc"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
