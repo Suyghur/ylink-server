@@ -1,0 +1,75 @@
+syntax = "v1"
+
+info(
+	title: "API聚合服务"
+	desc: "API聚合服务"
+	author: "#Suyghur"
+	version: "v1"
+)
+
+import (
+	"comm/comm.api"
+	"cmd/cmd.api"
+)
+
+@server(
+	group: player/login
+	prefix: api/v1
+)
+service apibff {
+	@doc "玩家登录"
+	@handler playerLogin
+	post /player/login (PlayerInfo) returns (CommResp)
+}
+
+@server(
+	group: player/cmd
+	prefix: api/v1
+	jwt: Auth
+)
+service apibff {
+	@doc "玩家发送信息"
+	@handler playerSend
+	post /player/send (SendReq) returns (CommResp)
+	
+	@doc "玩家登出（断开连接）"
+	@handler playerLogout
+	post /player/logout returns (CommResp)
+}
+
+@server(
+	group : cs/login
+	prefix : api/v1
+)
+service apibff {
+	@doc "客服登录"
+	@handler csLogin
+	post /cs/login (CsLoginInfo) returns (CommResp)
+}
+
+@server(
+	group : cs/cmd
+	prefix : api/v1
+	jwt : Auth
+)
+service apibff {
+	@doc "获取等待玩家列表"
+	@handler csFetchQueue
+	post /cs/fetch_queue returns (CommResp)
+	
+	@doc "客服连接玩家"
+	@handler csConnect
+	post /cs/connect (PlayerInfo) returns (CommResp)
+	
+	@doc "客服发送信息"
+	@handler csSend
+	post /cs/send (SendReq) returns (CommResp)
+	
+	@doc "客服断开连接"
+	@handler csDisconnect
+	post /cs/disconnect returns (CommResp)
+	
+	@doc "客服登出"
+	@handler csLogout
+	post /cs/logout returns (CommResp)
+}
