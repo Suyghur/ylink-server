@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+
+option go_package = "./pb";
+
+package pb;
+
+message ChatReq {
+  string chat_id = 1;
+}
+
+message ChatResp {
+  string msg = 1;
+  string pic = 2;
+}
+
+service rpcbff {
+  rpc receiverChat(ChatReq) returns (stream ChatResp);
+}

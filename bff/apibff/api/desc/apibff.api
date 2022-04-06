@@ -1,8 +1,8 @@
 syntax = "v1"
 
 info(
-	title: "API聚合服务"
-	desc: "API聚合服务"
+	title: "api前端服务"
+	desc: "api前端服务 "
 	author: "#Suyghur"
 	version: "v1"
 )
@@ -19,7 +19,7 @@ import (
 service apibff {
 	@doc "玩家登录"
 	@handler playerLogin
-	post /player/login (PlayerInfo) returns (CommResp)
+	post /player/login (PlayerLoginInfo) returns (CommResp)
 }
 
 @server(
@@ -28,11 +28,19 @@ service apibff {
 	jwt: Auth
 )
 service apibff {
+	@doc "玩家连接客服（vip）"
+	@handler playerConnect
+	post /player/connect (PlayerConnectReq) returns (CommResp)
+	
 	@doc "玩家发送信息"
 	@handler playerSend
 	post /player/send (SendReq) returns (CommResp)
 	
-	@doc "玩家登出（断开连接）"
+	@doc "玩家断开连接"
+	@handler playerDisconnect
+	post /player/disconnect (PlayerDisconnectReq) returns (CommResp)
+	
+	@doc "玩家登出"
 	@handler playerLogout
 	post /player/logout returns (CommResp)
 }
@@ -59,7 +67,7 @@ service apibff {
 	
 	@doc "客服连接玩家"
 	@handler csConnect
-	post /cs/connect (PlayerInfo) returns (CommResp)
+	post /cs/connect (CsConnectReq) returns (CommResp)
 	
 	@doc "客服发送信息"
 	@handler csSend
@@ -67,7 +75,7 @@ service apibff {
 	
 	@doc "客服断开连接"
 	@handler csDisconnect
-	post /cs/disconnect returns (CommResp)
+	post /cs/disconnect (CsDisconnectReq) returns (CommResp)
 	
 	@doc "客服登出"
 	@handler csLogout

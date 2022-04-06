@@ -23,7 +23,7 @@ func NewPlayerLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Playe
 	}
 }
 
-func (l *PlayerLoginLogic) PlayerLogin(req *types.PlayerInfo) (resp *types.CommResp, err error) {
+func (l *PlayerLoginLogic) PlayerLogin(req *types.PlayerLoginInfo) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

@@ -7,7 +7,7 @@ info(
 )
 
 type (
-    PlayerInfo {
+    PlayerLoginInfo {
         PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
     }

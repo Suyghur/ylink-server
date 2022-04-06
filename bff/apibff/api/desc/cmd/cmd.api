@@ -12,13 +12,24 @@ type (
         CsId string `json:"cs_id"`
     }
 
+    PlayerDisconnectReq {
+        CsId string `json:"cs_id"`
+        ChatId string `json:"chat_id"`
+    }
+
     CsConnectReq {
         PlayerId string `json:"palyer_id"`
         GameId string `json:"game_id"`
     }
 
+    CsDisconnectReq {
+        PlayerId string `json:"player_id"`
+        ChatId string `json:"chat_id"`
+    }
+
     SendReq {
-        chat_id string `json:"chat_id"`
-        msg string `json:"msg"`
+        ChatId string `form:"chat_id"`
+        Msg string `form:"msg"`
+        Pic string `form:"pic,optional"`
     }
 )

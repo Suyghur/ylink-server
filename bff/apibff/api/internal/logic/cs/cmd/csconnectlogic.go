@@ -23,7 +23,7 @@ func NewCsConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsConne
 	}
 }
 
-func (l *CsConnectLogic) CsConnect(req *types.PlayerInfo) (resp *types.CommResp, err error) {
+func (l *CsConnectLogic) CsConnect(req *types.CsConnectReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

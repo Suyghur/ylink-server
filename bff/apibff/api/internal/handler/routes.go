@@ -29,8 +29,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
+				Path:    "/player/connect",
+				Handler: playercmd.PlayerConnectHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/player/send",
 				Handler: playercmd.PlayerSendHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/disconnect",
+				Handler: playercmd.PlayerDisconnectHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

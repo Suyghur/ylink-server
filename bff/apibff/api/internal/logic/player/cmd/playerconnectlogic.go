@@ -9,21 +9,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CsDisconnectLogic struct {
+type PlayerConnectLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCsDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsDisconnectLogic {
-	return &CsDisconnectLogic{
+func NewPlayerConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlayerConnectLogic {
+	return &PlayerConnectLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CsDisconnectLogic) CsDisconnect(req *types.CsDisconnectReq) (resp *types.CommResp, err error) {
+func (l *PlayerConnectLogic) PlayerConnect(req *types.PlayerConnectReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return
