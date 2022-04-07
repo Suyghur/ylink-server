@@ -23,7 +23,7 @@ func NewPlayerSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Player
 	}
 }
 
-func (l *PlayerSendLogic) PlayerSend(req *types.SendReq) (resp *types.CommResp, err error) {
+func (l *PlayerSendLogic) PlayerSend(req *types.ChatMsgReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

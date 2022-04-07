@@ -7,25 +7,9 @@ info(
 )
 
 type (
-    PlayerLoginInfo {
-        PlayerId string `json:"player_id"`
-        GameId string `json:"game_id"`
-    }
-
-    CsLoginInfo {
-        UserName string `json:"user_name"`
-        Password string `json:"password"`
-    }
-
     CommResp {
         Code int `json:"code"`
         Msg string `json:"msg"`
         Data interface{} `json:"data"`
-    }
-
-    JwtToken {
-        AccessToken string `json:"access_token,omitempty"`
-        AccessExpire int64 `json:"access_expire,omitempty"`
-        RefreshAfter int64 `json:"refresh_after,omitempty"`
     }
 )

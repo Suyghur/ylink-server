@@ -23,7 +23,7 @@ func NewCsSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsSendLogi
 	}
 }
 
-func (l *CsSendLogic) CsSend(req *types.SendReq) (resp *types.CommResp, err error) {
+func (l *CsSendLogic) CsSend(req *types.ChatMsgReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

@@ -34,7 +34,7 @@ service apibff {
 	
 	@doc "玩家发送信息"
 	@handler playerSend
-	post /player/send (SendReq) returns (CommResp)
+	post /player/send (ChatMsgReq) returns (CommResp)
 	
 	@doc "玩家断开连接"
 	@handler playerDisconnect
@@ -71,7 +71,7 @@ service apibff {
 	
 	@doc "客服发送信息"
 	@handler csSend
-	post /cs/send (SendReq) returns (CommResp)
+	post /cs/send (ChatMsgReq) returns (CommResp)
 	
 	@doc "客服断开连接"
 	@handler csDisconnect

@@ -8,6 +8,11 @@ info(
 
 
 type (
+    PlayerLoginInfo {
+        PlayerId string `json:"player_id"`
+        GameId string `json:"game_id"`
+    }
+
     PlayerConnectReq {
         CsId string `json:"cs_id"`
     }
@@ -15,6 +20,11 @@ type (
     PlayerDisconnectReq {
         CsId string `json:"cs_id"`
         ChatId string `json:"chat_id"`
+    }
+
+    CsLoginInfo {
+        UserName string `json:"user_name"`
+        Password string `json:"password"`
     }
 
     CsConnectReq {
@@ -27,9 +37,9 @@ type (
         ChatId string `json:"chat_id"`
     }
 
-    SendReq {
+    ChatMsgReq {
         ChatId string `form:"chat_id"`
-        Msg string `form:"msg"`
+        Text string `form:"msg"`
         Pic string `form:"pic,optional"`
     }
 )
