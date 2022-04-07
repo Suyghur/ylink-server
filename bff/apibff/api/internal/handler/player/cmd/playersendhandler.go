@@ -20,7 +20,11 @@ func PlayerSendHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := cmd.NewPlayerSendLogic(r.Context(), svcCtx)
 		resp, err := l.PlayerSend(&req)
 		if err != nil {
-			httpx.Error(w, err)
+			httpx.OkJson(w, &types.CommResp{
+				Code: -1,
+				Msg:  err.Error(),
+				Data: map[string]interface{}{},
+			})
 		} else {
 			httpx.OkJson(w, resp)
 		}

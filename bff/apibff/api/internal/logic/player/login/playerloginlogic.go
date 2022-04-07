@@ -36,7 +36,7 @@ func (l *PlayerLoginLogic) PlayerLogin(req *types.PlayerLoginInfo) (resp *types.
 	return &types.CommResp{Code: 0, Msg: "success", Data: map[string]interface{}{
 		"access_token":  rpcResp.AccessToken,
 		"access_expire": rpcResp.AccessExpire,
-		"refreshAfter":  rpcResp.RefreshAfter,
+		"refresh_after": rpcResp.RefreshAfter,
 		"url":           rpcResp.Url,
 	}}, nil
 }

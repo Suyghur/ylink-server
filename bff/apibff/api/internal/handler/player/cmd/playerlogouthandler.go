@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"net/http"
+	"ylink/bff/apibff/api/internal/types"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"ylink/bff/apibff/api/internal/logic/player/cmd"
@@ -13,7 +14,11 @@ func PlayerLogoutHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := cmd.NewPlayerLogoutLogic(r.Context(), svcCtx)
 		resp, err := l.PlayerLogout()
 		if err != nil {
-			httpx.Error(w, err)
+			httpx.OkJson(w, &types.CommResp{
+				Code: -1,
+				Msg:  err.Error(),
+				Data: map[string]interface{}{},
+			})
 		} else {
 			httpx.OkJson(w, resp)
 		}

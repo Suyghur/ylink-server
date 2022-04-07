@@ -27,7 +27,7 @@ func (l *PlayerLoginLogic) PlayerLogin(in *pb.PlayerLoginReq) (*pb.LoginResp, er
 	// todo: add your logic here and delete this line
 
 	return &pb.LoginResp{
-		AccessToken:  "test_token",
+		AccessToken:  in.PlayerId,
 		AccessExpire: 100,
 		RefreshAfter: 100,
 		Url:          "www.baidu.com"}, nil

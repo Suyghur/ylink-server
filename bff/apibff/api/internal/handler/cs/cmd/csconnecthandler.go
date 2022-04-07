@@ -13,14 +13,22 @@ func CsConnectHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.CsConnectReq
 		if err := httpx.Parse(r, &req); err != nil {
-			httpx.Error(w, err)
+			httpx.OkJson(w, &types.CommResp{
+				Code: -1,
+				Msg:  err.Error(),
+				Data: map[string]interface{}{},
+			})
 			return
 		}
 
 		l := cmd.NewCsConnectLogic(r.Context(), svcCtx)
 		resp, err := l.CsConnect(&req)
 		if err != nil {
-			httpx.Error(w, err)
+			httpx.OkJson(w, &types.CommResp{
+				Code: -1,
+				Msg:  err.Error(),
+				Data: map[string]interface{}{},
+			})
 		} else {
 			httpx.OkJson(w, resp)
 		}
