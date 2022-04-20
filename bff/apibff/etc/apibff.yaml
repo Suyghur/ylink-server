@@ -1,0 +1,7 @@
+Name: apibff
+Host: 0.0.0.0
+Port: 10000
+
+Auth:
+  AccessSecret: ylink2022
+  AccessExpire: 259200

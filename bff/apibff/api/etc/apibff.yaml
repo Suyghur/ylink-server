@@ -1,7 +1,0 @@
-Name: apibff
-Host: 0.0.0.0
-Port: 8001
-
-Auth:
-  AccessSecret: ylink2022
-  AccessExpire: 259200
