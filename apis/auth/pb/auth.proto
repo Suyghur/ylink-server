@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+import "google/protobuf/struct.proto";
+
+message AuthResp{
+  int64 code = 1;
+  string msg = 2;
+  google.protobuf.Struct data = 3;
+}
+
+service Auth{
+  rpc playerAuth (google.protobuf.Struct) returns (AuthResp);
+  rpc csAuth (google.protobuf.Struct) returns (AuthResp);
+  rpc checkAuth (google.protobuf.Struct) returns (AuthResp);
+}
