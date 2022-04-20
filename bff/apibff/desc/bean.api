@@ -8,7 +8,7 @@ info(
 
 
 type CommResp {
-    Code int `json:"code"`
+    Code int64 `json:"code"`
     Msg string `json:"msg"`
     Data interface{} `json:"data"`
 }
@@ -36,7 +36,7 @@ type (
 
 type (
     CsAuthReq {
-        UserName string `json:"uname"`
+        Uname string `json:"uname"`
         Password string `json:"password"`
     }
 

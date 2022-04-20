@@ -2,6 +2,18 @@ Name: apibff
 Host: 0.0.0.0
 Port: 10000
 
+AuthRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: auth.rpc
+
+#CmdRpc:
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: cmd.rpc
+
 Auth:
   AccessSecret: ylink2022
   AccessExpire: 259200

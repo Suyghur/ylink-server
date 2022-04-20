@@ -6,6 +6,24 @@ package pb;
 
 import "google/protobuf/struct.proto";
 
+message AuthReq{
+  google.protobuf.Struct data = 1;
+}
+
+message PlayerAuthReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message CsAuthReq{
+  string uname = 1;
+  string password = 2;
+}
+
+message CheckAuthReq{
+  string  token = 1;
+}
+
 message AuthResp{
   int64 code = 1;
   string msg = 2;
@@ -13,7 +31,7 @@ message AuthResp{
 }
 
 service Auth{
-  rpc playerAuth (google.protobuf.Struct) returns (AuthResp);
-  rpc csAuth (google.protobuf.Struct) returns (AuthResp);
-  rpc checkAuth (google.protobuf.Struct) returns (AuthResp);
+  rpc playerAuth (PlayerAuthReq) returns (AuthResp);
+  rpc csAuth (CsAuthReq) returns (AuthResp);
+  rpc checkAuth (CheckAuthReq) returns (AuthResp);
 }

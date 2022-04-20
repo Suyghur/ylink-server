@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"ylink/apis/auth/pb"
 
 	"ylink/bff/apibff/internal/svc"
 	"ylink/bff/apibff/internal/types"
@@ -24,7 +25,20 @@ func NewCsAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsAuthLogi
 }
 
 func (l *CsAuthLogic) CsAuth(req *types.CsAuthReq) (resp *types.CommResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	if authResp, err := l.svcCtx.AuthRpc.CsAuth(l.ctx, &pb.CsAuthReq{
+		Uname:    req.Uname,
+		Password: req.Password,
+	}); err != nil {
+		return &types.CommResp{
+			Code: authResp.Code,
+			Msg:  "success",
+			Data: map[string]interface{}{},
+		}, err
+	} else {
+		return &types.CommResp{
+			Code: 0,
+			Msg:  "success",
+			Data: authResp.Data,
+		}, nil
+	}
 }

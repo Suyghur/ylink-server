@@ -6,6 +6,9 @@ package pb;
 
 import "google/protobuf/struct.proto";
 
+message CmdReq{
+  google.protobuf.Struct data = 1;
+}
 
 message CmdResp{
   int64 code = 1;
@@ -14,17 +17,17 @@ message CmdResp{
 }
 
 service Cmd {
-  rpc playerFetchCsInfo (google.protobuf.Struct) returns (CmdResp);
-  rpc playerFetchHistoryMsg (google.protobuf.Struct) returns (CmdResp);
-  rpc playerFetchMsg (google.protobuf.Struct) returns (CmdResp);
-  rpc playerSendMsg (google.protobuf.Struct) returns (CmdResp);
-  rpc playerDisconnect (google.protobuf.Struct) returns (CmdResp);
+  rpc playerFetchCsInfo (CmdReq) returns (CmdResp);
+  rpc playerFetchHistoryMsg (CmdReq) returns (CmdResp);
+  rpc playerFetchMsg (CmdReq) returns (CmdResp);
+  rpc playerSendMsg (CmdReq) returns (CmdResp);
+  rpc playerDisconnect (CmdReq) returns (CmdResp);
 
-  rpc csFetchPlayerInfo (google.protobuf.Struct) returns (CmdResp);
-  rpc csFetchPlayerQueue (google.protobuf.Struct) returns (CmdResp);
-  rpc csConnectPlayer (google.protobuf.Struct) returns (CmdResp);
-  rpc csFetchHistoryChat (google.protobuf.Struct) returns (CmdResp);
-  rpc csFetchHistoryMsg (google.protobuf.Struct) returns (CmdResp);
-  rpc csFetchMsg (google.protobuf.Struct) returns (CmdResp);
-  rpc csSendMsg (google.protobuf.Struct) returns (CmdResp);
+  rpc csFetchPlayerInfo (CmdReq) returns (CmdResp);
+  rpc csFetchPlayerQueue (CmdReq) returns (CmdResp);
+  rpc csConnectPlayer (CmdReq) returns (CmdResp);
+  rpc csFetchHistoryChat (CmdReq) returns (CmdResp);
+  rpc csFetchHistoryMsg (CmdReq) returns (CmdResp);
+  rpc csFetchMsg (CmdReq) returns (CmdResp);
+  rpc csSendMsg (CmdReq) returns (CmdResp);
 }

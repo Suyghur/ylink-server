@@ -2,7 +2,7 @@
 package types
 
 type CommResp struct {
-	Code int         `json:"code"`
+	Code int64       `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
@@ -27,7 +27,7 @@ type PlayerSendMsgReq struct {
 }
 
 type CsAuthReq struct {
-	UserName string `json:"uname"`
+	Uname    string `json:"uname"`
 	Password string `json:"password"`
 }
 
