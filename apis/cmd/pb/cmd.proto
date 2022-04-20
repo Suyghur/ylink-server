@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+import "google/protobuf/struct.proto";
+
+message CmdReq{
+  google.protobuf.Struct data = 1;
+}
+
+message CmdResp{
+  int64 code = 1;
+  string msg = 2;
+  google.protobuf.Struct data = 3;
+}
+
+service Cmd {
+  rpc playerFetchCsInfo (CmdReq) returns (CmdResp);
+  rpc playerFetchHistoryMsg (CmdReq) returns (CmdResp);
+  rpc playerFetchMsg (CmdReq) returns (CmdResp);
+  rpc playerSendMsg (CmdReq) returns (CmdResp);
+  rpc playerDisconnect (CmdReq) returns (CmdResp);
+
+  rpc csFetchPlayerInfo (CmdReq) returns (CmdResp);
+  rpc csFetchPlayerQueue (CmdReq) returns (CmdResp);
+  rpc csConnectPlayer (CmdReq) returns (CmdResp);
+  rpc csFetchHistoryChat (CmdReq) returns (CmdResp);
+  rpc csFetchHistoryMsg (CmdReq) returns (CmdResp);
+  rpc csFetchMsg (CmdReq) returns (CmdResp);
+  rpc csSendMsg (CmdReq) returns (CmdResp);
+}

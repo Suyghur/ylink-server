@@ -1,0 +1,80 @@
+syntax = "v1"
+
+info(
+    title: "用户操作实例"
+    desc: "用户操作实例"
+    author: "#Suyghur"
+)
+
+
+type CommResp {
+    Code int64 `json:"code"`
+    Msg string `json:"msg"`
+    Data interface{} `json:"data"`
+}
+
+type (
+    PlayerAuthReq {
+        PlayerId string `json:"player_id"`
+        GameId string `json:"game_id"`
+    }
+
+    PlayerFetchCsInfoReq {
+        CsId string `json:"cs_id"`
+    }
+
+    PlayerFetchHistoryMsgReq {
+        Page int `json:"page"`
+        Limit int `json:"limit"`
+    }
+
+    PlayerSendMsgReq {
+        Content string `json:"content"`
+        Pic string `json:"pic"`
+    }
+)
+
+type (
+    CsAuthReq {
+        Uname string `json:"uname"`
+        Password string `json:"password"`
+    }
+
+    CsFetchPlayerInfoReq {
+        PlayerId string `json:"palyer_id"`
+        GameId string `json:"game_id"`
+    }
+
+    CsFetchPlayerQueueReq {
+        Limit int `json:"limit"`
+    }
+
+    CsConnectPlayerReq {
+        PlayerId string `json:"player_id"`
+        GameId string `json:"game_id"`
+    }
+
+    CsFetchHistoryChatReq {
+        Page int `json:"page"`
+        Limit int `json:"limit"`
+    }
+
+    CsFetchHistoryMsgReq {
+        PlayerId string `json:"player_id"`
+        GameId string `json:"game_id"`
+        Page int `json:"page"`
+        Limit int `json:"limit"`
+    }
+
+    CsFetchMsgReq {
+        PlayerId string `json:"player_id"`
+        GameId string `json:"game_id"`
+    }
+
+    CsSendMsgReq {
+        PlayerId string `json:"player_id"`
+        GameId string `json:"game_id"`
+        Content string `json:"content"`
+        Pic string `json:"pic"`
+    }
+)
