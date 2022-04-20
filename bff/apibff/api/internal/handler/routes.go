@@ -4,10 +4,10 @@ package handler
 import (
 	"net/http"
 
+	csauth "ylink/bff/apibff/api/internal/handler/cs/auth"
 	cscmd "ylink/bff/apibff/api/internal/handler/cs/cmd"
-	cslogin "ylink/bff/apibff/api/internal/handler/cs/login"
+	playerauth "ylink/bff/apibff/api/internal/handler/player/auth"
 	playercmd "ylink/bff/apibff/api/internal/handler/player/cmd"
-	playerlogin "ylink/bff/apibff/api/internal/handler/player/login"
 	"ylink/bff/apibff/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -18,8 +18,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/player/login",
-				Handler: playerlogin.PlayerLoginHandler(serverCtx),
+				Path:    "/player/auth",
+				Handler: playerauth.PlayerAuthHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),
@@ -29,23 +29,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/player/connect",
-				Handler: playercmd.PlayerConnectHandler(serverCtx),
+				Path:    "/player/fetch_cs_info",
+				Handler: playercmd.PlayerFetchCsInfoHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/player/send",
-				Handler: playercmd.PlayerSendHandler(serverCtx),
+				Path:    "/player/fetch_history_msg",
+				Handler: playercmd.PlayerFetchHistoryMsgHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/fetch_msg",
+				Handler: playercmd.PlayerFetchMsgHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/send_msg",
+				Handler: playercmd.PlayerSendMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/player/disconnect",
 				Handler: playercmd.PlayerDisconnectHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/player/logout",
-				Handler: playercmd.PlayerLogoutHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
@@ -56,8 +61,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/login",
-				Handler: cslogin.CsLoginHandler(serverCtx),
+				Path:    "/cs/auth",
+				Handler: csauth.CsAuthHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),
@@ -67,28 +72,38 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/fetch_queue",
-				Handler: cscmd.CsFetchQueueHandler(serverCtx),
+				Path:    "/cs/fetch_player_info",
+				Handler: cscmd.CsFetchPlayerInfoHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/connect",
-				Handler: cscmd.CsConnectHandler(serverCtx),
+				Path:    "/cs/fetch_player_queue",
+				Handler: cscmd.CsFetchPlayerQueueHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/send",
-				Handler: cscmd.CsSendHandler(serverCtx),
+				Path:    "/cs/connect_player",
+				Handler: cscmd.CsConnectPlayerHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/disconnect",
-				Handler: cscmd.CsDisconnectHandler(serverCtx),
+				Path:    "/cs/fetch_history_list",
+				Handler: cscmd.CsFetchHistoryListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/logout",
-				Handler: cscmd.CsLogoutHandler(serverCtx),
+				Path:    "/cs/fetch_history_msg",
+				Handler: cscmd.CsFetchHistoryMsgHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/cs/fetch_msg",
+				Handler: cscmd.CsFetchMsgHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/cs/send_msg",
+				Handler: cscmd.CsSendMsgHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

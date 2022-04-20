@@ -7,37 +7,64 @@ type CommResp struct {
 	Data interface{} `json:"data"`
 }
 
-type PlayerLoginInfo struct {
+type PlayerAuthReq struct {
 	PlayerId string `json:"player_id"`
 	GameId   string `json:"game_id"`
 }
 
-type PlayerConnectReq struct {
+type PlayerFetchCsInfoReq struct {
 	CsId string `json:"cs_id"`
 }
 
-type PlayerDisconnectReq struct {
-	CsId   string `json:"cs_id"`
-	ChatId string `json:"chat_id"`
+type PlayerFetchHistoryMsgReq struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
 }
 
-type CsLoginInfo struct {
-	UserName string `json:"user_name"`
+type PlayerSendMsgReq struct {
+	Content string `json:"content"`
+	Pic     string `json:"pic"`
+}
+
+type CsAuthReq struct {
+	UserName string `json:"uname"`
 	Password string `json:"password"`
 }
 
-type CsConnectReq struct {
+type CsFetchPlayerInfoReq struct {
 	PlayerId string `json:"palyer_id"`
 	GameId   string `json:"game_id"`
 }
 
-type CsDisconnectReq struct {
-	PlayerId string `json:"player_id"`
-	ChatId   string `json:"chat_id"`
+type CsFetchPlayerQueueReq struct {
+	Limit int `json:"limit"`
 }
 
-type ChatMsgReq struct {
-	ChatId string `form:"chat_id"`
-	Text   string `form:"msg"`
-	Pic    string `form:"pic,optional"`
+type CsConnectPlayerReq struct {
+	PlayerId string `json:"player_id"`
+	GameId   string `json:"game_id"`
+}
+
+type CsFetchHistoryChatReq struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
+}
+
+type CsFetchHistoryMsgReq struct {
+	PlayerId string `json:"player_id"`
+	GameId   string `json:"game_id"`
+	Page     int    `json:"page"`
+	Limit    int    `json:"limit"`
+}
+
+type CsFetchMsgReq struct {
+	PlayerId string `json:"player_id"`
+	GameId   string `json:"game_id"`
+}
+
+type CsSendMsgReq struct {
+	PlayerId string `json:"player_id"`
+	GameId   string `json:"game_id"`
+	Content  string `json:"content"`
+	Pic      string `json:"pic"`
 }

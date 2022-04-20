@@ -9,22 +9,18 @@ import (
 	"ylink/bff/apibff/api/internal/types"
 )
 
-func PlayerSendHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func PlayerFetchHistoryMsgHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ChatMsgReq
+		var req types.PlayerFetchHistoryMsgReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
 			return
 		}
 
-		l := cmd.NewPlayerSendLogic(r.Context(), svcCtx)
-		resp, err := l.PlayerSend(&req)
+		l := cmd.NewPlayerFetchHistoryMsgLogic(r.Context(), svcCtx)
+		resp, err := l.PlayerFetchHistoryMsg(&req)
 		if err != nil {
-			httpx.OkJson(w, &types.CommResp{
-				Code: -1,
-				Msg:  err.Error(),
-				Data: map[string]interface{}{},
-			})
+			httpx.Error(w, err)
 		} else {
 			httpx.OkJson(w, resp)
 		}

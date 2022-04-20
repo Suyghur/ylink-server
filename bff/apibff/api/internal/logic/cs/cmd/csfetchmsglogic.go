@@ -9,21 +9,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CsLogoutLogic struct {
+type CsFetchMsgLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCsLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsLogoutLogic {
-	return &CsLogoutLogic{
+func NewCsFetchMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsFetchMsgLogic {
+	return &CsFetchMsgLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CsLogoutLogic) CsLogout() (resp *types.CommResp, err error) {
+func (l *CsFetchMsgLogic) CsFetchMsg(req *types.CsFetchMsgReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

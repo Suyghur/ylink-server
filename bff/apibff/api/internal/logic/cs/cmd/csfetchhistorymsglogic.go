@@ -9,21 +9,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CsConnectLogic struct {
+type CsFetchHistoryMsgLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCsConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsConnectLogic {
-	return &CsConnectLogic{
+func NewCsFetchHistoryMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsFetchHistoryMsgLogic {
+	return &CsFetchHistoryMsgLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CsConnectLogic) CsConnect(req *types.CsConnectReq) (resp *types.CommResp, err error) {
+func (l *CsFetchHistoryMsgLogic) CsFetchHistoryMsg(req *types.CsFetchHistoryMsgReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

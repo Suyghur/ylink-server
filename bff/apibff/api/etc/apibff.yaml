@@ -2,20 +2,6 @@ Name: apibff
 Host: 0.0.0.0
 Port: 8001
 
-#Mysql:
-#  DataSource: root:kel317-+@tcp(101.33.209.36)/ylink?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
-
-#CacheRedis:
-#  - Host: $host
-#    Pass: $pass
-#    Type: node
-
-GatewayRpcConf:
-  Etcd:
-    Hosts:
-      - 101.33.209.36:2379
-    Key: gateway.rpc
-
 Auth:
   AccessSecret: ylink2022
   AccessExpire: 259200

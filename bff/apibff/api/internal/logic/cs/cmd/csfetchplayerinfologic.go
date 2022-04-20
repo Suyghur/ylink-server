@@ -9,21 +9,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CsFetchQueueLogic struct {
+type CsFetchPlayerInfoLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCsFetchQueueLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsFetchQueueLogic {
-	return &CsFetchQueueLogic{
+func NewCsFetchPlayerInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsFetchPlayerInfoLogic {
+	return &CsFetchPlayerInfoLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CsFetchQueueLogic) CsFetchQueue() (resp *types.CommResp, err error) {
+func (l *CsFetchPlayerInfoLogic) CsFetchPlayerInfo(req *types.CsFetchPlayerInfoReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

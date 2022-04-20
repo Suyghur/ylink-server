@@ -1,4 +1,4 @@
-package login
+package auth
 
 import (
 	"context"
@@ -9,21 +9,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CsLoginLogic struct {
+type CsAuthLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCsLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsLoginLogic {
-	return &CsLoginLogic{
+func NewCsAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsAuthLogic {
+	return &CsAuthLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CsLoginLogic) CsLogin(req *types.CsLoginInfo) (resp *types.CommResp, err error) {
+func (l *CsAuthLogic) CsAuth(req *types.CsAuthReq) (resp *types.CommResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

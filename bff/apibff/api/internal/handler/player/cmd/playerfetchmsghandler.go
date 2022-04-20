@@ -8,10 +8,10 @@ import (
 	"ylink/bff/apibff/api/internal/svc"
 )
 
-func PlayerDisconnectHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func PlayerFetchMsgHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := cmd.NewPlayerDisconnectLogic(r.Context(), svcCtx)
-		resp, err := l.PlayerDisconnect()
+		l := cmd.NewPlayerFetchMsgLogic(r.Context(), svcCtx)
+		resp, err := l.PlayerFetchMsg()
 		if err != nil {
 			httpx.Error(w, err)
 		} else {
