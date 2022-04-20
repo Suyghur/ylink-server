@@ -13,13 +13,19 @@ type (
         GameId string `json:"game_id"`
     }
 
-    PlayerConnectReq {
-        CsId string `json:"cs_id"`
+    PlayerInfo {
+        GameId string `json:"game_id"`
+        PlayerId string `json:"player_id"`
+        PlayerName string `json:"player_name"`
+        PlayerPower string `json:"player_power"`
+        PlayerVipLevel string `json:"player_vip_level"`
+        PlayerRechargeAmount string `json:"player_recharge_amount"`
+        ServerId string `json:"server_id"`
+        ServerName string `json:"server_name"`
     }
 
-    PlayerDisconnectReq {
+    PlayerConnectReq {
         CsId string `json:"cs_id"`
-        ChatId string `json:"chat_id"`
     }
 
     CsLoginInfo {
@@ -34,11 +40,9 @@ type (
 
     CsDisconnectReq {
         PlayerId string `json:"player_id"`
-        ChatId string `json:"chat_id"`
     }
 
     ChatMsgReq {
-        ChatId string `form:"chat_id"`
         Text string `form:"msg"`
         Pic string `form:"pic,optional"`
     }

@@ -4,6 +4,8 @@
 package server
 
 import (
+	"context"
+
 	"ylink/bff/rpcbff/internal/logic"
 	"ylink/bff/rpcbff/internal/svc"
 	"ylink/bff/rpcbff/pb"
@@ -20,7 +22,12 @@ func NewRpcbffServer(svcCtx *svc.ServiceContext) *RpcbffServer {
 	}
 }
 
-func (s *RpcbffServer) ReceiverChatMsg(in *pb.ChatMsgReq, stream pb.Rpcbff_ReceiverChatMsgServer) error {
-	l := logic.NewReceiverChatMsgLogic(stream.Context(), s.svcCtx)
-	return l.ReceiverChatMsg(in, stream)
+func (s *RpcbffServer) Connect(in *pb.CommandReq, stream pb.Rpcbff_ConnectServer) error {
+	l := logic.NewConnectLogic(stream.Context(), s.svcCtx)
+	return l.Connect(in, stream)
+}
+
+func (s *RpcbffServer) Disconnect(ctx context.Context, in *pb.CommandReq) (*pb.CommandResp, error) {
+	l := logic.NewDisconnectLogic(ctx, s.svcCtx)
+	return l.Disconnect(in)
 }

@@ -1,83 +1,90 @@
 syntax = "v1"
 
 info(
-	title: "api前端服务"
-	desc: "api前端服务 "
-	author: "#Suyghur"
-	version: "v1"
+    title: "api前端服务"
+    desc: "api前端服务 "
+    author: "#Suyghur"
+    version: "v1"
 )
 
 import (
-	"comm/comm.api"
-	"cmd/cmd.api"
+    "cmd.api"
 )
 
-@server(
-	group: player/login
-	prefix: api/v1
-)
-service apibff {
-	@doc "玩家登录"
-	@handler playerLogin
-	post /player/login (PlayerLoginInfo) returns (CommResp)
+type CommResp {
+    Code int `json:"code"`
+    Msg string `json:"msg"`
+    Data interface{} `json:"data"`
 }
 
 @server(
-	group: player/cmd
-	prefix: api/v1
-	jwt: Auth
+    group: player/login
+    prefix: api/v1
 )
 service apibff {
-	@doc "玩家连接客服（vip）"
-	@handler playerConnect
-	post /player/connect (PlayerConnectReq) returns (CommResp)
-	
-	@doc "玩家发送信息"
-	@handler playerSend
-	post /player/send (ChatMsgReq) returns (CommResp)
-	
-	@doc "玩家断开连接"
-	@handler playerDisconnect
-	post /player/disconnect (PlayerDisconnectReq) returns (CommResp)
-	
-	@doc "玩家登出"
-	@handler playerLogout
-	post /player/logout returns (CommResp)
+    @doc "玩家登录"
+    @handler playerLogin
+    post /player/login (PlayerLoginInfo) returns (CommResp)
 }
 
 @server(
-	group : cs/login
-	prefix : api/v1
+    group: player/cmd
+    prefix: api/v1
+    jwt: Auth
 )
 service apibff {
-	@doc "客服登录"
-	@handler csLogin
-	post /cs/login (CsLoginInfo) returns (CommResp)
+    @doc "玩家连接客服"
+    @handler playerConnect
+    post /player/connect (PlayerConnectReq) returns (CommResp)
+
+    @doc "玩家发送信息"
+    @handler playerSend
+    post /player/send (ChatMsgReq) returns (CommResp)
+
+    @doc "玩家断开连接"
+    @handler playerDisconnect
+    post /player/disconnect returns (CommResp)
+
+
+
+    @doc "玩家登出"
+    @handler playerLogout
+    post /player/logout returns (CommResp)
 }
 
 @server(
-	group : cs/cmd
-	prefix : api/v1
-	jwt : Auth
+    group : cs/login
+    prefix : api/v1
 )
 service apibff {
-	@doc "获取等待玩家列表"
-	@handler csFetchQueue
-	post /cs/fetch_queue returns (CommResp)
-	
-	@doc "客服连接玩家"
-	@handler csConnect
-	post /cs/connect (CsConnectReq) returns (CommResp)
-	
-	@doc "客服发送信息"
-	@handler csSend
-	post /cs/send (ChatMsgReq) returns (CommResp)
-	
-	@doc "客服断开连接"
-	@handler csDisconnect
-	post /cs/disconnect (CsDisconnectReq) returns (CommResp)
-	
-	@doc "客服登出"
-	@handler csLogout
-	post /cs/logout returns (CommResp)
+    @doc "客服登录"
+    @handler csLogin
+    post /cs/login (CsLoginInfo) returns (CommResp)
+}
+
+@server(
+    group : cs/cmd
+    prefix : api/v1
+    jwt : Auth
+)
+service apibff {
+    @doc "获取等待玩家列表"
+    @handler csFetchQueue
+    post /cs/fetch_queue returns (CommResp)
+
+    @doc "客服连接玩家"
+    @handler csConnect
+    post /cs/connect (CsConnectReq) returns (CommResp)
+
+    @doc "客服发送信息"
+    @handler csSend
+    post /cs/send (ChatMsgReq) returns (CommResp)
+
+    @doc "客服断开连接"
+    @handler csDisconnect
+    post /cs/disconnect (CsDisconnectReq) returns (CommResp)
+
+    @doc "客服登出"
+    @handler csLogout
+    post /cs/logout returns (CommResp)
 }

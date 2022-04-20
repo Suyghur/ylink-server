@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RpcbffClient interface {
-	ReceiverChatMsg(ctx context.Context, in *ChatMsgReq, opts ...grpc.CallOption) (Rpcbff_ReceiverChatMsgClient, error)
+	Connect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (Rpcbff_ConnectClient, error)
+	Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error)
 }
 
 type rpcbffClient struct {
@@ -33,12 +34,12 @@ func NewRpcbffClient(cc grpc.ClientConnInterface) RpcbffClient {
 	return &rpcbffClient{cc}
 }
 
-func (c *rpcbffClient) ReceiverChatMsg(ctx context.Context, in *ChatMsgReq, opts ...grpc.CallOption) (Rpcbff_ReceiverChatMsgClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Rpcbff_ServiceDesc.Streams[0], "/pb.rpcbff/receiverChatMsg", opts...)
+func (c *rpcbffClient) Connect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (Rpcbff_ConnectClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Rpcbff_ServiceDesc.Streams[0], "/pb.Rpcbff/connect", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &rpcbffReceiverChatMsgClient{stream}
+	x := &rpcbffConnectClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -48,28 +49,38 @@ func (c *rpcbffClient) ReceiverChatMsg(ctx context.Context, in *ChatMsgReq, opts
 	return x, nil
 }
 
-type Rpcbff_ReceiverChatMsgClient interface {
-	Recv() (*ChatMsgReqResp, error)
+type Rpcbff_ConnectClient interface {
+	Recv() (*CommandResp, error)
 	grpc.ClientStream
 }
 
-type rpcbffReceiverChatMsgClient struct {
+type rpcbffConnectClient struct {
 	grpc.ClientStream
 }
 
-func (x *rpcbffReceiverChatMsgClient) Recv() (*ChatMsgReqResp, error) {
-	m := new(ChatMsgReqResp)
+func (x *rpcbffConnectClient) Recv() (*CommandResp, error) {
+	m := new(CommandResp)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
+func (c *rpcbffClient) Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error) {
+	out := new(CommandResp)
+	err := c.cc.Invoke(ctx, "/pb.Rpcbff/disconnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RpcbffServer is the server API for Rpcbff service.
 // All implementations must embed UnimplementedRpcbffServer
 // for forward compatibility
 type RpcbffServer interface {
-	ReceiverChatMsg(*ChatMsgReq, Rpcbff_ReceiverChatMsgServer) error
+	Connect(*CommandReq, Rpcbff_ConnectServer) error
+	Disconnect(context.Context, *CommandReq) (*CommandResp, error)
 	mustEmbedUnimplementedRpcbffServer()
 }
 
@@ -77,8 +88,11 @@ type RpcbffServer interface {
 type UnimplementedRpcbffServer struct {
 }
 
-func (UnimplementedRpcbffServer) ReceiverChatMsg(*ChatMsgReq, Rpcbff_ReceiverChatMsgServer) error {
-	return status.Errorf(codes.Unimplemented, "method ReceiverChatMsg not implemented")
+func (UnimplementedRpcbffServer) Connect(*CommandReq, Rpcbff_ConnectServer) error {
+	return status.Errorf(codes.Unimplemented, "method Connect not implemented")
+}
+func (UnimplementedRpcbffServer) Disconnect(context.Context, *CommandReq) (*CommandResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Disconnect not implemented")
 }
 func (UnimplementedRpcbffServer) mustEmbedUnimplementedRpcbffServer() {}
 
@@ -93,38 +107,61 @@ func RegisterRpcbffServer(s grpc.ServiceRegistrar, srv RpcbffServer) {
 	s.RegisterService(&Rpcbff_ServiceDesc, srv)
 }
 
-func _Rpcbff_ReceiverChatMsg_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ChatMsgReq)
+func _Rpcbff_Connect_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(CommandReq)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(RpcbffServer).ReceiverChatMsg(m, &rpcbffReceiverChatMsgServer{stream})
+	return srv.(RpcbffServer).Connect(m, &rpcbffConnectServer{stream})
 }
 
-type Rpcbff_ReceiverChatMsgServer interface {
-	Send(*ChatMsgReqResp) error
+type Rpcbff_ConnectServer interface {
+	Send(*CommandResp) error
 	grpc.ServerStream
 }
 
-type rpcbffReceiverChatMsgServer struct {
+type rpcbffConnectServer struct {
 	grpc.ServerStream
 }
 
-func (x *rpcbffReceiverChatMsgServer) Send(m *ChatMsgReqResp) error {
+func (x *rpcbffConnectServer) Send(m *CommandResp) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _Rpcbff_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CommandReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RpcbffServer).Disconnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Rpcbff/disconnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RpcbffServer).Disconnect(ctx, req.(*CommandReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 // Rpcbff_ServiceDesc is the grpc.ServiceDesc for Rpcbff service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Rpcbff_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.rpcbff",
+	ServiceName: "pb.Rpcbff",
 	HandlerType: (*RpcbffServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "disconnect",
+			Handler:    _Rpcbff_Disconnect_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "receiverChatMsg",
-			Handler:       _Rpcbff_ReceiverChatMsg_Handler,
+			StreamName:    "connect",
+			Handler:       _Rpcbff_Connect_Handler,
 			ServerStreams: true,
 		},
 	},

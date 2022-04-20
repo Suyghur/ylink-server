@@ -13,11 +13,12 @@ import (
 )
 
 type (
-	ChatMsgReq     = pb.ChatMsgReq
-	ChatMsgReqResp = pb.ChatMsgReqResp
+	CommandReq  = pb.CommandReq
+	CommandResp = pb.CommandResp
 
 	Rpcbff interface {
-		ReceiverChatMsg(ctx context.Context, in *ChatMsgReq, opts ...grpc.CallOption) (pb.Rpcbff_ReceiverChatMsgClient, error)
+		Connect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (pb.Rpcbff_ConnectClient, error)
+		Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error)
 	}
 
 	defaultRpcbff struct {
@@ -31,7 +32,12 @@ func NewRpcbff(cli zrpc.Client) Rpcbff {
 	}
 }
 
-func (m *defaultRpcbff) ReceiverChatMsg(ctx context.Context, in *ChatMsgReq, opts ...grpc.CallOption) (pb.Rpcbff_ReceiverChatMsgClient, error) {
+func (m *defaultRpcbff) Connect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (pb.Rpcbff_ConnectClient, error) {
 	client := pb.NewRpcbffClient(m.cli.Conn())
-	return client.ReceiverChatMsg(ctx, in, opts...)
+	return client.Connect(ctx, in, opts...)
+}
+
+func (m *defaultRpcbff) Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error) {
+	client := pb.NewRpcbffClient(m.cli.Conn())
+	return client.Disconnect(ctx, in, opts...)
 }
