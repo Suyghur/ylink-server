@@ -1,6 +1,6 @@
 Name: apibff
 Host: 0.0.0.0
-Port: 10000
+Port: 10001
 
 AuthRpc:
   Etcd:

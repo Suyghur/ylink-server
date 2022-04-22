@@ -1,0 +1,9 @@
+Name: Authbff
+Host: 0.0.0.0
+Port: 10000
+
+AuthRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: auth.rpc

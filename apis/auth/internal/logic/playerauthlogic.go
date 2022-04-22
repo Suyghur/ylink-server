@@ -25,7 +25,6 @@ func NewPlayerAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Player
 }
 
 func (l *PlayerAuthLogic) PlayerAuth(in *pb.PlayerAuthReq) (*pb.AuthResp, error) {
-
 	l.Logger.Info("invoke func PlayerAuth...")
 	l.Logger.Infof("player_id: %s", in.PlayerId)
 	l.Logger.Infof("game_id: %s", in.GameId)
@@ -33,10 +32,7 @@ func (l *PlayerAuthLogic) PlayerAuth(in *pb.PlayerAuthReq) (*pb.AuthResp, error)
 	// todo 查询用户信息
 	// todo 生成token
 	if data, err := structpb.NewStruct(map[string]interface{}{
-		"token":         "player_auth",
-		"has_own_cs":    1,
-		"cs_id":         "cs1231",
-		"basic_rpc_url": "https://www.baidu.com",
+		"token": "player_auth",
 	}); err != nil {
 		return &pb.AuthResp{
 			Code: 1,

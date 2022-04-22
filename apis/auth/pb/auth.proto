@@ -16,8 +16,7 @@ message PlayerAuthReq{
 }
 
 message CsAuthReq{
-  string uname = 1;
-  string password = 2;
+  string cs_id = 1;
 }
 
 message CheckAuthReq{

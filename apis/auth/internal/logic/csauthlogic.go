@@ -26,14 +26,12 @@ func NewCsAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsAuthLogi
 
 func (l *CsAuthLogic) CsAuth(in *pb.CsAuthReq) (*pb.AuthResp, error) {
 	l.Logger.Info("invoke func CsAuth...")
-	l.Logger.Infof("uname: %s", in.Uname)
-	l.Logger.Infof("password: %s", in.Password)
+	l.Logger.Infof("cs_id: %s", in.CsId)
 
 	// todo 查询用户信息
 	// todo 生成token
 	if data, err := structpb.NewStruct(map[string]interface{}{
-		"token":         "cs_auth",
-		"basic_rpc_url": "https://www.baidu.com",
+		"token": "cs_auth",
 	}); err != nil {
 		return &pb.AuthResp{
 			Code: 1,
