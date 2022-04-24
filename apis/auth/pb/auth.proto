@@ -20,7 +20,8 @@ message CsAuthReq{
 }
 
 message CheckAuthReq{
-  string  token = 1;
+  string uid = 1;
+  string  token = 2;
 }
 
 message AuthResp{

@@ -2,6 +2,10 @@ package logic
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"google.golang.org/protobuf/types/known/structpb"
+	"ylink/ext/globalkey"
 
 	"ylink/apis/auth/internal/svc"
 	"ylink/apis/auth/pb"
@@ -24,7 +28,22 @@ func NewCheckAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckAu
 }
 
 func (l *CheckAuthLogic) CheckAuth(in *pb.CheckAuthReq) (*pb.AuthResp, error) {
-	// todo: add your logic here and delete this line
+	tokenKey := fmt.Sprintf(globalkey.CacheTokenKey, in.Uid)
+	cacheToken, err := l.svcCtx.RedisClient.GetCtx(l.ctx, tokenKey)
+	if err != nil {
+		return nil, err
+	}
+	if cacheToken != in.Token {
+		return nil, errors.New("CheckToken is invalid")
+	}
 
-	return &pb.AuthResp{}, nil
+	data, err := structpb.NewStruct(map[string]interface{}{})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AuthResp{
+		Code: 0,
+		Msg:  "success",
+		Data: data,
+	}, nil
 }

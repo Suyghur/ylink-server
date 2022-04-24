@@ -1,6 +1,16 @@
 Name: auth.rpc
 ListenOn: 0.0.0.0:11000
+
 Etcd:
   Hosts:
-  - 127.0.0.1:2379
+    - 127.0.0.1:2379
   Key: auth.rpc
+
+JwtAuth:
+  AccessSecret: ylink2022
+  AccessExpire: 259200
+
+Redis:
+  Host: 127.0.0.1:6379
+  Type: node
+  Pass: ylink2020
