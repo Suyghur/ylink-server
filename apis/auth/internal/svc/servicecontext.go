@@ -1,13 +1,21 @@
 package svc
 
-import "ylink/apis/auth/internal/config"
+import (
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"ylink/apis/auth/internal/config"
+)
 
 type ServiceContext struct {
-	Config config.Config
+	Config      config.Config
+	RedisClient *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
+		RedisClient: redis.New(c.Redis.Host, func(r *redis.Redis) {
+			r.Type = c.Redis.Type
+			r.Pass = c.Redis.Pass
+		}),
 	}
 }
