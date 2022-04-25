@@ -2,11 +2,9 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/protobuf/types/known/structpb"
 	"time"
-	"ylink/ext/globalkey"
 	"ylink/ext/jwtdata"
 
 	"ylink/apis/auth/internal/svc"
@@ -30,32 +28,16 @@ func NewPlayerAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Player
 }
 
 func (l *PlayerAuthLogic) PlayerAuth(in *pb.PlayerAuthReq) (*pb.AuthResp, error) {
-	var token string
-	// 查询redis
-	tokenKey := fmt.Sprintf(globalkey.CacheTokenKey, in.PlayerId)
-	token, err := l.svcCtx.RedisClient.GetCtx(l.ctx, tokenKey)
+	now := time.Now().Unix()
+	token, err := l.generatePlayerToken(now, in.PlayerId, in.GameId)
 	if err != nil {
 		return nil, err
-	}
-
-	// 生成token
-	if len(token) == 0 {
-		now := time.Now().Unix()
-		token, err = l.generatePlayerToken(now, in.PlayerId, in.GameId)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	data, err := structpb.NewStruct(map[string]interface{}{
 		"token": token,
 	})
 	if err != nil {
-		return nil, err
-	}
-
-	// 存入redis
-	if err := l.svcCtx.RedisClient.SetexCtx(l.ctx, tokenKey, token, int(l.svcCtx.Config.JwtAuth.AccessExpire)); err != nil {
 		return nil, err
 	}
 
