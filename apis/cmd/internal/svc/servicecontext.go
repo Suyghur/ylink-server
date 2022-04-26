@@ -1,8 +1,6 @@
 package svc
 
-import (
-	"ylink/apis/auth/internal/config"
-)
+import "ylink/apis/cmd/internal/config"
 
 type ServiceContext struct {
 	Config config.Config

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"ylink/apis/cmd/pb"
 
 	"ylink/bff/apibff/internal/svc"
 	"ylink/bff/apibff/internal/types"
@@ -24,7 +25,16 @@ func NewPlayerFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(req *types.PlayerFetchCsInfoReq) (resp *types.CommResp, err error) {
-	// todo: add your logic here and delete this line
+	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchCsInfo(l.ctx, &pb.PlayerFetchCsInfoReq{
+		CsId: req.CsId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.CommResp{
+		Code: cmdResp.Code,
+		Msg:  cmdResp.Msg,
+		Data: cmdResp.Data,
+	}, nil
 }

@@ -22,6 +22,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/cs/auth",
 				Handler: csAuthHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/check_auth",
+				Handler: checkAuthHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)

@@ -7,11 +7,6 @@ type CommResp struct {
 	Data interface{} `json:"data"`
 }
 
-type PlayerAuthReq struct {
-	PlayerId string `json:"player_id"`
-	GameId   string `json:"game_id"`
-}
-
 type PlayerFetchCsInfoReq struct {
 	CsId string `json:"cs_id"`
 }
@@ -24,16 +19,6 @@ type PlayerFetchHistoryMsgReq struct {
 type PlayerSendMsgReq struct {
 	Content string `json:"content"`
 	Pic     string `json:"pic"`
-}
-
-type CsAuthReq struct {
-	Uname    string `json:"uname"`
-	Password string `json:"password"`
-}
-
-type CsFetchPlayerInfoReq struct {
-	PlayerId string `json:"palyer_id"`
-	GameId   string `json:"game_id"`
 }
 
 type CsFetchPlayerQueueReq struct {

@@ -13,7 +13,6 @@ import (
 )
 
 type (
-	AuthReq       = pb.AuthReq
 	AuthResp      = pb.AuthResp
 	CheckAuthReq  = pb.CheckAuthReq
 	CsAuthReq     = pb.CsAuthReq

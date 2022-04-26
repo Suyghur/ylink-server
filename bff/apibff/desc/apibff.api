@@ -12,19 +12,9 @@ import (
 )
 
 @server(
-	group: player/auth
-	prefix: api/v1
-)
-service apibff {
-	@doc "玩家登录"
-	@handler playerAuth
-	post /player/auth (PlayerAuthReq) returns (CommResp)
-}
-
-@server(
 	group: player/cmd
 	prefix: api/v1
-	jwt: Auth
+	jwt: JwtAuth
 )
 service apibff {
 	@doc "玩家获取客服信息"
@@ -49,25 +39,11 @@ service apibff {
 }
 
 @server(
-	group : cs/auth
-	prefix : api/v1
-)
-service apibff {
-	@doc "客服登录"
-	@handler csAuth
-	post /cs/auth (CsAuthReq) returns (CommResp)
-}
-
-@server(
 	group : cs/cmd
 	prefix : api/v1
-	jwt : Auth
+	jwt : JwtAuth
 )
 service apibff {
-	@doc "客服获取玩家信息"
-	@handler csFetchPlayerInfo
-	post /cs/fetch_player_info (CsFetchPlayerInfoReq) returns (CommResp)
-	
 	@doc "客服获取玩家等待队列"
 	@handler csFetchPlayerQueue
 	post /cs/fetch_player_queue (CsFetchPlayerQueueReq) returns (CommResp)

@@ -10,6 +10,10 @@ type CsAuthReq struct {
 	CsId string `json:"cs_id"`
 }
 
+type CheckAuthReq struct {
+	AccessToken string `json:"access_token"`
+}
+
 type AuthResp struct {
 	Code int64       `json:"code"`
 	Msg  string      `json:"msg"`

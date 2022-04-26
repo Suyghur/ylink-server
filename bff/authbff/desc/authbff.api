@@ -16,6 +16,10 @@ type CsAuthReq {
 	CsId string `json:"cs_id"`
 }
 
+type CheckAuthReq {
+	AccessToken string `json:"access_token"`
+}
+
 type AuthResp {
 	Code int64       `json:"code"`
 	Msg  string      `json:"msg"`
@@ -33,4 +37,8 @@ service Authbff {
 	@doc "客服认证"
 	@handler csAuth
 	post /cs/auth (CsAuthReq) returns (AuthResp)
+	
+	@doc "测试token"
+	@handler checkAuth
+	post /check_auth (CheckAuthReq) returns (AuthResp)
 }
