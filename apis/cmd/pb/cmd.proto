@@ -6,28 +6,80 @@ package pb;
 
 import "google/protobuf/struct.proto";
 
-message CmdReq{
-  google.protobuf.Struct data = 1;
-}
-
 message CmdResp{
   int64 code = 1;
   string msg = 2;
   google.protobuf.Struct data = 3;
 }
 
-service Cmd {
-  rpc playerFetchCsInfo (CmdReq) returns (CmdResp);
-  rpc playerFetchHistoryMsg (CmdReq) returns (CmdResp);
-  rpc playerFetchMsg (CmdReq) returns (CmdResp);
-  rpc playerSendMsg (CmdReq) returns (CmdResp);
-  rpc playerDisconnect (CmdReq) returns (CmdResp);
+/**
+Player Command Request Bean
+ */
+message PlayerFetchCsInfoReq{
+  string cs_id = 1;
+}
 
-  rpc csFetchPlayerInfo (CmdReq) returns (CmdResp);
-  rpc csFetchPlayerQueue (CmdReq) returns (CmdResp);
-  rpc csConnectPlayer (CmdReq) returns (CmdResp);
-  rpc csFetchHistoryChat (CmdReq) returns (CmdResp);
-  rpc csFetchHistoryMsg (CmdReq) returns (CmdResp);
-  rpc csFetchMsg (CmdReq) returns (CmdResp);
-  rpc csSendMsg (CmdReq) returns (CmdResp);
+message PlayerFetchHistoryMsgReq{
+  int64 page = 1;
+  int64 limit = 2;
+}
+
+message PlayerFetchMsgReq{}
+
+message PlayerSendMsgReq{
+  string content = 1;
+  string pic = 2;
+}
+
+message PlayerDisconnectReq{}
+
+/**
+Cs Command Request Bean
+ */
+message CsFetchPlayerQueueReq{
+  int64 limit = 1;
+}
+
+message CsConnectPlayerReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message CsFetchHistoryChatReq{
+  int64 page = 1;
+  int64 limit = 2;
+}
+
+message CsFetchHistoryMsgReq{
+  string player_id = 1;
+  string game_id = 2;
+  int64 page = 3;
+  int64 limit = 4;
+}
+
+message CsFetchMsgReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message CsSendMsgReq{
+  string player_id = 1;
+  string game_id = 2;
+  string content = 3;
+  string pic = 4;
+}
+
+service Cmd {
+  rpc playerFetchCsInfo (PlayerFetchCsInfoReq) returns (CmdResp);
+  rpc playerFetchHistoryMsg (PlayerFetchHistoryMsgReq) returns (CmdResp);
+  rpc playerFetchMsg (PlayerFetchMsgReq) returns (CmdResp);
+  rpc playerSendMsg (PlayerSendMsgReq) returns (CmdResp);
+  rpc playerDisconnect (PlayerDisconnectReq) returns (CmdResp);
+
+  rpc csFetchPlayerQueue (CsFetchPlayerQueueReq) returns (CmdResp);
+  rpc csConnectPlayer (CsConnectPlayerReq) returns (CmdResp);
+  rpc csFetchHistoryChat (CsFetchHistoryChatReq) returns (CmdResp);
+  rpc csFetchHistoryMsg (CsFetchHistoryMsgReq) returns (CmdResp);
+  rpc csFetchMsg (CsFetchMsgReq) returns (CmdResp);
+  rpc csSendMsg (CsSendMsgReq) returns (CmdResp);
 }

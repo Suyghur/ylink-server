@@ -3,11 +3,11 @@ package logic
 import (
 	"context"
 	"google.golang.org/protobuf/types/known/structpb"
-
-	"ylink/bff/rpcbff/internal/svc"
-	"ylink/bff/rpcbff/pb"
+	"ylink/apis/auth/auth"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"ylink/bff/rpcbff/internal/svc"
+	"ylink/bff/rpcbff/pb"
 )
 
 type ConnectLogic struct {
@@ -27,9 +27,15 @@ func NewConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConnectLo
 func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Rpcbff_ConnectServer) error {
 	// todo: 验证token
 	// todo: 把stream放入资源pool
-
-	l.Logger.Info("invoke func connect")
-	l.Logger.Infof("%s", in.Token)
+	if authResp, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &auth.CheckAuthReq{
+		AccessToken: in.AccessToken,
+	}); err != nil {
+		return stream.Send(&pb.CommandResp{
+			CommandCode: authResp.Code,
+			CommandMsg:  authResp.Msg,
+			CommandData: authResp.Data,
+		})
+	}
 
 	data, _ := structpb.NewStruct(map[string]interface{}{})
 

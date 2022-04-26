@@ -35,7 +35,7 @@ func (l *PlayerAuthLogic) PlayerAuth(in *pb.PlayerAuthReq) (*pb.AuthResp, error)
 	}
 
 	data, err := structpb.NewStruct(map[string]interface{}{
-		"token": token,
+		"access_token": token,
 	})
 	if err != nil {
 		return nil, err

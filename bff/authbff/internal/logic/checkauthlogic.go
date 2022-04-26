@@ -26,7 +26,7 @@ func NewCheckAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckAu
 
 func (l *CheckAuthLogic) CheckAuth(req *types.CheckAuthReq) (resp *types.AuthResp, err error) {
 	if authResp, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &pb.CheckAuthReq{
-		Token: req.Token,
+		AccessToken: req.AccessToken,
 	}); err != nil {
 		return &types.AuthResp{
 			Code: authResp.Code,

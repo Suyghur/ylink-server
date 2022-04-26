@@ -34,7 +34,7 @@ func (l *CsAuthLogic) CsAuth(in *pb.CsAuthReq) (*pb.AuthResp, error) {
 		return nil, err
 	}
 	data, err := structpb.NewStruct(map[string]interface{}{
-		"token": token,
+		"access_token": token,
 	})
 	if err != nil {
 		return nil, err

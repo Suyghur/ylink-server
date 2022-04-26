@@ -29,7 +29,7 @@ func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error)
 	// todo: 把关联的stream从资源pool中移除
 
 	l.Logger.Info("invoke func disconnect")
-	l.Logger.Infof("%s", in.Token)
+	l.Logger.Infof("%s", in.AccessToken)
 
 	data, _ := structpb.NewStruct(map[string]interface{}{})
 	return &pb.CommandResp{

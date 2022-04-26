@@ -29,7 +29,7 @@ func (l *CheckAuthLogic) CheckAuth(in *pb.CheckAuthReq) (*pb.AuthResp, error) {
 	// 解析传入的token
 	// 第二个参数是一个回调函数，作用是判断生成token所用的签名算法是否和传入token的签名算法是否一致。
 	// 算法匹配就返回密钥，用来解析token.
-	token, err := jwt.Parse(in.Token, func(token *jwt.Token) (i interface{}, err error) {
+	token, err := jwt.Parse(in.AccessToken, func(token *jwt.Token) (i interface{}, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
@@ -42,10 +42,16 @@ func (l *CheckAuthLogic) CheckAuth(in *pb.CheckAuthReq) (*pb.AuthResp, error) {
 	}
 
 	// 将获取的token中的Claims强转为MapClaims
-	_, ok := token.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(jwt.MapClaims)
 	// 判断token是否有效
 	if !(ok && token.Valid) {
 		return nil, errors.New("cannot convert claim to mapClaim")
+	}
+
+	iat := claims["iat"].(int64)
+	exp := claims["exp"].(int64)
+	if iat == exp {
+		return nil, errors.New("access token is invalid")
 	}
 
 	data, err := structpb.NewStruct(map[string]interface{}{})

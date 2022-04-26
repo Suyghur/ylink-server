@@ -11,7 +11,7 @@ type CsAuthReq struct {
 }
 
 type CheckAuthReq struct {
-	Token string `json:"token"`
+	AccessToken string `json:"access_token"`
 }
 
 type AuthResp struct {

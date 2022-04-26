@@ -6,10 +6,6 @@ package pb;
 
 import "google/protobuf/struct.proto";
 
-message AuthReq{
-  google.protobuf.Struct data = 1;
-}
-
 message PlayerAuthReq{
   string player_id = 1;
   string game_id = 2;
@@ -20,7 +16,7 @@ message CsAuthReq{
 }
 
 message CheckAuthReq{
-  string  token = 1;
+  string  access_token = 1;
 }
 
 message AuthResp{
