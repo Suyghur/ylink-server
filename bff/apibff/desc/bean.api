@@ -14,11 +14,6 @@ type CommResp {
 }
 
 type (
-    PlayerAuthReq {
-        PlayerId string `json:"player_id"`
-        GameId string `json:"game_id"`
-    }
-
     PlayerFetchCsInfoReq {
         CsId string `json:"cs_id"`
     }
@@ -35,16 +30,6 @@ type (
 )
 
 type (
-    CsAuthReq {
-        Uname string `json:"uname"`
-        Password string `json:"password"`
-    }
-
-    CsFetchPlayerInfoReq {
-        PlayerId string `json:"palyer_id"`
-        GameId string `json:"game_id"`
-    }
-
     CsFetchPlayerQueueReq {
         Limit int `json:"limit"`
     }

@@ -13,7 +13,7 @@ message CommandResp {
 }
 
 message CommandReq {
-  string token = 1;
+  string access_token = 1;
 }
 
 service Rpcbff {

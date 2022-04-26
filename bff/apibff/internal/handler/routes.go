@@ -4,9 +4,7 @@ package handler
 import (
 	"net/http"
 
-	csauth "ylink/bff/apibff/internal/handler/cs/auth"
 	cscmd "ylink/bff/apibff/internal/handler/cs/cmd"
-	playerauth "ylink/bff/apibff/internal/handler/player/auth"
 	playercmd "ylink/bff/apibff/internal/handler/player/cmd"
 	"ylink/bff/apibff/internal/svc"
 
@@ -14,17 +12,6 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
-	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/player/auth",
-				Handler: playerauth.PlayerAuthHandler(serverCtx),
-			},
-		},
-		rest.WithPrefix("/api/v1"),
-	)
-
 	server.AddRoutes(
 		[]rest.Route{
 			{
@@ -53,28 +40,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: playercmd.PlayerDisconnectHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/v1"),
 	)
 
 	server.AddRoutes(
 		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/cs/auth",
-				Handler: csauth.CsAuthHandler(serverCtx),
-			},
-		},
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/cs/fetch_player_info",
-				Handler: cscmd.CsFetchPlayerInfoHandler(serverCtx),
-			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/fetch_player_queue",
@@ -106,7 +77,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: cscmd.CsSendMsgHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/v1"),
 	)
 }
