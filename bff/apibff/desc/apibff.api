@@ -15,7 +15,6 @@ import (
 	group: player/cmd
 	prefix: api/v1
 	jwt: JwtAuth
-	middleware: Player2Ctx
 )
 service apibff {
 	@doc "玩家获取客服信息"

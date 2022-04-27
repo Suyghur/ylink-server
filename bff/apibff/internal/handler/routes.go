@@ -13,36 +13,33 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Player2Ctx},
-			[]rest.Route{
-				{
-					Method:  http.MethodPost,
-					Path:    "/player/fetch-cs-info",
-					Handler: playercmd.PlayerFetchCsInfoHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/player/fetch-history-msg",
-					Handler: playercmd.PlayerFetchHistoryMsgHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/player/fetch-msg",
-					Handler: playercmd.PlayerFetchMsgHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/player/send-msg",
-					Handler: playercmd.PlayerSendMsgHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/player/disconnect",
-					Handler: playercmd.PlayerDisconnectHandler(serverCtx),
-				},
-			}...,
-		),
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/fetch-cs-info",
+				Handler: playercmd.PlayerFetchCsInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/fetch-history-msg",
+				Handler: playercmd.PlayerFetchHistoryMsgHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/fetch-msg",
+				Handler: playercmd.PlayerFetchMsgHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/send-msg",
+				Handler: playercmd.PlayerSendMsgHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/player/disconnect",
+				Handler: playercmd.PlayerDisconnectHandler(serverCtx),
+			},
+		},
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/v1"),
 	)

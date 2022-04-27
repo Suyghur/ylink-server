@@ -5,7 +5,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/protobuf/types/known/structpb"
 	"time"
-	"ylink/ext/jwtdata"
+	"ylink/ext/jwtkey"
 
 	"ylink/apis/auth/internal/svc"
 	"ylink/apis/auth/pb"
@@ -61,7 +61,7 @@ func (l *CsAuthLogic) generateCsToken(iat int64, csId string) (string, error) {
 	claims := make(jwt.MapClaims)
 	claims["iat"] = iat
 	claims["exp"] = iat + expire
-	claims[jwtdata.JwtKeyCsId] = csId
+	claims[jwtkey.CsId] = csId
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
 	return token.SignedString([]byte(secret))

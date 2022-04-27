@@ -6,20 +6,20 @@ package ctxdata
 
 import (
 	"context"
-	"ylink/ext/jwtdata"
+	"ylink/ext/jwtkey"
 )
 
 func GetPlayerIdFromCtx(ctx context.Context) string {
-	playerId, _ := ctx.Value(jwtdata.JwtKeyPlayerId).(string)
+	playerId, _ := ctx.Value(jwtkey.PlayerId).(string)
 	return playerId
 }
 
 func GetGameIdFromCtx(ctx context.Context) string {
-	gameId, _ := ctx.Value(jwtdata.JwtKeyGameId).(string)
+	gameId, _ := ctx.Value(jwtkey.GameId).(string)
 	return gameId
 }
 
 func GetCsIdFromJwt(ctx context.Context) string {
-	csId, _ := ctx.Value(jwtdata.JwtKeyCsId).(string)
+	csId, _ := ctx.Value(jwtkey.CsId).(string)
 	return csId
 }

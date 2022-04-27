@@ -5,7 +5,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/protobuf/types/known/structpb"
 	"time"
-	"ylink/ext/jwtdata"
+	"ylink/ext/jwtkey"
 
 	"ylink/apis/auth/internal/svc"
 	"ylink/apis/auth/pb"
@@ -64,8 +64,8 @@ func (l *PlayerAuthLogic) generatePlayerToken(iat int64, playerId string, gameId
 	claims := make(jwt.MapClaims)
 	claims["iat"] = iat
 	claims["exp"] = iat + expire
-	claims[jwtdata.JwtKeyPlayerId] = playerId
-	claims[jwtdata.JwtKeyGameId] = gameId
+	claims[jwtkey.PlayerId] = playerId
+	claims[jwtkey.GameId] = gameId
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
 	return token.SignedString([]byte(secret))
