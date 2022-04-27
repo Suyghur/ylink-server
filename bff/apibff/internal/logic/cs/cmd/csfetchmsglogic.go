@@ -23,7 +23,7 @@ func NewCsFetchMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsFetc
 	}
 }
 
-func (l *CsFetchMsgLogic) CsFetchMsg(req *types.CsFetchMsgReq) (resp *types.CommResp, err error) {
+func (l *CsFetchMsgLogic) CsFetchMsg(req *types.CsFetchMsgReq) (resp *types.CsFetchMsgResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

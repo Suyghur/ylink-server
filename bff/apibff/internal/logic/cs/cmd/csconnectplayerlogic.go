@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"ylink/apis/cmd/pb"
 
 	"ylink/bff/apibff/internal/svc"
 	"ylink/bff/apibff/internal/types"
@@ -23,8 +24,14 @@ func NewCsConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 	}
 }
 
-func (l *CsConnectPlayerLogic) CsConnectPlayer(req *types.CsConnectPlayerReq) (resp *types.CommResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+func (l *CsConnectPlayerLogic) CsConnectPlayer(req *types.CsConnectPlayerReq) error {
+	_, err := l.svcCtx.CmdRpc.CsConnectPlayer(l.ctx, &pb.CsConnectPlayerReq{
+		PlayerId: req.PlayerId,
+		GameId:   req.GameId,
+		CsId:     "",
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

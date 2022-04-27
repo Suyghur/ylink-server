@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"ylink/apis/cmd/pb"
+	"ylink/ext/ctxdata"
 
 	"ylink/bff/apibff/internal/svc"
 	"ylink/bff/apibff/internal/types"
@@ -23,8 +25,17 @@ func NewPlayerFetchMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pl
 	}
 }
 
-func (l *PlayerFetchMsgLogic) PlayerFetchMsg() (resp *types.CommResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+func (l *PlayerFetchMsgLogic) PlayerFetchMsg() (resp *types.PlayerFetchMsgResp, err error) {
+	playerId := ctxdata.GetGameIdFromCtx(l.ctx)
+	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchMsg(l.ctx, &pb.PlayerFetchMsgReq{
+		PlayerId: playerId,
+		GameId:   gameId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.PlayerFetchMsgResp{
+		List: cmdResp.List.AsSlice(),
+	}, nil
 }

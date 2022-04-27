@@ -23,7 +23,7 @@ func NewCsFetchPlayerQueueLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(req *types.CsFetchPlayerQueueReq) (resp *types.CommResp, err error) {
+func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(req *types.CsFetchPlayerQueueReq) (resp *types.CsFetchPlayerQueueResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

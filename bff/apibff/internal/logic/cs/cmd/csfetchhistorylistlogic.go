@@ -23,7 +23,7 @@ func NewCsFetchHistoryListLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CsFetchHistoryListLogic) CsFetchHistoryList(req *types.CsFetchHistoryChatReq) (resp *types.CommResp, err error) {
+func (l *CsFetchHistoryListLogic) CsFetchHistoryList(req *types.CsFetchHistoryChatReq) (resp *types.CsFetchHistoryChatResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

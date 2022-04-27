@@ -22,57 +22,57 @@ func NewCmdServer(svcCtx *svc.ServiceContext) *CmdServer {
 	}
 }
 
-func (s *CmdServer) PlayerFetchCsInfo(ctx context.Context, in *pb.PlayerFetchCsInfoReq) (*pb.CmdResp, error) {
+func (s *CmdServer) PlayerFetchCsInfo(ctx context.Context, in *pb.PlayerFetchCsInfoReq) (*pb.PlayerFetchCsInfoResp, error) {
 	l := logic.NewPlayerFetchCsInfoLogic(ctx, s.svcCtx)
 	return l.PlayerFetchCsInfo(in)
 }
 
-func (s *CmdServer) PlayerFetchHistoryMsg(ctx context.Context, in *pb.PlayerFetchHistoryMsgReq) (*pb.CmdResp, error) {
+func (s *CmdServer) PlayerFetchHistoryMsg(ctx context.Context, in *pb.PlayerFetchHistoryMsgReq) (*pb.PlayerFetchHistoryMsgResp, error) {
 	l := logic.NewPlayerFetchHistoryMsgLogic(ctx, s.svcCtx)
 	return l.PlayerFetchHistoryMsg(in)
 }
 
-func (s *CmdServer) PlayerFetchMsg(ctx context.Context, in *pb.PlayerFetchMsgReq) (*pb.CmdResp, error) {
+func (s *CmdServer) PlayerFetchMsg(ctx context.Context, in *pb.PlayerFetchMsgReq) (*pb.PlayerFetchMsgResp, error) {
 	l := logic.NewPlayerFetchMsgLogic(ctx, s.svcCtx)
 	return l.PlayerFetchMsg(in)
 }
 
-func (s *CmdServer) PlayerSendMsg(ctx context.Context, in *pb.PlayerSendMsgReq) (*pb.CmdResp, error) {
+func (s *CmdServer) PlayerSendMsg(ctx context.Context, in *pb.PlayerSendMsgReq) (*pb.PlayerSendMsgResp, error) {
 	l := logic.NewPlayerSendMsgLogic(ctx, s.svcCtx)
 	return l.PlayerSendMsg(in)
 }
 
-func (s *CmdServer) PlayerDisconnect(ctx context.Context, in *pb.PlayerDisconnectReq) (*pb.CmdResp, error) {
+func (s *CmdServer) PlayerDisconnect(ctx context.Context, in *pb.PlayerDisconnectReq) (*pb.PlayerDisconnectResp, error) {
 	l := logic.NewPlayerDisconnectLogic(ctx, s.svcCtx)
 	return l.PlayerDisconnect(in)
 }
 
-func (s *CmdServer) CsFetchPlayerQueue(ctx context.Context, in *pb.CsFetchPlayerQueueReq) (*pb.CmdResp, error) {
+func (s *CmdServer) CsFetchPlayerQueue(ctx context.Context, in *pb.CsFetchPlayerQueueReq) (*pb.CsFetchPlayerQueueResp, error) {
 	l := logic.NewCsFetchPlayerQueueLogic(ctx, s.svcCtx)
 	return l.CsFetchPlayerQueue(in)
 }
 
-func (s *CmdServer) CsConnectPlayer(ctx context.Context, in *pb.CsConnectPlayerReq) (*pb.CmdResp, error) {
+func (s *CmdServer) CsConnectPlayer(ctx context.Context, in *pb.CsConnectPlayerReq) (*pb.CsConnectPlayerResp, error) {
 	l := logic.NewCsConnectPlayerLogic(ctx, s.svcCtx)
 	return l.CsConnectPlayer(in)
 }
 
-func (s *CmdServer) CsFetchHistoryChat(ctx context.Context, in *pb.CsFetchHistoryChatReq) (*pb.CmdResp, error) {
+func (s *CmdServer) CsFetchHistoryChat(ctx context.Context, in *pb.CsFetchHistoryChatReq) (*pb.CsFetchHistoryChatResp, error) {
 	l := logic.NewCsFetchHistoryChatLogic(ctx, s.svcCtx)
 	return l.CsFetchHistoryChat(in)
 }
 
-func (s *CmdServer) CsFetchHistoryMsg(ctx context.Context, in *pb.CsFetchHistoryMsgReq) (*pb.CmdResp, error) {
+func (s *CmdServer) CsFetchHistoryMsg(ctx context.Context, in *pb.CsFetchHistoryMsgReq) (*pb.CsFetchHistoryMsgResp, error) {
 	l := logic.NewCsFetchHistoryMsgLogic(ctx, s.svcCtx)
 	return l.CsFetchHistoryMsg(in)
 }
 
-func (s *CmdServer) CsFetchMsg(ctx context.Context, in *pb.CsFetchMsgReq) (*pb.CmdResp, error) {
+func (s *CmdServer) CsFetchMsg(ctx context.Context, in *pb.CsFetchMsgReq) (*pb.CsFetchMsgResp, error) {
 	l := logic.NewCsFetchMsgLogic(ctx, s.svcCtx)
 	return l.CsFetchMsg(in)
 }
 
-func (s *CmdServer) CsSendMsg(ctx context.Context, in *pb.CsSendMsgReq) (*pb.CmdResp, error) {
+func (s *CmdServer) CsSendMsg(ctx context.Context, in *pb.CsSendMsgReq) (*pb.CsSendMsgResp, error) {
 	l := logic.NewCsSendMsgLogic(ctx, s.svcCtx)
 	return l.CsSendMsg(in)
 }

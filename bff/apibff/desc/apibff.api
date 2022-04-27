@@ -15,27 +15,28 @@ import (
 	group: player/cmd
 	prefix: api/v1
 	jwt: JwtAuth
+	middleware: Player2Ctx
 )
 service apibff {
 	@doc "玩家获取客服信息"
 	@handler playerFetchCsInfo
-	post /player/fetch_cs_info (PlayerFetchCsInfoReq) returns (CommResp)
+	post /player/fetch-cs-info (PlayerFetchCsInfoReq) returns (PlayerFetchCsInfoResp)
 	
 	@doc "玩家获取历史消息"
 	@handler playerFetchHistoryMsg
-	post /player/fetch_history_msg (PlayerFetchHistoryMsgReq) returns (CommResp)
+	post /player/fetch-history-msg (PlayerFetchHistoryMsgReq) returns (PlayerFetchHistoryMsgResp)
 	
 	@doc "玩家获取消息"
 	@handler playerFetchMsg
-	post /player/fetch_msg returns (CommResp)
+	post /player/fetch-msg returns (PlayerFetchMsgResp)
 	
 	@doc "玩家发送消息"
 	@handler playerSendMsg
-	post /player/send_msg (PlayerSendMsgReq) returns (CommResp)
+	post /player/send-msg (PlayerSendMsgReq)
 	
 	@doc "玩家断开连接客服"
 	@handler playerDisconnect
-	post /player/disconnect returns (CommResp)
+	post /player/disconnect
 }
 
 @server(
@@ -46,25 +47,25 @@ service apibff {
 service apibff {
 	@doc "客服获取玩家等待队列"
 	@handler csFetchPlayerQueue
-	post /cs/fetch_player_queue (CsFetchPlayerQueueReq) returns (CommResp)
+	post /cs/fetch-player-queue (CsFetchPlayerQueueReq) returns (CsFetchPlayerQueueResp)
 	
 	@doc "客服连接玩家"
 	@handler csConnectPlayer
-	post /cs/connect_player (CsConnectPlayerReq) returns (CommResp)
+	post /cs/connect-player (CsConnectPlayerReq)
 	
 	@doc "客服获取历史会话列表"
 	@handler csFetchHistoryList
-	post /cs/fetch_history_list (CsFetchHistoryChatReq) returns (CommResp)
+	post /cs/fetch-history-list (CsFetchHistoryChatReq) returns (CsFetchHistoryChatResp)
 	
 	@doc "客服获取历史消息"
 	@handler csFetchHistoryMsg
-	post /cs/fetch_history_msg (CsFetchHistoryMsgReq) returns (CommResp)
+	post /cs/fetch-history-msg (CsFetchHistoryMsgReq) returns (CsFetchHistoryMsgResp)
 	
 	@doc "客服获取消息"
 	@handler csFetchMsg
-	post /cs/fetch_msg (CsFetchMsgReq) returns (CommResp)
+	post /cs/fetch-msg (CsFetchMsgReq) returns (CsFetchMsgResp)
 	
 	@doc "客服发送消息"
 	@handler csSendMsg
-	post /cs/send_msg (CsSendMsgReq) returns (CommResp)
+	post /cs/send-msg (CsSendMsgReq)
 }

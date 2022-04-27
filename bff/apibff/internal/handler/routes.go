@@ -13,33 +13,36 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/player/fetch_cs_info",
-				Handler: playercmd.PlayerFetchCsInfoHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/player/fetch_history_msg",
-				Handler: playercmd.PlayerFetchHistoryMsgHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/player/fetch_msg",
-				Handler: playercmd.PlayerFetchMsgHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/player/send_msg",
-				Handler: playercmd.PlayerSendMsgHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/player/disconnect",
-				Handler: playercmd.PlayerDisconnectHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Player2Ctx},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/player/fetch-cs-info",
+					Handler: playercmd.PlayerFetchCsInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/player/fetch-history-msg",
+					Handler: playercmd.PlayerFetchHistoryMsgHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/player/fetch-msg",
+					Handler: playercmd.PlayerFetchMsgHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/player/send-msg",
+					Handler: playercmd.PlayerSendMsgHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/player/disconnect",
+					Handler: playercmd.PlayerDisconnectHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
 		rest.WithPrefix("/api/v1"),
 	)
@@ -48,32 +51,32 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/fetch_player_queue",
+				Path:    "/cs/fetch-player-queue",
 				Handler: cscmd.CsFetchPlayerQueueHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/connect_player",
+				Path:    "/cs/connect-player",
 				Handler: cscmd.CsConnectPlayerHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/fetch_history_list",
+				Path:    "/cs/fetch-history-list",
 				Handler: cscmd.CsFetchHistoryListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/fetch_history_msg",
+				Path:    "/cs/fetch-history-msg",
 				Handler: cscmd.CsFetchHistoryMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/fetch_msg",
+				Path:    "/cs/fetch-msg",
 				Handler: cscmd.CsFetchMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/cs/send_msg",
+				Path:    "/cs/send-msg",
 				Handler: cscmd.CsSendMsgHandler(serverCtx),
 			},
 		},

@@ -16,22 +16,56 @@ message CmdResp{
 Player Command Request Bean
  */
 message PlayerFetchCsInfoReq{
+  string player_id = 1;
+  string game_id = 2;
+  string cs_id = 3;
+}
+
+message PlayerFetchCsInfoResp{
   string cs_id = 1;
+  string cs_nickname = 2;
+  string cs_avatar_url = 3;
+  string cs_signature = 4;
+  int64 online_status = 5;
 }
 
 message PlayerFetchHistoryMsgReq{
-  int64 page = 1;
-  int64 limit = 2;
+  string player_id = 1;
+  string game_id = 2;
+  int64 page = 3;
+  int64 limit = 4;
 }
 
-message PlayerFetchMsgReq{}
+message PlayerFetchHistoryMsgResp{
+  int64 total_page = 1;
+  int64 current_page = 2;
+  google.protobuf.ListValue list = 3;
+}
+
+message PlayerFetchMsgReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message PlayerFetchMsgResp{
+  google.protobuf.ListValue list = 1;
+}
 
 message PlayerSendMsgReq{
-  string content = 1;
-  string pic = 2;
+  string player_id = 1;
+  string game_id = 2;
+  string content = 4;
+  string pic = 5;
 }
 
-message PlayerDisconnectReq{}
+message PlayerSendMsgResp{}
+
+message PlayerDisconnectReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message PlayerDisconnectResp{}
 
 /**
 Cs Command Request Bean
@@ -40,46 +74,77 @@ message CsFetchPlayerQueueReq{
   int64 limit = 1;
 }
 
-message CsConnectPlayerReq{
-  string player_id = 1;
-  string game_id = 2;
+message CsFetchPlayerQueueResp{
+  int64 total = 1;
+  google.protobuf.ListValue list = 2;
 }
 
+message CsConnectPlayerReq{
+  string cs_id = 1;
+  string player_id = 2;
+  string game_id = 3;
+}
+
+message CsConnectPlayerResp{}
+
 message CsFetchHistoryChatReq{
-  int64 page = 1;
-  int64 limit = 2;
+  string cs_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+
+message CsFetchHistoryChatResp{
+  int64 total_page = 1;
+  int64 current_page = 2;
+  google.protobuf.ListValue list = 3;
 }
 
 message CsFetchHistoryMsgReq{
-  string player_id = 1;
-  string game_id = 2;
-  int64 page = 3;
-  int64 limit = 4;
+  string cs_id = 1;
+  string player_id = 2;
+  string game_id = 3;
+  int64 page = 4;
+  int64 limit = 5;
+}
+
+message CsFetchHistoryMsgResp{
+  string cs_id = 1;
+  int64 total_page = 2;
+  int64 current_page = 3;
+  google.protobuf.ListValue list = 4;
 }
 
 message CsFetchMsgReq{
-  string player_id = 1;
-  string game_id = 2;
+  string cs_id = 1;
+  string player_id = 2;
+  string game_id = 3;
+}
+
+message CsFetchMsgResp{
+  google.protobuf.ListValue list = 4;
 }
 
 message CsSendMsgReq{
-  string player_id = 1;
-  string game_id = 2;
-  string content = 3;
-  string pic = 4;
+  string cs_id = 1;
+  string player_id = 2;
+  string game_id = 3;
+  string content = 4;
+  string pic = 5;
 }
 
-service Cmd {
-  rpc playerFetchCsInfo (PlayerFetchCsInfoReq) returns (CmdResp);
-  rpc playerFetchHistoryMsg (PlayerFetchHistoryMsgReq) returns (CmdResp);
-  rpc playerFetchMsg (PlayerFetchMsgReq) returns (CmdResp);
-  rpc playerSendMsg (PlayerSendMsgReq) returns (CmdResp);
-  rpc playerDisconnect (PlayerDisconnectReq) returns (CmdResp);
+message CsSendMsgResp{}
 
-  rpc csFetchPlayerQueue (CsFetchPlayerQueueReq) returns (CmdResp);
-  rpc csConnectPlayer (CsConnectPlayerReq) returns (CmdResp);
-  rpc csFetchHistoryChat (CsFetchHistoryChatReq) returns (CmdResp);
-  rpc csFetchHistoryMsg (CsFetchHistoryMsgReq) returns (CmdResp);
-  rpc csFetchMsg (CsFetchMsgReq) returns (CmdResp);
-  rpc csSendMsg (CsSendMsgReq) returns (CmdResp);
+service Cmd {
+  rpc playerFetchCsInfo (PlayerFetchCsInfoReq) returns (PlayerFetchCsInfoResp);
+  rpc playerFetchHistoryMsg (PlayerFetchHistoryMsgReq) returns (PlayerFetchHistoryMsgResp);
+  rpc playerFetchMsg (PlayerFetchMsgReq) returns (PlayerFetchMsgResp);
+  rpc playerSendMsg (PlayerSendMsgReq) returns (PlayerSendMsgResp);
+  rpc playerDisconnect (PlayerDisconnectReq) returns (PlayerDisconnectResp);
+
+  rpc csFetchPlayerQueue (CsFetchPlayerQueueReq) returns (CsFetchPlayerQueueResp);
+  rpc csConnectPlayer (CsConnectPlayerReq) returns (CsConnectPlayerResp);
+  rpc csFetchHistoryChat (CsFetchHistoryChatReq) returns (CsFetchHistoryChatResp);
+  rpc csFetchHistoryMsg (CsFetchHistoryMsgReq) returns (CsFetchHistoryMsgResp);
+  rpc csFetchMsg (CsFetchMsgReq) returns (CsFetchMsgResp);
+  rpc csSendMsg (CsSendMsgReq) returns (CsSendMsgResp);
 }

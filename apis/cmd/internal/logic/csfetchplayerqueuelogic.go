@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"google.golang.org/protobuf/types/known/structpb"
+	"ylink/ext/result"
 
 	"ylink/apis/cmd/internal/svc"
 	"ylink/apis/cmd/pb"
@@ -23,8 +26,25 @@ func NewCsFetchPlayerQueueLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.CsFetchPlayerQueueReq) (*pb.CmdResp, error) {
-	// todo: add your logic here and delete this line
+func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.CsFetchPlayerQueueReq) (*pb.CsFetchPlayerQueueResp, error) {
+	// todo 查询等待用户的队列
 
-	return &pb.CmdResp{}, nil
+	list, err := structpb.NewList([]interface{}{
+		map[string]interface{}{
+			"player_id": "player1111",
+			"game_id":   "game1231",
+			"wait_time": 1000,
+		},
+		map[string]interface{}{
+			"player_id": "player2222",
+			"game_id":   "game1231",
+			"wait_time": 10,
+		},
+	})
+	if err != nil {
+		return nil, errors.Wrap(result.NewErrMsg("fetch player wait queue error"), "")
+	}
+	return &pb.CsFetchPlayerQueueResp{
+		List: list,
+	}, nil
 }

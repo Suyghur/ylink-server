@@ -23,8 +23,9 @@ func NewCsConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 	}
 }
 
-func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.CsConnectPlayerReq) (*pb.CmdResp, error) {
-	// todo: add your logic here and delete this line
+func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.CsConnectPlayerReq) (*pb.CsConnectPlayerResp, error) {
+	// todo 调用inner修改状态，如果玩家在等待队列中，则取出玩家
+	// todo 建立连接的映射关系
 
-	return &pb.CmdResp{}, nil
+	return &pb.CsConnectPlayerResp{}, nil
 }
