@@ -24,17 +24,18 @@ func NewPlayerFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(req *types.PlayerFetchCsInfoReq) (resp *types.CommResp, err error) {
+func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(req *types.PlayerFetchCsInfoReq) (resp *types.PlayerFetchCsInfoResp, err error) {
 	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchCsInfo(l.ctx, &pb.PlayerFetchCsInfoReq{
 		CsId: req.CsId,
 	})
 	if err != nil {
 		return nil, err
 	}
-
-	return &types.CommResp{
-		Code: cmdResp.Code,
-		Msg:  cmdResp.Msg,
-		Data: cmdResp.Data,
+	return &types.PlayerFetchCsInfoResp{
+		CsId:         cmdResp.CsId,
+		CsNickname:   cmdResp.CsNickname,
+		CsAvatarUrl:  cmdResp.CsAvatarUrl,
+		CsSignature:  cmdResp.CsSignature,
+		OnlineStatus: cmdResp.OnlineStatus,
 	}, nil
 }

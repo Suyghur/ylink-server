@@ -4,6 +4,5 @@
 
 package globalkey
 
-const (
-	CacheTokenKey = "token:%s"
-)
+var AccessSecret string
+var AccessExpire int64

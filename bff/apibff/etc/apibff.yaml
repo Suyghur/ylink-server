@@ -10,4 +10,4 @@ CmdRpc:
 
 JwtAuth:
   AccessSecret: ylink2022
-  AccessExpire: 86400
+  AccessExpire: 604800

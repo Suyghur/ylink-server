@@ -18,11 +18,11 @@ func CsSendMsgHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := cmd.NewCsSendMsgLogic(r.Context(), svcCtx)
-		resp, err := l.CsSendMsg(&req)
+		err := l.CsSendMsg(&req)
 		if err != nil {
 			httpx.Error(w, err)
 		} else {
-			httpx.OkJson(w, resp)
+			httpx.Ok(w)
 		}
 	}
 }

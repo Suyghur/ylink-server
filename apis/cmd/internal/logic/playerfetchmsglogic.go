@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"google.golang.org/protobuf/types/known/structpb"
+	"ylink/ext/result"
 
 	"ylink/apis/cmd/internal/svc"
 	"ylink/apis/cmd/pb"
@@ -23,8 +26,29 @@ func NewPlayerFetchMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pl
 	}
 }
 
-func (l *PlayerFetchMsgLogic) PlayerFetchMsg(in *pb.PlayerFetchMsgReq) (*pb.CmdResp, error) {
-	// todo: add your logic here and delete this line
+func (l *PlayerFetchMsgLogic) PlayerFetchMsg(in *pb.PlayerFetchMsgReq) (*pb.PlayerFetchMsgResp, error) {
+	// todo 全量取出自己收件箱下的信息
+	list, err := structpb.NewList([]interface{}{
+		map[string]interface{}{
+			"content":     "你好呀,我是玩家",
+			"pic":         "https://www.baidu.com",
+			"send_id":     in.PlayerId,
+			"receiver_id": "cs1231",
+			"create_time": "2022-04-27 14:47:50",
+		},
+		map[string]interface{}{
+			"content":     "你好呀,我是客服",
+			"pic":         "",
+			"send_id":     "cs1231",
+			"receiver_id": in.PlayerId,
+			"create_time": "2022-04-27 14:47:50",
+		},
+	})
+	if err != nil {
+		return nil, errors.Wrap(result.NewErrMsg("fetch message list error"), "")
+	}
 
-	return &pb.CmdResp{}, nil
+	return &pb.PlayerFetchMsgResp{
+		List: list,
+	}, nil
 }

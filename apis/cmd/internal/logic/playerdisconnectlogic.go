@@ -23,8 +23,8 @@ func NewPlayerDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *PlayerDisconnectLogic) PlayerDisconnect(in *pb.PlayerDisconnectReq) (*pb.CmdResp, error) {
-	// todo: add your logic here and delete this line
+func (l *PlayerDisconnectLogic) PlayerDisconnect(in *pb.PlayerDisconnectReq) (*pb.PlayerDisconnectResp, error) {
+	// todo 修改inner服务玩家状态
 
-	return &pb.CmdResp{}, nil
+	return &pb.PlayerDisconnectResp{}, nil
 }
