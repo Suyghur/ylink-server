@@ -6,21 +6,32 @@ info(
     author: "#Suyghur"
 )
 
-
-type CommResp {
-    Code int64 `json:"code"`
-    Msg string `json:"msg"`
-    Data interface{} `json:"data"`
-}
-
 type (
     PlayerFetchCsInfoReq {
         CsId string `json:"cs_id"`
     }
 
+    PlayerFetchCsInfoResp {
+        CsId string `json:"cs_id"`
+        CsNickname string `json:"cs_nickname"`
+        CsAvatarUrl string `json:"cs_avatar_url"`
+        CsSignature string `json:"cs_signature"`
+        OnlineStatus int64 `json:"online_status"`
+    }
+
     PlayerFetchHistoryMsgReq {
-        Page int `json:"page"`
-        Limit int `json:"limit"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+    }
+
+    PlayerFetchHistoryMsgResp {
+        TotalPage int64 `json:"total_page"`
+        CurrentPage int64 `json:"current_page"`
+        List []interface{} `json:"list"`
+    }
+
+    PlayerFetchMsgResp {
+        List []interface{} `json:"list"`
     }
 
     PlayerSendMsgReq {
@@ -34,6 +45,10 @@ type (
         Limit int `json:"limit"`
     }
 
+    CsFetchPlayerQueueResp {
+        List []interface{} `json:"list"`
+    }
+
     CsConnectPlayerReq {
         PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
@@ -44,6 +59,12 @@ type (
         Limit int `json:"limit"`
     }
 
+    CsFetchHistoryChatResp {
+        TotalPage int64 `json:"total_page"`
+        CurrentPage int64 `json:"current_page"`
+        List []interface{} `json:"list"`
+    }
+
     CsFetchHistoryMsgReq {
         PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
@@ -51,9 +72,19 @@ type (
         Limit int `json:"limit"`
     }
 
+    CsFetchHistoryMsgResp {
+        TotalPage int64 `json:"total_page"`
+        CurrentPage int64 `json:"current_page"`
+        List []interface{} `json:"list"`
+    }
+
     CsFetchMsgReq {
         PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
+    }
+
+    CsFetchMsgResp {
+        List []interface{} `json:"list"`
     }
 
     CsSendMsgReq {

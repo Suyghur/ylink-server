@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"ylink/apis/cmd/pb"
+	"ylink/ext/ctxdata"
 
 	"ylink/bff/apibff/internal/svc"
 	"ylink/bff/apibff/internal/types"
@@ -23,8 +25,14 @@ func NewPlayerSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pla
 	}
 }
 
-func (l *PlayerSendMsgLogic) PlayerSendMsg(req *types.PlayerSendMsgReq) (resp *types.CommResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+func (l *PlayerSendMsgLogic) PlayerSendMsg(req *types.PlayerSendMsgReq) error {
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
+	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	_, err := l.svcCtx.CmdRpc.PlayerSendMsg(l.ctx, &pb.PlayerSendMsgReq{
+		PlayerId: playerId,
+		GameId:   gameId,
+		Content:  req.Content,
+		Pic:      req.Pic,
+	})
+	return err
 }

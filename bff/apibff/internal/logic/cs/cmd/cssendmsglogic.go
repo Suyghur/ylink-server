@@ -23,8 +23,8 @@ func NewCsSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsSendM
 	}
 }
 
-func (l *CsSendMsgLogic) CsSendMsg(req *types.CsSendMsgReq) (resp *types.CommResp, err error) {
+func (l *CsSendMsgLogic) CsSendMsg(req *types.CsSendMsgReq) error {
 	// todo: add your logic here and delete this line
 
-	return
+	return nil
 }

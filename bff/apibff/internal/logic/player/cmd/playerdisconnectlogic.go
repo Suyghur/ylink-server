@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"context"
-
-	"ylink/bff/apibff/internal/svc"
-	"ylink/bff/apibff/internal/types"
+	"ylink/apis/cmd/pb"
+	"ylink/ext/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"ylink/bff/apibff/internal/svc"
 )
 
 type PlayerDisconnectLogic struct {
@@ -23,8 +23,12 @@ func NewPlayerDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *PlayerDisconnectLogic) PlayerDisconnect() (resp *types.CommResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+func (l *PlayerDisconnectLogic) PlayerDisconnect() error {
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
+	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	_, err := l.svcCtx.CmdRpc.PlayerDisconnect(l.ctx, &pb.PlayerDisconnectReq{
+		PlayerId: playerId,
+		GameId:   gameId,
+	})
+	return err
 }

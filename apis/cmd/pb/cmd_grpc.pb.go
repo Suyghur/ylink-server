@@ -22,17 +22,17 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CmdClient interface {
-	PlayerFetchCsInfo(ctx context.Context, in *PlayerFetchCsInfoReq, opts ...grpc.CallOption) (*CmdResp, error)
-	PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHistoryMsgReq, opts ...grpc.CallOption) (*CmdResp, error)
-	PlayerFetchMsg(ctx context.Context, in *PlayerFetchMsgReq, opts ...grpc.CallOption) (*CmdResp, error)
-	PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*CmdResp, error)
-	PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*CmdResp, error)
-	CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQueueReq, opts ...grpc.CallOption) (*CmdResp, error)
-	CsConnectPlayer(ctx context.Context, in *CsConnectPlayerReq, opts ...grpc.CallOption) (*CmdResp, error)
-	CsFetchHistoryChat(ctx context.Context, in *CsFetchHistoryChatReq, opts ...grpc.CallOption) (*CmdResp, error)
-	CsFetchHistoryMsg(ctx context.Context, in *CsFetchHistoryMsgReq, opts ...grpc.CallOption) (*CmdResp, error)
-	CsFetchMsg(ctx context.Context, in *CsFetchMsgReq, opts ...grpc.CallOption) (*CmdResp, error)
-	CsSendMsg(ctx context.Context, in *CsSendMsgReq, opts ...grpc.CallOption) (*CmdResp, error)
+	PlayerFetchCsInfo(ctx context.Context, in *PlayerFetchCsInfoReq, opts ...grpc.CallOption) (*PlayerFetchCsInfoResp, error)
+	PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHistoryMsgReq, opts ...grpc.CallOption) (*PlayerFetchHistoryMsgResp, error)
+	PlayerFetchMsg(ctx context.Context, in *PlayerFetchMsgReq, opts ...grpc.CallOption) (*PlayerFetchMsgResp, error)
+	PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*PlayerSendMsgResp, error)
+	PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*PlayerDisconnectResp, error)
+	CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQueueReq, opts ...grpc.CallOption) (*CsFetchPlayerQueueResp, error)
+	CsConnectPlayer(ctx context.Context, in *CsConnectPlayerReq, opts ...grpc.CallOption) (*CsConnectPlayerResp, error)
+	CsFetchHistoryChat(ctx context.Context, in *CsFetchHistoryChatReq, opts ...grpc.CallOption) (*CsFetchHistoryChatResp, error)
+	CsFetchHistoryMsg(ctx context.Context, in *CsFetchHistoryMsgReq, opts ...grpc.CallOption) (*CsFetchHistoryMsgResp, error)
+	CsFetchMsg(ctx context.Context, in *CsFetchMsgReq, opts ...grpc.CallOption) (*CsFetchMsgResp, error)
+	CsSendMsg(ctx context.Context, in *CsSendMsgReq, opts ...grpc.CallOption) (*CsSendMsgResp, error)
 }
 
 type cmdClient struct {
@@ -43,8 +43,8 @@ func NewCmdClient(cc grpc.ClientConnInterface) CmdClient {
 	return &cmdClient{cc}
 }
 
-func (c *cmdClient) PlayerFetchCsInfo(ctx context.Context, in *PlayerFetchCsInfoReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) PlayerFetchCsInfo(ctx context.Context, in *PlayerFetchCsInfoReq, opts ...grpc.CallOption) (*PlayerFetchCsInfoResp, error) {
+	out := new(PlayerFetchCsInfoResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/playerFetchCsInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -52,8 +52,8 @@ func (c *cmdClient) PlayerFetchCsInfo(ctx context.Context, in *PlayerFetchCsInfo
 	return out, nil
 }
 
-func (c *cmdClient) PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHistoryMsgReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHistoryMsgReq, opts ...grpc.CallOption) (*PlayerFetchHistoryMsgResp, error) {
+	out := new(PlayerFetchHistoryMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/playerFetchHistoryMsg", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -61,8 +61,8 @@ func (c *cmdClient) PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHi
 	return out, nil
 }
 
-func (c *cmdClient) PlayerFetchMsg(ctx context.Context, in *PlayerFetchMsgReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) PlayerFetchMsg(ctx context.Context, in *PlayerFetchMsgReq, opts ...grpc.CallOption) (*PlayerFetchMsgResp, error) {
+	out := new(PlayerFetchMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/playerFetchMsg", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,8 +70,8 @@ func (c *cmdClient) PlayerFetchMsg(ctx context.Context, in *PlayerFetchMsgReq, o
 	return out, nil
 }
 
-func (c *cmdClient) PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*PlayerSendMsgResp, error) {
+	out := new(PlayerSendMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/playerSendMsg", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,8 +79,8 @@ func (c *cmdClient) PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opt
 	return out, nil
 }
 
-func (c *cmdClient) PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*PlayerDisconnectResp, error) {
+	out := new(PlayerDisconnectResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/playerDisconnect", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -88,8 +88,8 @@ func (c *cmdClient) PlayerDisconnect(ctx context.Context, in *PlayerDisconnectRe
 	return out, nil
 }
 
-func (c *cmdClient) CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQueueReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQueueReq, opts ...grpc.CallOption) (*CsFetchPlayerQueueResp, error) {
+	out := new(CsFetchPlayerQueueResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/csFetchPlayerQueue", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,8 +97,8 @@ func (c *cmdClient) CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQue
 	return out, nil
 }
 
-func (c *cmdClient) CsConnectPlayer(ctx context.Context, in *CsConnectPlayerReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) CsConnectPlayer(ctx context.Context, in *CsConnectPlayerReq, opts ...grpc.CallOption) (*CsConnectPlayerResp, error) {
+	out := new(CsConnectPlayerResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/csConnectPlayer", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -106,8 +106,8 @@ func (c *cmdClient) CsConnectPlayer(ctx context.Context, in *CsConnectPlayerReq,
 	return out, nil
 }
 
-func (c *cmdClient) CsFetchHistoryChat(ctx context.Context, in *CsFetchHistoryChatReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) CsFetchHistoryChat(ctx context.Context, in *CsFetchHistoryChatReq, opts ...grpc.CallOption) (*CsFetchHistoryChatResp, error) {
+	out := new(CsFetchHistoryChatResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/csFetchHistoryChat", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -115,8 +115,8 @@ func (c *cmdClient) CsFetchHistoryChat(ctx context.Context, in *CsFetchHistoryCh
 	return out, nil
 }
 
-func (c *cmdClient) CsFetchHistoryMsg(ctx context.Context, in *CsFetchHistoryMsgReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) CsFetchHistoryMsg(ctx context.Context, in *CsFetchHistoryMsgReq, opts ...grpc.CallOption) (*CsFetchHistoryMsgResp, error) {
+	out := new(CsFetchHistoryMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/csFetchHistoryMsg", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -124,8 +124,8 @@ func (c *cmdClient) CsFetchHistoryMsg(ctx context.Context, in *CsFetchHistoryMsg
 	return out, nil
 }
 
-func (c *cmdClient) CsFetchMsg(ctx context.Context, in *CsFetchMsgReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) CsFetchMsg(ctx context.Context, in *CsFetchMsgReq, opts ...grpc.CallOption) (*CsFetchMsgResp, error) {
+	out := new(CsFetchMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/csFetchMsg", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -133,8 +133,8 @@ func (c *cmdClient) CsFetchMsg(ctx context.Context, in *CsFetchMsgReq, opts ...g
 	return out, nil
 }
 
-func (c *cmdClient) CsSendMsg(ctx context.Context, in *CsSendMsgReq, opts ...grpc.CallOption) (*CmdResp, error) {
-	out := new(CmdResp)
+func (c *cmdClient) CsSendMsg(ctx context.Context, in *CsSendMsgReq, opts ...grpc.CallOption) (*CsSendMsgResp, error) {
+	out := new(CsSendMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/csSendMsg", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -146,17 +146,17 @@ func (c *cmdClient) CsSendMsg(ctx context.Context, in *CsSendMsgReq, opts ...grp
 // All implementations must embed UnimplementedCmdServer
 // for forward compatibility
 type CmdServer interface {
-	PlayerFetchCsInfo(context.Context, *PlayerFetchCsInfoReq) (*CmdResp, error)
-	PlayerFetchHistoryMsg(context.Context, *PlayerFetchHistoryMsgReq) (*CmdResp, error)
-	PlayerFetchMsg(context.Context, *PlayerFetchMsgReq) (*CmdResp, error)
-	PlayerSendMsg(context.Context, *PlayerSendMsgReq) (*CmdResp, error)
-	PlayerDisconnect(context.Context, *PlayerDisconnectReq) (*CmdResp, error)
-	CsFetchPlayerQueue(context.Context, *CsFetchPlayerQueueReq) (*CmdResp, error)
-	CsConnectPlayer(context.Context, *CsConnectPlayerReq) (*CmdResp, error)
-	CsFetchHistoryChat(context.Context, *CsFetchHistoryChatReq) (*CmdResp, error)
-	CsFetchHistoryMsg(context.Context, *CsFetchHistoryMsgReq) (*CmdResp, error)
-	CsFetchMsg(context.Context, *CsFetchMsgReq) (*CmdResp, error)
-	CsSendMsg(context.Context, *CsSendMsgReq) (*CmdResp, error)
+	PlayerFetchCsInfo(context.Context, *PlayerFetchCsInfoReq) (*PlayerFetchCsInfoResp, error)
+	PlayerFetchHistoryMsg(context.Context, *PlayerFetchHistoryMsgReq) (*PlayerFetchHistoryMsgResp, error)
+	PlayerFetchMsg(context.Context, *PlayerFetchMsgReq) (*PlayerFetchMsgResp, error)
+	PlayerSendMsg(context.Context, *PlayerSendMsgReq) (*PlayerSendMsgResp, error)
+	PlayerDisconnect(context.Context, *PlayerDisconnectReq) (*PlayerDisconnectResp, error)
+	CsFetchPlayerQueue(context.Context, *CsFetchPlayerQueueReq) (*CsFetchPlayerQueueResp, error)
+	CsConnectPlayer(context.Context, *CsConnectPlayerReq) (*CsConnectPlayerResp, error)
+	CsFetchHistoryChat(context.Context, *CsFetchHistoryChatReq) (*CsFetchHistoryChatResp, error)
+	CsFetchHistoryMsg(context.Context, *CsFetchHistoryMsgReq) (*CsFetchHistoryMsgResp, error)
+	CsFetchMsg(context.Context, *CsFetchMsgReq) (*CsFetchMsgResp, error)
+	CsSendMsg(context.Context, *CsSendMsgReq) (*CsSendMsgResp, error)
 	mustEmbedUnimplementedCmdServer()
 }
 
@@ -164,37 +164,37 @@ type CmdServer interface {
 type UnimplementedCmdServer struct {
 }
 
-func (UnimplementedCmdServer) PlayerFetchCsInfo(context.Context, *PlayerFetchCsInfoReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) PlayerFetchCsInfo(context.Context, *PlayerFetchCsInfoReq) (*PlayerFetchCsInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerFetchCsInfo not implemented")
 }
-func (UnimplementedCmdServer) PlayerFetchHistoryMsg(context.Context, *PlayerFetchHistoryMsgReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) PlayerFetchHistoryMsg(context.Context, *PlayerFetchHistoryMsgReq) (*PlayerFetchHistoryMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerFetchHistoryMsg not implemented")
 }
-func (UnimplementedCmdServer) PlayerFetchMsg(context.Context, *PlayerFetchMsgReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) PlayerFetchMsg(context.Context, *PlayerFetchMsgReq) (*PlayerFetchMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerFetchMsg not implemented")
 }
-func (UnimplementedCmdServer) PlayerSendMsg(context.Context, *PlayerSendMsgReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) PlayerSendMsg(context.Context, *PlayerSendMsgReq) (*PlayerSendMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerSendMsg not implemented")
 }
-func (UnimplementedCmdServer) PlayerDisconnect(context.Context, *PlayerDisconnectReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) PlayerDisconnect(context.Context, *PlayerDisconnectReq) (*PlayerDisconnectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerDisconnect not implemented")
 }
-func (UnimplementedCmdServer) CsFetchPlayerQueue(context.Context, *CsFetchPlayerQueueReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) CsFetchPlayerQueue(context.Context, *CsFetchPlayerQueueReq) (*CsFetchPlayerQueueResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsFetchPlayerQueue not implemented")
 }
-func (UnimplementedCmdServer) CsConnectPlayer(context.Context, *CsConnectPlayerReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) CsConnectPlayer(context.Context, *CsConnectPlayerReq) (*CsConnectPlayerResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsConnectPlayer not implemented")
 }
-func (UnimplementedCmdServer) CsFetchHistoryChat(context.Context, *CsFetchHistoryChatReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) CsFetchHistoryChat(context.Context, *CsFetchHistoryChatReq) (*CsFetchHistoryChatResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsFetchHistoryChat not implemented")
 }
-func (UnimplementedCmdServer) CsFetchHistoryMsg(context.Context, *CsFetchHistoryMsgReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) CsFetchHistoryMsg(context.Context, *CsFetchHistoryMsgReq) (*CsFetchHistoryMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsFetchHistoryMsg not implemented")
 }
-func (UnimplementedCmdServer) CsFetchMsg(context.Context, *CsFetchMsgReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) CsFetchMsg(context.Context, *CsFetchMsgReq) (*CsFetchMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsFetchMsg not implemented")
 }
-func (UnimplementedCmdServer) CsSendMsg(context.Context, *CsSendMsgReq) (*CmdResp, error) {
+func (UnimplementedCmdServer) CsSendMsg(context.Context, *CsSendMsgReq) (*CsSendMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsSendMsg not implemented")
 }
 func (UnimplementedCmdServer) mustEmbedUnimplementedCmdServer() {}
