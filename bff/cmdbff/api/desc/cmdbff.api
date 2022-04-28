@@ -1,0 +1,70 @@
+syntax = "v1"
+
+info(
+	title: "api前端服务"
+	desc: "api前端服务 "
+	author: "#Suyghur"
+	version: "v1"
+)
+
+import (
+	"bean.api"
+)
+
+@server(
+	group: player
+	prefix: api/v1/cmd
+	jwt: JwtAuth
+)
+service cmdbff {
+	@doc "玩家获取客服信息"
+	@handler fetchCsInfo
+	post /player/fetch-cs-info (PlayerFetchCsInfoReq) returns (PlayerFetchCsInfoResp)
+	
+	@doc "玩家获取历史消息"
+	@handler fetchHistoryMsg
+	post /player/fetch-history-msg (PlayerFetchHistoryMsgReq) returns (PlayerFetchHistoryMsgResp)
+	
+	@doc "玩家获取消息"
+	@handler fetchMsg
+	post /player/fetch-msg returns (PlayerFetchMsgResp)
+	
+	@doc "玩家发送消息"
+	@handler sendMsg
+	post /player/send-msg (PlayerSendMsgReq)
+	
+	@doc "玩家断开连接客服"
+	@handler disconnect
+	post /player/disconnect
+}
+
+@server(
+	group : cs
+	prefix : api/v1/cmd
+	jwt : JwtAuth
+)
+service cmdbff {
+	@doc "客服获取玩家等待队列"
+	@handler fetchPlayerQueue
+	post /cs/fetch-player-queue (CsFetchPlayerQueueReq) returns (CsFetchPlayerQueueResp)
+	
+	@doc "客服连接玩家"
+	@handler connectPlayer
+	post /cs/connect-player (CsConnectPlayerReq)
+	
+	@doc "客服获取历史会话列表"
+	@handler fetchHistoryList
+	post /cs/fetch-history-list (CsFetchHistoryChatReq) returns (CsFetchHistoryChatResp)
+	
+	@doc "客服获取历史消息"
+	@handler fetchHistoryMsg
+	post /cs/fetch-history-msg (CsFetchHistoryMsgReq) returns (CsFetchHistoryMsgResp)
+	
+	@doc "客服获取消息"
+	@handler fetchMsg
+	post /cs/fetch-msg (CsFetchMsgReq) returns (CsFetchMsgResp)
+	
+	@doc "客服发送消息"
+	@handler sendMsg
+	post /cs/send-msg (CsSendMsgReq)
+}

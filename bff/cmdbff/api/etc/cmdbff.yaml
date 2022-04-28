@@ -1,0 +1,13 @@
+Name: cmdbff
+Host: 0.0.0.0
+Port: 10001
+
+CmdRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: cmd.rpc
+
+JwtAuth:
+  AccessSecret: ylink2022
+  AccessExpire: 604800

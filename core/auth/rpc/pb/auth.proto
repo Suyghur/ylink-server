@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+message PlayerAuthReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message CsAuthReq{
+  string cs_id = 1;
+}
+
+message AuthResp{
+  string access_token = 1;
+}
+
+message CheckAuthReq{
+  string  access_token = 1;
+}
+
+message CheckAuthResp{}
+
+service Auth{
+  rpc playerAuth (PlayerAuthReq) returns (AuthResp);
+  rpc csAuth (CsAuthReq) returns (AuthResp);
+  rpc checkAuth (CheckAuthReq) returns (CheckAuthResp);
+}

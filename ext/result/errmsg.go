@@ -12,6 +12,7 @@ func init() {
 	message[ServerCommonError] = "some unknown error has occurred"
 	message[RequestParamError] = "request params error"
 	message[TokenExpireError] = "the token is invalid, please re-authenticate"
+	message[TokenParseError] = "failed to parse token"
 	message[TokenGenerateError] = "failed to generate token"
 	message[DbError] = "database is busy, please try again late"
 }

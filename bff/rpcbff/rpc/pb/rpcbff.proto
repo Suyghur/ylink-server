@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+import "google/protobuf/struct.proto";
+
+enum ConnectType{
+  PLAYER = 0;
+  CS = 1;
+}
+
+message CommandReq {
+  ConnectType type = 1;
+  string access_token = 2;
+}
+
+message CommandResp {
+  int64 code = 1;
+  string  msg = 2;
+  google.protobuf.Struct data = 3;
+}
+
+service Rpcbff {
+  rpc connect(CommandReq) returns (stream CommandResp);
+  rpc disconnect(CommandReq) returns (CommandResp);
+}

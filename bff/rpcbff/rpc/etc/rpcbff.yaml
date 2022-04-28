@@ -1,0 +1,13 @@
+Name: rpcbff.rpc
+ListenOn: 0.0.0.0:10200
+
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: rpcbff.rpc
+
+AuthRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: auth.rpc
