@@ -2,6 +2,8 @@ package player
 
 import (
 	"context"
+	"ylink/core/cmd/rpc/cmd"
+	"ylink/ext/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"ylink/bff/cmdbff/api/internal/svc"
@@ -22,7 +24,11 @@ func NewDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Discon
 }
 
 func (l *DisconnectLogic) Disconnect() error {
-	// todo: add your logic here and delete this line
-
-	return nil
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
+	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	_, err := l.svcCtx.CmdRpc.PlayerDisconnect(l.ctx, &cmd.PlayerDisconnectReq{
+		PlayerId: playerId,
+		GameId:   gameId,
+	})
+	return err
 }

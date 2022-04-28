@@ -2,6 +2,8 @@ package player
 
 import (
 	"context"
+	"ylink/core/cmd/rpc/pb"
+	"ylink/ext/ctxdata"
 
 	"ylink/bff/cmdbff/api/internal/svc"
 	"ylink/bff/cmdbff/api/internal/types"
@@ -24,7 +26,13 @@ func NewSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendMsgLo
 }
 
 func (l *SendMsgLogic) SendMsg(req *types.PlayerSendMsgReq) error {
-	// todo: add your logic here and delete this line
-
-	return nil
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
+	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	_, err := l.svcCtx.CmdRpc.PlayerSendMsg(l.ctx, &pb.PlayerSendMsgReq{
+		PlayerId: playerId,
+		GameId:   gameId,
+		Content:  req.Content,
+		Pic:      req.Pic,
+	})
+	return err
 }

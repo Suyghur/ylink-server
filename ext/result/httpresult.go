@@ -44,6 +44,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 }
 
 func ParamErrorResult(r *http.Request, w http.ResponseWriter, err error) {
+	logx.WithContext(r.Context()).Errorf("[API ERROR] : %+v", err)
 	msg := fmt.Sprintf("%s ,%s", MapErrMsg(RequestParamError), err.Error())
 	httpx.WriteJson(w, http.StatusBadRequest, Error(RequestParamError, msg))
 }

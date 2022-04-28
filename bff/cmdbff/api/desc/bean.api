@@ -42,7 +42,7 @@ type (
 
 type (
     CsFetchPlayerQueueReq {
-        Limit int `json:"limit"`
+        Limit int64 `json:"limit"`
     }
 
     CsFetchPlayerQueueResp {
@@ -55,8 +55,8 @@ type (
     }
 
     CsFetchHistoryChatReq {
-        Page int `json:"page"`
-        Limit int `json:"limit"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
     }
 
     CsFetchHistoryChatResp {
@@ -68,8 +68,8 @@ type (
     CsFetchHistoryMsgReq {
         PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
-        Page int `json:"page"`
-        Limit int `json:"limit"`
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
     }
 
     CsFetchHistoryMsgResp {

@@ -34,7 +34,7 @@ type PlayerSendMsgReq struct {
 }
 
 type CsFetchPlayerQueueReq struct {
-	Limit int `json:"limit"`
+	Limit int64 `json:"limit"`
 }
 
 type CsFetchPlayerQueueResp struct {
@@ -47,8 +47,8 @@ type CsConnectPlayerReq struct {
 }
 
 type CsFetchHistoryChatReq struct {
-	Page  int `json:"page"`
-	Limit int `json:"limit"`
+	Page  int64 `json:"page"`
+	Limit int64 `json:"limit"`
 }
 
 type CsFetchHistoryChatResp struct {
@@ -60,8 +60,8 @@ type CsFetchHistoryChatResp struct {
 type CsFetchHistoryMsgReq struct {
 	PlayerId string `json:"player_id"`
 	GameId   string `json:"game_id"`
-	Page     int    `json:"page"`
-	Limit    int    `json:"limit"`
+	Page     int64  `json:"page"`
+	Limit    int64  `json:"limit"`
 }
 
 type CsFetchHistoryMsgResp struct {

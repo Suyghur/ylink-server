@@ -2,9 +2,10 @@ package cs
 
 import (
 	"context"
-
 	"ylink/bff/cmdbff/api/internal/svc"
 	"ylink/bff/cmdbff/api/internal/types"
+	"ylink/core/cmd/rpc/cmd"
+	"ylink/ext/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +25,14 @@ func NewConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Con
 }
 
 func (l *ConnectPlayerLogic) ConnectPlayer(req *types.CsConnectPlayerReq) error {
-	// todo: add your logic here and delete this line
-
+	csId := ctxdata.GetCsIdFromCtx(l.ctx)
+	_, err := l.svcCtx.CmdRpc.CsConnectPlayer(l.ctx, &cmd.CsConnectPlayerReq{
+		CsId:     csId,
+		PlayerId: req.PlayerId,
+		GameId:   req.GameId,
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }

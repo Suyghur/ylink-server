@@ -2,6 +2,8 @@ package player
 
 import (
 	"context"
+	"ylink/core/cmd/rpc/cmd"
+	"ylink/ext/ctxdata"
 
 	"ylink/bff/cmdbff/api/internal/svc"
 	"ylink/bff/cmdbff/api/internal/types"
@@ -24,7 +26,23 @@ func NewFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fetch
 }
 
 func (l *FetchCsInfoLogic) FetchCsInfo(req *types.PlayerFetchCsInfoReq) (resp *types.PlayerFetchCsInfoResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
+	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	l.Logger.Infof("player id: %s", playerId)
+	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchCsInfo(l.ctx, &cmd.PlayerFetchCsInfoReq{
+		PlayerId: playerId,
+		GameId:   gameId,
+		CsId:     req.CsId,
+	})
+	if err != nil {
+		l.Logger.Info(err.Error())
+		return nil, err
+	}
+	return &types.PlayerFetchCsInfoResp{
+		CsId:         cmdResp.CsId,
+		CsNickname:   cmdResp.CsNickname,
+		CsAvatarUrl:  cmdResp.CsAvatarUrl,
+		CsSignature:  cmdResp.CsSignature,
+		OnlineStatus: cmdResp.OnlineStatus,
+	}, nil
 }

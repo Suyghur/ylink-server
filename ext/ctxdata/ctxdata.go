@@ -19,7 +19,7 @@ func GetGameIdFromCtx(ctx context.Context) string {
 	return gameId
 }
 
-func GetCsIdFromJwt(ctx context.Context) string {
+func GetCsIdFromCtx(ctx context.Context) string {
 	csId, _ := ctx.Value(jwtkey.CsId).(string)
 	return csId
 }

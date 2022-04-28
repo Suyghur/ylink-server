@@ -2,6 +2,8 @@ package player
 
 import (
 	"context"
+	"ylink/core/cmd/rpc/pb"
+	"ylink/ext/ctxdata"
 
 	"ylink/bff/cmdbff/api/internal/svc"
 	"ylink/bff/cmdbff/api/internal/types"
@@ -24,7 +26,16 @@ func NewFetchMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FetchMsg
 }
 
 func (l *FetchMsgLogic) FetchMsg() (resp *types.PlayerFetchMsgResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	playerId := ctxdata.GetGameIdFromCtx(l.ctx)
+	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchMsg(l.ctx, &pb.PlayerFetchMsgReq{
+		PlayerId: playerId,
+		GameId:   gameId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.PlayerFetchMsgResp{
+		List: cmdResp.List.AsSlice(),
+	}, nil
 }
