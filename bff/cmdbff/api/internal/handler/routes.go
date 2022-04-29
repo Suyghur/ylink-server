@@ -4,8 +4,6 @@ package handler
 import (
 	"net/http"
 
-	cs "ylink/bff/cmdbff/api/internal/handler/cs"
-	player "ylink/bff/cmdbff/api/internal/handler/player"
 	"ylink/bff/cmdbff/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -17,27 +15,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/player/fetch-cs-info",
-				Handler: player.FetchCsInfoHandler(serverCtx),
+				Handler: playerFetchCsInfoHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/player/fetch-history-msg",
-				Handler: player.FetchHistoryMsgHandler(serverCtx),
+				Handler: playerFetchHistoryMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/player/fetch-msg",
-				Handler: player.FetchMsgHandler(serverCtx),
+				Handler: playerFetchMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/player/send-msg",
-				Handler: player.SendMsgHandler(serverCtx),
+				Handler: playerSendMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/player/disconnect",
-				Handler: player.DisconnectHandler(serverCtx),
+				Handler: playerDisconnectHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
@@ -49,32 +47,32 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/fetch-player-queue",
-				Handler: cs.FetchPlayerQueueHandler(serverCtx),
+				Handler: csFetchPlayerQueueHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/connect-player",
-				Handler: cs.ConnectPlayerHandler(serverCtx),
+				Handler: csConnectPlayerHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/fetch-history-list",
-				Handler: cs.FetchHistoryListHandler(serverCtx),
+				Handler: csFetchHistoryListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/fetch-history-msg",
-				Handler: cs.FetchHistoryMsgHandler(serverCtx),
+				Handler: csFetchHistoryMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/fetch-msg",
-				Handler: cs.FetchMsgHandler(serverCtx),
+				Handler: csFetchMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/send-msg",
-				Handler: cs.SendMsgHandler(serverCtx),
+				Handler: csSendMsgHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),

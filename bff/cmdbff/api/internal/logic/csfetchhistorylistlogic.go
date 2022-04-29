@@ -1,4 +1,4 @@
-package cs
+package logic
 
 import (
 	"context"
@@ -11,21 +11,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type FetchHistoryListLogic struct {
+type CsFetchHistoryListLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewFetchHistoryListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FetchHistoryListLogic {
-	return &FetchHistoryListLogic{
+func NewCsFetchHistoryListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsFetchHistoryListLogic {
+	return &CsFetchHistoryListLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *FetchHistoryListLogic) FetchHistoryList(req *types.CsFetchHistoryChatReq) (resp *types.CsFetchHistoryChatResp, err error) {
+func (l *CsFetchHistoryListLogic) CsFetchHistoryList(req *types.CsFetchHistoryChatReq) (resp *types.CsFetchHistoryChatResp, err error) {
 	csId := ctxdata.GetCsIdFromCtx(l.ctx)
 	cmdResp, err := l.svcCtx.CmdRpc.CsFetchHistoryChat(l.ctx, &cmd.CsFetchHistoryChatReq{
 		CsId:  csId,

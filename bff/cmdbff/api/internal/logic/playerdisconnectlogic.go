@@ -1,4 +1,4 @@
-package player
+package logic
 
 import (
 	"context"
@@ -9,21 +9,21 @@ import (
 	"ylink/bff/cmdbff/api/internal/svc"
 )
 
-type DisconnectLogic struct {
+type PlayerDisconnectLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DisconnectLogic {
-	return &DisconnectLogic{
+func NewPlayerDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlayerDisconnectLogic {
+	return &PlayerDisconnectLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *DisconnectLogic) Disconnect() error {
+func (l *PlayerDisconnectLogic) PlayerDisconnect() error {
 	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
 	_, err := l.svcCtx.CmdRpc.PlayerDisconnect(l.ctx, &cmd.PlayerDisconnectReq{

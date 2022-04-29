@@ -1,4 +1,4 @@
-package player
+package logic
 
 import (
 	"context"
@@ -11,21 +11,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type SendMsgLogic struct {
+type PlayerSendMsgLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendMsgLogic {
-	return &SendMsgLogic{
+func NewPlayerSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlayerSendMsgLogic {
+	return &PlayerSendMsgLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *SendMsgLogic) SendMsg(req *types.PlayerSendMsgReq) error {
+func (l *PlayerSendMsgLogic) PlayerSendMsg(req *types.PlayerSendMsgReq) error {
 	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
 	_, err := l.svcCtx.CmdRpc.PlayerSendMsg(l.ctx, &pb.PlayerSendMsgReq{

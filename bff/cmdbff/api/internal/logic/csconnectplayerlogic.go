@@ -1,30 +1,31 @@
-package cs
+package logic
 
 import (
 	"context"
-	"ylink/bff/cmdbff/api/internal/svc"
-	"ylink/bff/cmdbff/api/internal/types"
 	"ylink/core/cmd/rpc/cmd"
 	"ylink/ext/ctxdata"
+
+	"ylink/bff/cmdbff/api/internal/svc"
+	"ylink/bff/cmdbff/api/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ConnectPlayerLogic struct {
+type CsConnectPlayerLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConnectPlayerLogic {
-	return &ConnectPlayerLogic{
+func NewCsConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsConnectPlayerLogic {
+	return &CsConnectPlayerLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *ConnectPlayerLogic) ConnectPlayer(req *types.CsConnectPlayerReq) error {
+func (l *CsConnectPlayerLogic) CsConnectPlayer(req *types.CsConnectPlayerReq) error {
 	csId := ctxdata.GetCsIdFromCtx(l.ctx)
 	_, err := l.svcCtx.CmdRpc.CsConnectPlayer(l.ctx, &cmd.CsConnectPlayerReq{
 		CsId:     csId,

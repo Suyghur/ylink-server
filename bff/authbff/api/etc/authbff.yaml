@@ -2,6 +2,13 @@ Name: Authbff
 Host: 0.0.0.0
 Port: 10000
 
+#链路追踪
+Telemetry:
+  Name: authbff-api
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
 AuthRpc:
   Etcd:
     Hosts:

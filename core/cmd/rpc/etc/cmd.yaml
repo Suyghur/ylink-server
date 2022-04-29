@@ -1,7 +1,13 @@
 Name: cmd.rpc
-ListenOn: 0.0.0.0:12000
+ListenOn: 0.0.0.0:10300
 
 Etcd:
   Hosts:
     - 127.0.0.1:2379
   Key: cmd.rpc
+
+Telemetry:
+  Name: cmd-rpc
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger

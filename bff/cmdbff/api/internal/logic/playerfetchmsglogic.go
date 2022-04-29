@@ -1,4 +1,4 @@
-package player
+package logic
 
 import (
 	"context"
@@ -11,21 +11,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type FetchMsgLogic struct {
+type PlayerFetchMsgLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewFetchMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FetchMsgLogic {
-	return &FetchMsgLogic{
+func NewPlayerFetchMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlayerFetchMsgLogic {
+	return &PlayerFetchMsgLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *FetchMsgLogic) FetchMsg() (resp *types.PlayerFetchMsgResp, err error) {
+func (l *PlayerFetchMsgLogic) PlayerFetchMsg() (resp *types.PlayerFetchMsgResp, err error) {
 	playerId := ctxdata.GetGameIdFromCtx(l.ctx)
 	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
 	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchMsg(l.ctx, &pb.PlayerFetchMsgReq{

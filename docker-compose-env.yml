@@ -1,0 +1,86 @@
+version: '3.5'
+
+######## 项目依赖的环境，启动项目之前要先启动此环境 #######
+
+services:
+  #jaeger链路追踪
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    restart: always
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+    environment:
+      - "SPAN_STORAGE_TYPE=elasticsearch"
+      - "ES_SERVER_URLS=http://elasticsearch:9200"
+      - "LOG_LEVEL=debug"
+    networks:
+      - ylinknet
+
+  #  #搜集kafka业务日志、存储prometheus监控数据
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+    container_name: elasticsearch
+    user: root
+    environment:
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "TZ=Asia/Shanghai"
+    volumes:
+      - "/data/docker_mount/elasticsearch/data:/usr/share/elasticsearch/data"
+    restart: always
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - ylinknet
+
+  #查看elasticsearch数据
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.4
+    container_name: kibana
+    environment:
+      - "elasticsearch.hosts=http://elasticsearch:9200"
+      - "TZ=Asia/Shanghai"
+    restart: always
+    networks:
+      - ylinknet
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  etcd:
+    hostname: etcd
+    image: bitnami/etcd:3
+    privileged: true
+    volumes:
+      - "/data/docker_mount/etcd/data:/opt/bitnami/etcd/data"
+    environment:
+      - "ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379"
+      - "ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379"
+      - "ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380"
+      - "ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380"
+      - "ALLOW_NONE_AUTHENTICATION=yes"
+      - "ETCD_INITIAL_CLUSTER=node1=http://0.0.0.0:2380"
+      - "ETCD_NAME=node1"
+      - "ETCD_DATA_DIR=/opt/bitnami/etcd/data"
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    networks:
+      - ylinknet
+
+networks:
+  ylinknet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
