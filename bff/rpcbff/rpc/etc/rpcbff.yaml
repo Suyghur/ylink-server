@@ -17,3 +17,9 @@ AuthRpcConf:
     Hosts:
       - 127.0.0.1:2379
     Key: auth.rpc
+
+KqChatMsgConf:
+  Brokers:
+    - 127.0.0.1:9092
+  Topic: chat-msg-topic
+  GroupId: rpcbff
