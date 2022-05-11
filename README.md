@@ -2,7 +2,7 @@
 
 内部项目孵化中
 
-<iframe id="embed_dom" name="embed_dom" frameborder="0" style="display:block;width:525px; height:245px;" src="https://www.processon.com/embed/624faa00f346fb1da671cf55"></iframe>
+![](http://assets.processon.com/chart_image/624faa00f346fb1da671cf58.png)
 
 ## Thanks
 
