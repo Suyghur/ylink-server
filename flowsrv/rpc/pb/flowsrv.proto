@@ -22,7 +22,7 @@ message CommandResp {
   google.protobuf.Struct data = 3;
 }
 
-service Rpcbff {
+service Flowsrv {
   rpc connect(CommandReq) returns (stream CommandResp);
   rpc disconnect(CommandReq) returns (CommandResp);
 }

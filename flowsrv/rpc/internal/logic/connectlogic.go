@@ -5,8 +5,8 @@ import (
 	"ylink/core/auth/rpc/auth"
 	"ylink/ext/result"
 
-	"ylink/bff/rpcbff/rpc/internal/svc"
-	"ylink/bff/rpcbff/rpc/pb"
+	"ylink/flowsrv/rpc/internal/svc"
+	"ylink/flowsrv/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +25,7 @@ func NewConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConnectLo
 	}
 }
 
-func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Rpcbff_ConnectServer) error {
+func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServer) error {
 	_, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &auth.CheckAuthReq{
 		AccessToken: in.AccessToken,
 	})

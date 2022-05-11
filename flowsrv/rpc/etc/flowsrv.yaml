@@ -1,14 +1,14 @@
-Name: rpcbff.rpc
+Name: flowsrv.rpc
 ListenOn: 0.0.0.0:10200
 
 Etcd:
   Hosts:
     - 127.0.0.1:2379
-  Key: rpcbff.rpc
+  Key: flowsrv.rpc
 
 Telemetry:
-  Name: rpcbff-rpc
-  Endpoint: http://127.0.0.1:14268/api/traces
+  Name: flowsrv-rpc
+  Endpoint: http://ylink-jaeger-trace.ylink.svc.cluster.local:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
@@ -18,8 +18,8 @@ AuthRpcConf:
       - 127.0.0.1:2379
     Key: auth.rpc
 
-KqChatMsgConf:
+KqMsgConf:
   Brokers:
     - 127.0.0.1:9092
-  Topic: chat-msg-topic
-  GroupId: rpcbff
+  Topic: recv-box-topic
+  GroupId: flowsrv

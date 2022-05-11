@@ -144,6 +144,23 @@ services:
     networks:
       - ylink_net
 
+  #redis容器
+  redis:
+    image: redis:6.2.5
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - "TZ=Asia/Shanghai"
+    volumes:
+      # 数据文件
+      - "/data/docker_mount/redis/data:/data:rw"
+    command: "redis-server --requirepass ylink  --appendonly yes"
+    privileged: true
+    restart: always
+    networks:
+      - ylink_net
+
   etcd:
     hostname: etcd
     image: bitnami/etcd:3

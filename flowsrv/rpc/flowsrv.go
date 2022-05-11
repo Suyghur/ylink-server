@@ -4,10 +4,10 @@ import (
 	"flag"
 	"fmt"
 
-	"ylink/bff/rpcbff/rpc/internal/config"
-	"ylink/bff/rpcbff/rpc/internal/server"
-	"ylink/bff/rpcbff/rpc/internal/svc"
-	"ylink/bff/rpcbff/rpc/pb"
+	"ylink/flowsrv/rpc/internal/config"
+	"ylink/flowsrv/rpc/internal/server"
+	"ylink/flowsrv/rpc/internal/svc"
+	"ylink/flowsrv/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/rpcbff.yaml", "the config file")
+var configFile = flag.String("f", "etc/flowsrv.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -24,10 +24,10 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewRpcbffServer(ctx)
+	svr := server.NewFlowsrvServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterRpcbffServer(grpcServer, svr)
+		pb.RegisterFlowsrvServer(grpcServer, svr)
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

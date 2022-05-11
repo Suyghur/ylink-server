@@ -3,13 +3,13 @@ ListenOn: 0.0.0.0:10400
 
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - ylink-etcd.ylink.svc.cluster.local:2379
   Key: auth.rpc
 
 
 Telemetry:
   Name: auth-rpc
-  Endpoint: http://127.0.0.1:14268/api/traces
+  Endpoint: http://ylink-jaeger-trace.ylink.svc.cluster.local:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
