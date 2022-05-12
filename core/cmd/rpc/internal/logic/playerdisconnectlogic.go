@@ -2,9 +2,9 @@ package logic
 
 import (
 	"context"
-
 	"ylink/core/cmd/rpc/internal/svc"
 	"ylink/core/cmd/rpc/pb"
+	"ylink/core/inner/rpc/inner"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +24,13 @@ func NewPlayerDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *PlayerDisconnectLogic) PlayerDisconnect(in *pb.PlayerDisconnectReq) (*pb.PlayerDisconnectResp, error) {
-	// todo 修改inner服务玩家状态
-
+	// 调用inner服务玩家状态
+	_, err := l.svcCtx.InnerRpc.PlayerDisconnect(l.ctx, &inner.InnerPlayerDisconnectReq{
+		PlayerId: in.PlayerId,
+		GameId:   in.GameId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return &pb.PlayerDisconnectResp{}, nil
 }

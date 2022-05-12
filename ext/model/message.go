@@ -10,4 +10,5 @@ type ChatMessage struct {
 	Pic        string `json:"pic"`
 	ReceiverId string `json:"receiver_id"`
 	SenderId   string `json:"sender_id"`
+	GameId     string `json:"game_id"`
 }

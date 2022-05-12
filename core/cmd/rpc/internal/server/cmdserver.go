@@ -32,11 +32,6 @@ func (s *CmdServer) PlayerFetchHistoryMsg(ctx context.Context, in *pb.PlayerFetc
 	return l.PlayerFetchHistoryMsg(in)
 }
 
-func (s *CmdServer) PlayerFetchMsg(ctx context.Context, in *pb.PlayerFetchMsgReq) (*pb.PlayerFetchMsgResp, error) {
-	l := logic.NewPlayerFetchMsgLogic(ctx, s.svcCtx)
-	return l.PlayerFetchMsg(in)
-}
-
 func (s *CmdServer) PlayerSendMsg(ctx context.Context, in *pb.PlayerSendMsgReq) (*pb.PlayerSendMsgResp, error) {
 	l := logic.NewPlayerSendMsgLogic(ctx, s.svcCtx)
 	return l.PlayerSendMsg(in)
@@ -65,11 +60,6 @@ func (s *CmdServer) CsFetchHistoryChat(ctx context.Context, in *pb.CsFetchHistor
 func (s *CmdServer) CsFetchHistoryMsg(ctx context.Context, in *pb.CsFetchHistoryMsgReq) (*pb.CsFetchHistoryMsgResp, error) {
 	l := logic.NewCsFetchHistoryMsgLogic(ctx, s.svcCtx)
 	return l.CsFetchHistoryMsg(in)
-}
-
-func (s *CmdServer) CsFetchMsg(ctx context.Context, in *pb.CsFetchMsgReq) (*pb.CsFetchMsgResp, error) {
-	l := logic.NewCsFetchMsgLogic(ctx, s.svcCtx)
-	return l.CsFetchMsg(in)
 }
 
 func (s *CmdServer) CsSendMsg(ctx context.Context, in *pb.CsSendMsgReq) (*pb.CsSendMsgResp, error) {

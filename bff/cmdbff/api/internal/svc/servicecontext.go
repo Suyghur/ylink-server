@@ -14,6 +14,6 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
-		CmdRpc: cmd.NewCmd(zrpc.MustNewClient(c.CmdRpc)),
+		CmdRpc: cmd.NewCmd(zrpc.MustNewClient(c.CmdRpcConf)),
 	}
 }

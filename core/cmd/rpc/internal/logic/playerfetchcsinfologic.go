@@ -2,9 +2,9 @@ package logic
 
 import (
 	"context"
-
 	"ylink/core/cmd/rpc/internal/svc"
 	"ylink/core/cmd/rpc/pb"
+	"ylink/core/inner/rpc/inner"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,11 +24,19 @@ func NewPlayerFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(in *pb.PlayerFetchCsInfoReq) (*pb.PlayerFetchCsInfoResp, error) {
+	innerResp, err := l.svcCtx.InnerRpc.PlayerFetchCsInfo(l.ctx, &inner.InnerPlayerFetchCsInfoReq{
+		PlayerId: in.PlayerId,
+		GameId:   in.GameId,
+		CsId:     in.CsId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return &pb.PlayerFetchCsInfoResp{
-		CsId:         in.CsId,
-		CsNickname:   "vip客服1231",
-		CsAvatarUrl:  "https://www.baiduc.om",
-		CsSignature:  "服务时间：9:30-20:30",
-		OnlineStatus: 1,
+		CsId:         innerResp.CsId,
+		CsNickname:   innerResp.CsNickname,
+		CsAvatarUrl:  innerResp.CsAvatarUrl,
+		CsSignature:  innerResp.CsSignature,
+		OnlineStatus: innerResp.OnlineStatus,
 	}, nil
 }

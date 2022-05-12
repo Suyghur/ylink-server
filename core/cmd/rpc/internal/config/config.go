@@ -7,5 +7,6 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	KqChatMsgConf kafka.KqConfig
+	InnerRpcConf  zrpc.RpcClientConf
+	KqSendMsgConf kafka.KqConfig
 }

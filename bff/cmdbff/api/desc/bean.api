@@ -30,10 +30,6 @@ type (
         List []interface{} `json:"list"`
     }
 
-    PlayerFetchMsgResp {
-        List []interface{} `json:"list"`
-    }
-
     PlayerSendMsgReq {
         Content string `json:"content"`
         Pic string `json:"pic"`
@@ -81,10 +77,6 @@ type (
     CsFetchMsgReq {
         PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
-    }
-
-    CsFetchMsgResp {
-        List []interface{} `json:"list"`
     }
 
     CsSendMsgReq {

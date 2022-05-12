@@ -33,8 +33,9 @@ func (l *PlayerSendMsgLogic) PlayerSendMsg(in *pb.PlayerSendMsgReq) (*pb.PlayerS
 		Pic:        in.Pic,
 		ReceiverId: "",
 		SenderId:   in.PlayerId,
+		GameId:     in.GameId,
 	})
-	_, _, err := l.svcCtx.ChatMsgProducer.SendMessage(string(msg), in.PlayerId)
+	_, _, err := l.svcCtx.SendBoxProducer.SendMessage(string(msg), in.PlayerId)
 	if err != nil {
 		return nil, err
 	}

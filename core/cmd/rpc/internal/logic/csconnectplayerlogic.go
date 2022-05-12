@@ -2,9 +2,9 @@ package logic
 
 import (
 	"context"
-
 	"ylink/core/cmd/rpc/internal/svc"
 	"ylink/core/cmd/rpc/pb"
+	"ylink/core/inner/rpc/inner"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,8 +24,15 @@ func NewCsConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 }
 
 func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.CsConnectPlayerReq) (*pb.CsConnectPlayerResp, error) {
-	// todo 调用inner修改状态，如果玩家在等待队列中，则取出玩家
-	// todo 建立连接的映射关系
+	// 调用inner服务建立映射关系
+	_, err := l.svcCtx.InnerRpc.CsConnectPlayer(l.ctx, &inner.InnerCsConnectPlayerReq{
+		CsId:     in.CsId,
+		PlayerId: in.PlayerId,
+		GameId:   in.GameId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &pb.CsConnectPlayerResp{}, nil
 }

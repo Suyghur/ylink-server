@@ -24,11 +24,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/player/fetch-msg",
-				Handler: playerFetchMsgHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
 				Path:    "/player/send-msg",
 				Handler: playerSendMsgHandler(serverCtx),
 			},
@@ -37,13 +32,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/player/disconnect",
 				Handler: playerDisconnectHandler(serverCtx),
 			},
-		},
-		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
-		rest.WithPrefix("/api/v1/cmd"),
-	)
-
-	server.AddRoutes(
-		[]rest.Route{
 			{
 				Method:  http.MethodPost,
 				Path:    "/cs/fetch-player-queue",
@@ -63,11 +51,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/cs/fetch-history-msg",
 				Handler: csFetchHistoryMsgHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/cs/fetch-msg",
-				Handler: csFetchMsgHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

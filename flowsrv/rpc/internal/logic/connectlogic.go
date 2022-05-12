@@ -29,7 +29,7 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 	_, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &auth.CheckAuthReq{
 		AccessToken: in.AccessToken,
 	})
-	//data, _ := structpb.NewStruct(map[string]interface{}{})
+	//data, _ := structpb.NewStruct(treemap[string]interface{}{})
 	if err != nil {
 		return stream.Send(&pb.CommandResp{
 			Code: result.TokenParseError,

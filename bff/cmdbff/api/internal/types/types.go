@@ -24,10 +24,6 @@ type PlayerFetchHistoryMsgResp struct {
 	List        []interface{} `json:"list"`
 }
 
-type PlayerFetchMsgResp struct {
-	List []interface{} `json:"list"`
-}
-
 type PlayerSendMsgReq struct {
 	Content string `json:"content"`
 	Pic     string `json:"pic"`
@@ -73,10 +69,6 @@ type CsFetchHistoryMsgResp struct {
 type CsFetchMsgReq struct {
 	PlayerId string `json:"player_id"`
 	GameId   string `json:"game_id"`
-}
-
-type CsFetchMsgResp struct {
-	List []interface{} `json:"list"`
 }
 
 type CsSendMsgReq struct {

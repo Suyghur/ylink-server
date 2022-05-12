@@ -1,21 +1,21 @@
 Name: cmd.rpc
 ListenOn: 0.0.0.0:10300
 
-Etcd:
-  Hosts:
-    - 127.0.0.1:2379
-  Key: cmd.rpc
+InnerRpcConf:
+  Endpoints:
+    - localhost:10500
+  NonBlock: true
 
 Telemetry:
   Name: cmd-rpc
-  Endpoint: http://127.0.0.1:14268/api/traces
+  Endpoint: http://localhost:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
-KqChatMsgConf:
+KqSendMsgConf:
   Brokers:
-    - 127.0.0.1:9092
-  Topic: chat-msg-topic
+    - localhost:9092
+  Topic: send-box-topic
   GroupId:
 
 Redis:

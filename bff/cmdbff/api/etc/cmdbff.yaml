@@ -4,15 +4,14 @@ Port: 10100
 
 Telemetry:
   Name: cmdbff-api
-  Endpoint: http://127.0.0.1:14268/api/traces
+  Endpoint: http://localhost:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
-CmdRpc:
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: cmd.rpc
+CmdRpcConf:
+  Endpoints:
+    - localhost:10300
+  NonBlock: true
 
 JwtAuth:
   AccessSecret: ylink2022

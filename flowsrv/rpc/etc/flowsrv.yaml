@@ -3,7 +3,7 @@ ListenOn: 0.0.0.0:10200
 
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - localhost:2379
   Key: flowsrv.rpc
 
 Telemetry:
@@ -15,11 +15,11 @@ Telemetry:
 AuthRpcConf:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - localhost:2379
     Key: auth.rpc
 
-KqMsgConf:
+KqRecvMsgConf:
   Brokers:
-    - 127.0.0.1:9092
+    - localhost:9092
   Topic: recv-box-topic
   GroupId: flowsrv

@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+import "google/protobuf/struct.proto";
+
+/**
+Player Command Request Bean
+ */
+message InnerPlayerFetchCsInfoReq{
+  string player_id = 1;
+  string game_id = 2;
+  string cs_id = 3;
+}
+
+message InnerPlayerFetchCsInfoResp{
+  string cs_id = 1;
+  string cs_nickname = 2;
+  string cs_avatar_url = 3;
+  string cs_signature = 4;
+  int64 online_status = 5;
+}
+
+message InnerPlayerDisconnectReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message InnerPlayerDisconnectResp{}
+
+/**
+Cs Command Request Bean
+ */
+message InnerCsFetchPlayerQueueReq {
+  int64 limit = 1;
+}
+
+message InnerCsFetchPlayerQueueResp{
+  int64 total = 1;
+  google.protobuf.ListValue list = 2;
+}
+
+message InnerCsConnectPlayerReq{
+  string cs_id = 1;
+  string player_id = 2;
+  string game_id = 3;
+}
+
+message InnerCsConnectPlayerResp{}
+
+service Inner {
+  rpc playerFetchCsInfo (InnerPlayerFetchCsInfoReq) returns (InnerPlayerFetchCsInfoResp);
+  rpc playerDisconnect (InnerPlayerDisconnectReq) returns (InnerPlayerDisconnectResp);
+
+  rpc csFetchPlayerQueue (InnerCsFetchPlayerQueueReq) returns (InnerCsFetchPlayerQueueResp);
+  rpc csConnectPlayer (InnerCsConnectPlayerReq) returns (InnerCsConnectPlayerResp);
+}

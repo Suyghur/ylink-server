@@ -36,15 +36,6 @@ message PlayerFetchHistoryMsgResp{
   google.protobuf.ListValue list = 3;
 }
 
-message PlayerFetchMsgReq{
-  string player_id = 1;
-  string game_id = 2;
-}
-
-message PlayerFetchMsgResp{
-  google.protobuf.ListValue list = 1;
-}
-
 message PlayerSendMsgReq{
   string player_id = 1;
   string game_id = 2;
@@ -108,16 +99,6 @@ message CsFetchHistoryMsgResp{
   google.protobuf.ListValue list = 4;
 }
 
-message CsFetchMsgReq{
-  string cs_id = 1;
-  string player_id = 2;
-  string game_id = 3;
-}
-
-message CsFetchMsgResp{
-  google.protobuf.ListValue list = 4;
-}
-
 message CsSendMsgReq{
   string cs_id = 1;
   string player_id = 2;
@@ -131,7 +112,6 @@ message CsSendMsgResp{}
 service Cmd {
   rpc playerFetchCsInfo (PlayerFetchCsInfoReq) returns (PlayerFetchCsInfoResp);
   rpc playerFetchHistoryMsg (PlayerFetchHistoryMsgReq) returns (PlayerFetchHistoryMsgResp);
-  rpc playerFetchMsg (PlayerFetchMsgReq) returns (PlayerFetchMsgResp);
   rpc playerSendMsg (PlayerSendMsgReq) returns (PlayerSendMsgResp);
   rpc playerDisconnect (PlayerDisconnectReq) returns (PlayerDisconnectResp);
 
@@ -139,6 +119,5 @@ service Cmd {
   rpc csConnectPlayer (CsConnectPlayerReq) returns (CsConnectPlayerResp);
   rpc csFetchHistoryChat (CsFetchHistoryChatReq) returns (CsFetchHistoryChatResp);
   rpc csFetchHistoryMsg (CsFetchHistoryMsgReq) returns (CsFetchHistoryMsgResp);
-  rpc csFetchMsg (CsFetchMsgReq) returns (CsFetchMsgResp);
   rpc csSendMsg (CsSendMsgReq) returns (CsSendMsgResp);
 }

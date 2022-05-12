@@ -29,7 +29,7 @@ func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error)
 	_, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &auth.CheckAuthReq{
 		AccessToken: in.AccessToken,
 	})
-	//data, _ := structpb.NewStruct(map[string]interface{}{})
+	//data, _ := structpb.NewStruct(treemap[string]interface{}{})
 	if err != nil {
 		return &pb.CommandResp{
 			Code: result.TokenParseError,

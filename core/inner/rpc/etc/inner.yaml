@@ -1,0 +1,21 @@
+Name: inner.rpc
+ListenOn: 127.0.0.1:10500
+
+Telemetry:
+  Name: cmd-rpc
+  Endpoint: http://localhost:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+KqRecvMsgConf:
+  Brokers:
+    - localhost:9092
+  Topic: send-box-topic
+  GroupId: inner-rpc
+
+KqSendMsgConf:
+  Brokers:
+    - localhost:9092
+  Topic: recv-box-topic
+  GroupId:
+
