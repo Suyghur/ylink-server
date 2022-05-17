@@ -4,10 +4,14 @@
 
 package ext
 
-import "ylink/comm/ds/treemap"
+import (
+	treemap "github.com/liyue201/gostl/ds/map"
+	"github.com/liyue201/gostl/ds/set"
+)
 
 var (
-	IdMap *treemap.Map
-	CsMap *treemap.Map
-	// PlayerStatMap
+	Game2PlayerMap     *treemap.Map
+	CsMap              *treemap.Map
+	Game2PlayerStatMap *treemap.Map
+	CsStatSet          *set.Set
 )

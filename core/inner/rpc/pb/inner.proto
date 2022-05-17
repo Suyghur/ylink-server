@@ -50,12 +50,20 @@ message InnerCsConnectPlayerReq{
 
 message InnerCsConnectPlayerResp{}
 
+message UpdateUserStatusReq{
+  int64 type = 1;
+  string uid = 2;
+  optional string game_id = 3;
+}
+
+message UpdateUserStatusResp{}
+
 service Inner {
   rpc playerFetchCsInfo (InnerPlayerFetchCsInfoReq) returns (InnerPlayerFetchCsInfoResp);
   rpc playerDisconnect (InnerPlayerDisconnectReq) returns (InnerPlayerDisconnectResp);
 
-  //
-
   rpc csFetchPlayerQueue (InnerCsFetchPlayerQueueReq) returns (InnerCsFetchPlayerQueueResp);
   rpc csConnectPlayer (InnerCsConnectPlayerReq) returns (InnerCsConnectPlayerResp);
+
+  rpc updateUserStatus (UpdateUserStatusReq) returns (UpdateUserStatusResp);
 }

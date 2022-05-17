@@ -21,12 +21,15 @@ type (
 	InnerPlayerDisconnectResp   = pb.InnerPlayerDisconnectResp
 	InnerPlayerFetchCsInfoReq   = pb.InnerPlayerFetchCsInfoReq
 	InnerPlayerFetchCsInfoResp  = pb.InnerPlayerFetchCsInfoResp
+	UpdateUserStatusReq         = pb.UpdateUserStatusReq
+	UpdateUserStatusResp        = pb.UpdateUserStatusResp
 
 	Inner interface {
 		PlayerFetchCsInfo(ctx context.Context, in *InnerPlayerFetchCsInfoReq, opts ...grpc.CallOption) (*InnerPlayerFetchCsInfoResp, error)
 		PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error)
 		CsFetchPlayerQueue(ctx context.Context, in *InnerCsFetchPlayerQueueReq, opts ...grpc.CallOption) (*InnerCsFetchPlayerQueueResp, error)
 		CsConnectPlayer(ctx context.Context, in *InnerCsConnectPlayerReq, opts ...grpc.CallOption) (*InnerCsConnectPlayerResp, error)
+		UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error)
 	}
 
 	defaultInner struct {
@@ -58,4 +61,9 @@ func (m *defaultInner) CsFetchPlayerQueue(ctx context.Context, in *InnerCsFetchP
 func (m *defaultInner) CsConnectPlayer(ctx context.Context, in *InnerCsConnectPlayerReq, opts ...grpc.CallOption) (*InnerCsConnectPlayerResp, error) {
 	client := pb.NewInnerClient(m.cli.Conn())
 	return client.CsConnectPlayer(ctx, in, opts...)
+}
+
+func (m *defaultInner) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error) {
+	client := pb.NewInnerClient(m.cli.Conn())
+	return client.UpdateUserStatus(ctx, in, opts...)
 }

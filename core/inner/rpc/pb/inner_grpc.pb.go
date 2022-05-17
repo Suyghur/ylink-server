@@ -26,6 +26,7 @@ type InnerClient interface {
 	PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error)
 	CsFetchPlayerQueue(ctx context.Context, in *InnerCsFetchPlayerQueueReq, opts ...grpc.CallOption) (*InnerCsFetchPlayerQueueResp, error)
 	CsConnectPlayer(ctx context.Context, in *InnerCsConnectPlayerReq, opts ...grpc.CallOption) (*InnerCsConnectPlayerResp, error)
+	UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error)
 }
 
 type innerClient struct {
@@ -72,6 +73,15 @@ func (c *innerClient) CsConnectPlayer(ctx context.Context, in *InnerCsConnectPla
 	return out, nil
 }
 
+func (c *innerClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error) {
+	out := new(UpdateUserStatusResp)
+	err := c.cc.Invoke(ctx, "/pb.Inner/updateUserStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InnerServer is the server API for Inner service.
 // All implementations must embed UnimplementedInnerServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type InnerServer interface {
 	PlayerDisconnect(context.Context, *InnerPlayerDisconnectReq) (*InnerPlayerDisconnectResp, error)
 	CsFetchPlayerQueue(context.Context, *InnerCsFetchPlayerQueueReq) (*InnerCsFetchPlayerQueueResp, error)
 	CsConnectPlayer(context.Context, *InnerCsConnectPlayerReq) (*InnerCsConnectPlayerResp, error)
+	UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*UpdateUserStatusResp, error)
 	mustEmbedUnimplementedInnerServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedInnerServer) CsFetchPlayerQueue(context.Context, *InnerCsFetc
 }
 func (UnimplementedInnerServer) CsConnectPlayer(context.Context, *InnerCsConnectPlayerReq) (*InnerCsConnectPlayerResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsConnectPlayer not implemented")
+}
+func (UnimplementedInnerServer) UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*UpdateUserStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserStatus not implemented")
 }
 func (UnimplementedInnerServer) mustEmbedUnimplementedInnerServer() {}
 
@@ -184,6 +198,24 @@ func _Inner_CsConnectPlayer_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Inner_UpdateUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InnerServer).UpdateUserStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Inner/updateUserStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InnerServer).UpdateUserStatus(ctx, req.(*UpdateUserStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Inner_ServiceDesc is the grpc.ServiceDesc for Inner service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Inner_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "csConnectPlayer",
 			Handler:    _Inner_CsConnectPlayer_Handler,
+		},
+		{
+			MethodName: "updateUserStatus",
+			Handler:    _Inner_UpdateUserStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

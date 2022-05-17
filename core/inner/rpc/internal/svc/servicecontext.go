@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"ylink/comm/ds/treemap"
+	treemap "github.com/liyue201/gostl/ds/map"
 	"ylink/comm/kafka"
 	"ylink/comm/model"
 	"ylink/core/inner/rpc/internal/config"
@@ -27,7 +27,7 @@ func fetchCsCenterInfo() {
 }
 
 func mockInfo() {
-	ext.IdMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.Game2PlayerMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.CsMap = treemap.New(treemap.WithGoroutineSafe())
 
 	// 已连接的映射
@@ -40,8 +40,8 @@ func mockInfo() {
 	game1111P2cMap := treemap.New(treemap.WithGoroutineSafe())
 	game1111P2cMap.Insert("player1231", "cs_1111")
 
-	ext.IdMap.Insert("game1231", game1231P2cMap)
-	ext.IdMap.Insert("game1111", game1111P2cMap)
+	ext.Game2PlayerMap.Insert("game1231", game1231P2cMap)
+	ext.Game2PlayerMap.Insert("game1111", game1111P2cMap)
 
 	ext.CsMap.Insert("cs_1231", &model.CsInfo{
 		CsId:         "cs_1231",
