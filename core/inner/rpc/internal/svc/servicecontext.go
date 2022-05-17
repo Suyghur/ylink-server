@@ -1,26 +1,23 @@
 package svc
 
 import (
+	"ylink/comm/ds/treemap"
+	"ylink/comm/kafka"
+	"ylink/comm/model"
 	"ylink/core/inner/rpc/internal/config"
 	"ylink/core/inner/rpc/internal/ext"
-	"ylink/ext/ds/treemap"
-	"ylink/ext/kafka"
-	"ylink/ext/model"
 )
 
 type ServiceContext struct {
-	Config          config.Config
-	RecvBoxProducer *kafka.Producer
+	Config           config.Config
+	KqMsgBoxProducer *kafka.Producer
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	fetchCsCenterInfo()
-	recvBoxProducer := kafka.NewKafkaProducer(c.KqSendMsgConf.Brokers, c.KqSendMsgConf.Topic)
-	var sendBoxHandler ext.SendBoxConsumerHandler
-	sendBoxHandler.Init(c.KqRecvMsgConf, recvBoxProducer)
-	go sendBoxHandler.ConsumerGroup.RegisterHandleAndConsumer(&sendBoxHandler)
 	return &ServiceContext{
-		Config: c,
+		Config:           c,
+		KqMsgBoxProducer: kafka.NewKafkaProducer(c.KqMsgBoxProducerConf.Brokers, c.KqMsgBoxProducerConf.Topic),
 	}
 }
 
@@ -33,6 +30,9 @@ func mockInfo() {
 	ext.IdMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.CsMap = treemap.New(treemap.WithGoroutineSafe())
 
+	// 已连接的映射
+
+	// 专属客服映射
 	game1231P2cMap := treemap.New(treemap.WithGoroutineSafe())
 	game1231P2cMap.Insert("player1231", "cs_1231")
 	game1231P2cMap.Insert("player1111", "cs_2222")

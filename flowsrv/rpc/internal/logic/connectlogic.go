@@ -2,8 +2,9 @@ package logic
 
 import (
 	"context"
+	"ylink/comm/result"
 	"ylink/core/auth/rpc/auth"
-	"ylink/ext/result"
+	"ylink/flowsrv/rpc/internal/mgr"
 
 	"ylink/flowsrv/rpc/internal/svc"
 	"ylink/flowsrv/rpc/pb"
@@ -26,10 +27,10 @@ func NewConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConnectLo
 }
 
 func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServer) error {
-	_, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &auth.CheckAuthReq{
+	authResp, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &auth.CheckAuthReq{
+		Type:        in.Type,
 		AccessToken: in.AccessToken,
 	})
-	//data, _ := structpb.NewStruct(treemap[string]interface{}{})
 	if err != nil {
 		return stream.Send(&pb.CommandResp{
 			Code: result.TokenParseError,
@@ -37,6 +38,10 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 			Data: nil,
 		})
 	}
+	// update(对接的user的状态也返回)
+	//stream.RecvMsg()
+	mgr.GetFlowMgrInstance().SetFlow(authResp.Uid, stream)
+
 	return stream.Send(&pb.CommandResp{
 		Code: result.Ok,
 		Msg:  "success",

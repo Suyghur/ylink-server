@@ -2,11 +2,12 @@ package config
 
 import (
 	"github.com/zeromicro/go-zero/zrpc"
-	"ylink/ext/kafka"
+	"ylink/comm/kafka"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	KqRecvMsgConf kafka.KqConfig
-	KqSendMsgConf kafka.KqConfig
+	KqMsgBoxConsumerConf kafka.KqConsumerConfig
+	KqMsgBoxProducerConf kafka.KqProducerConfig
+	//KqDbBoxProducerConf  kafka.KqProducerConfig
 }

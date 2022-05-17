@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
-	"ylink/ext/result"
+	"ylink/comm/globalkey"
+	"ylink/comm/jwtkey"
+	"ylink/comm/result"
 
 	"ylink/core/auth/rpc/internal/svc"
 	"ylink/core/auth/rpc/pb"
@@ -32,7 +34,17 @@ func (l *CheckAuthLogic) CheckAuth(in *pb.CheckAuthReq) (*pb.CheckAuthResp, erro
 	})
 
 	if token.Valid {
-		return &pb.CheckAuthResp{}, nil
+		//将获取的token中的Claims强转为MapClaims
+		claims, _ := token.Claims.(jwt.MapClaims)
+		var uid string
+		if in.Type == globalkey.CONNECT_TYPE_PLAYER {
+			uid = claims[jwtkey.PlayerId].(string)
+		} else {
+			uid = claims[jwtkey.CsId].(string)
+		}
+		return &pb.CheckAuthResp{
+			Uid: uid,
+		}, nil
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
 		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 			return nil, errors.Wrap(result.NewErrCode(result.TokenParseError), "")

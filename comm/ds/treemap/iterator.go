@@ -5,8 +5,8 @@
 package treemap
 
 import (
-	"ylink/ext/ds/rbtree"
-	"ylink/ext/utils/iterator"
+	"ylink/comm/ds/rbtree"
+	"ylink/comm/utils/iterator"
 )
 
 type MapIterator struct {

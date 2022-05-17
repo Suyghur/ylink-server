@@ -7,15 +7,18 @@ Telemetry:
   Sampler: 1.0
   Batcher: jaeger
 
-KqRecvMsgConf:
+KqMsgBoxConsumerConf:
   Brokers:
     - localhost:9092
   Topic: send-box-topic
   GroupId: inner-rpc
 
-KqSendMsgConf:
+KqMsgBoxProducerConf:
   Brokers:
     - localhost:9092
   Topic: recv-box-topic
-  GroupId:
 
+KqDbBoxProducerConf:
+  Brokers:
+    - localhost:9092
+  Topic: db-box-topic

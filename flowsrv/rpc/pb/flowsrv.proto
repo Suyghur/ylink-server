@@ -6,13 +6,9 @@ package pb;
 
 import "google/protobuf/struct.proto";
 
-enum ConnectType{
-  PLAYER = 0;
-  CS = 1;
-}
 
 message CommandReq {
-  ConnectType type = 1;
+  int64 type = 1;
   string access_token = 2;
 }
 

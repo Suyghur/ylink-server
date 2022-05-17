@@ -6,8 +6,8 @@ package rbtree
 
 import (
 	"fmt"
-	"ylink/ext/utils/comparator"
-	"ylink/ext/utils/visitor"
+	"ylink/comm/utils/comparator"
+	"ylink/comm/utils/visitor"
 )
 
 var defaultKeyComparator = comparator.BuiltinTypeComparator

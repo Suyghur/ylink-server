@@ -4,7 +4,7 @@
 
 package rbtree
 
-import "ylink/ext/utils/iterator"
+import "ylink/comm/utils/iterator"
 
 type RbTreeIterator struct {
 	node *Node

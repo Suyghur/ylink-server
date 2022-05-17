@@ -4,10 +4,10 @@
 package treemap
 
 import (
-	"ylink/ext/ds/rbtree"
-	"ylink/ext/utils/comparator"
-	"ylink/ext/utils/sync"
-	"ylink/ext/utils/visitor"
+	"ylink/comm/ds/rbtree"
+	"ylink/comm/utils/comparator"
+	"ylink/comm/utils/sync"
+	"ylink/comm/utils/visitor"
 )
 
 // MultiMap uses RbTress for internal data structure, and keys can bee repeated.

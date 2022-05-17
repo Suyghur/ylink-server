@@ -12,13 +12,7 @@ Telemetry:
   Sampler: 1.0
   Batcher: jaeger
 
-KqSendMsgConf:
+KqMsgBoxProducerConf:
   Brokers:
     - localhost:9092
   Topic: send-box-topic
-  GroupId:
-
-Redis:
-  Host: redis:6379
-  Type: node
-  Pass: ylink

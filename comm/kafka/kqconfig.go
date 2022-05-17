@@ -4,7 +4,12 @@
 
 package kafka
 
-type KqConfig struct {
+type KqProducerConfig struct {
+	Brokers []string
+	Topic   string
+}
+
+type KqConsumerConfig struct {
 	Brokers []string
 	Topic   string
 	GroupId string

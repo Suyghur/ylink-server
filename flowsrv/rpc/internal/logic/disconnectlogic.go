@@ -2,8 +2,8 @@ package logic
 
 import (
 	"context"
+	"ylink/comm/result"
 	"ylink/core/auth/rpc/auth"
-	"ylink/ext/result"
 
 	"ylink/flowsrv/rpc/internal/svc"
 	"ylink/flowsrv/rpc/pb"
@@ -27,9 +27,9 @@ func NewDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Discon
 
 func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error) {
 	_, err := l.svcCtx.AuthRpc.CheckAuth(l.ctx, &auth.CheckAuthReq{
+		Type:        in.Type,
 		AccessToken: in.AccessToken,
 	})
-	//data, _ := structpb.NewStruct(treemap[string]interface{}{})
 	if err != nil {
 		return &pb.CommandResp{
 			Code: result.TokenParseError,
@@ -37,6 +37,9 @@ func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error)
 			Data: nil,
 		}, err
 	}
+
+	// TODO: notify inner service
+
 	return &pb.CommandResp{
 		Code: result.Ok,
 		Msg:  "success",

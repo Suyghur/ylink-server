@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/structpb"
+	"ylink/comm/result"
 	"ylink/core/inner/rpc/internal/svc"
 	"ylink/core/inner/rpc/pb"
-	"ylink/ext/result"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

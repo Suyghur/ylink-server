@@ -30,12 +30,12 @@ func NewConsumerGroup(c *ConsumerGroupConfig, addr, topics []string, groupId str
 	client, err := sarama.NewClient(addr, config)
 	if err != nil {
 		logx.WithContext(context.Background()).Error(err.Error())
-		return nil
+		panic(err.Error())
 	}
 	consumerGroup, err := sarama.NewConsumerGroupFromClient(groupId, client)
 	if err != nil {
 		logx.WithContext(context.Background()).Error(err.Error())
-		return nil
+		panic(err.Error())
 	}
 	return &ConsumerGroup{consumerGroup, groupId, topics}
 }
@@ -45,6 +45,7 @@ func (cg *ConsumerGroup) RegisterHandleAndConsumer(handler sarama.ConsumerGroupH
 	for {
 		if err := cg.ConsumerGroup.Consume(ctx, cg.topics, handler); err != nil {
 			logx.Error(err.Error())
+			panic(err.Error())
 		}
 	}
 }

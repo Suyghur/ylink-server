@@ -1,10 +1,10 @@
-Name: Authbff
+Name: authbff
 Host: 0.0.0.0
 Port: 10000
 
 AuthRpcConf:
   Endpoints:
-        - localhost:10400
+    - localhost:10400
   NonBlock: true
 
 #链路追踪

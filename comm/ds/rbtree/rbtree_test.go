@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"testing"
 	"time"
-	"ylink/ext/utils/comparator"
+	"ylink/comm/utils/comparator"
 )
 
 func TestRbTeeFind(t *testing.T) {

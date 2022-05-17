@@ -5,8 +5,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 	"time"
-	"ylink/ext/jwtkey"
-	"ylink/ext/result"
+	"ylink/comm/jwtkey"
+	"ylink/comm/result"
 
 	"ylink/core/auth/rpc/internal/svc"
 	"ylink/core/auth/rpc/pb"

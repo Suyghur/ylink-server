@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/structpb"
-	"ylink/ext/result"
+	"ylink/comm/result"
 
 	"ylink/core/cmd/rpc/internal/svc"
 	"ylink/core/cmd/rpc/pb"

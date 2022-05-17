@@ -6,11 +6,11 @@ package treemap
 
 import (
 	gosync "sync"
-	"ylink/ext/ds/rbtree"
-	"ylink/ext/utils/comparator"
-	"ylink/ext/utils/iterator"
-	"ylink/ext/utils/sync"
-	"ylink/ext/utils/visitor"
+	"ylink/comm/ds/rbtree"
+	"ylink/comm/utils/comparator"
+	"ylink/comm/utils/iterator"
+	"ylink/comm/utils/sync"
+	"ylink/comm/utils/visitor"
 )
 
 var (

@@ -18,10 +18,13 @@ message AuthResp{
 }
 
 message CheckAuthReq{
-  string  access_token = 1;
+  int64 type = 1;
+  string  access_token = 2;
 }
 
-message CheckAuthResp{}
+message CheckAuthResp{
+  string uid = 1;
+}
 
 service Auth{
   rpc playerAuth (PlayerAuthReq) returns (AuthResp);

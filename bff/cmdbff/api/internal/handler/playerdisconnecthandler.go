@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-	"ylink/ext/result"
+	"ylink/comm/result"
 
 	"ylink/bff/cmdbff/api/internal/logic"
 	"ylink/bff/cmdbff/api/internal/svc"

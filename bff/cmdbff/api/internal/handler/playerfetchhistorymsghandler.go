@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-	"ylink/ext/result"
+	"ylink/comm/result"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"ylink/bff/cmdbff/api/internal/logic"

@@ -5,7 +5,7 @@ import (
 	"ylink/bff/authbff/api/internal/logic"
 	"ylink/bff/authbff/api/internal/svc"
 	"ylink/bff/authbff/api/internal/types"
-	"ylink/ext/result"
+	"ylink/comm/result"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
