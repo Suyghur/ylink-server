@@ -17,9 +17,9 @@ COPY core/cmd/rpc/etc /app/etc
 RUN go build -ldflags="-s -w" -o /app/cmd core/cmd/rpc/cmd.go
 
 
-FROM alpine
+FROM scratch
 
-RUN apk update --no-cache && apk add --no-cache ca-certificates
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai
 ENV TZ Asia/Shanghai
 

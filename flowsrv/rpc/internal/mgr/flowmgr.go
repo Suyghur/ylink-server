@@ -34,3 +34,7 @@ func (manager *flowManager) SetFlow(uid string, flow pb.Flowsrv_ConnectServer) {
 func (manager *flowManager) GetFlow(uid string) pb.Flowsrv_ConnectServer {
 	return manager.flowMap[uid]
 }
+
+func (manager *flowManager) RemoveFlow(uid string) {
+	delete(manager.flowMap, uid)
+}

@@ -1,4 +1,4 @@
-Name: cmd.rpc
+Name: cmd.api
 ListenOn: 0.0.0.0:10300
 
 InnerRpcConf:
@@ -7,12 +7,12 @@ InnerRpcConf:
   NonBlock: true
 
 Telemetry:
-  Name: cmd-rpc
-  Endpoint: http://localhost:14268/api/traces
+  Name: cmd-api
+  Endpoint: http://127.0.0.1:9092/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
 KqMsgBoxProducerConf:
   Brokers:
-    - localhost:9092
+    - 127.0.0.1:9092
   Topic: send-box-topic

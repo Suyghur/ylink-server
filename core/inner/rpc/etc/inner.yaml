@@ -1,24 +1,24 @@
-Name: inner.rpc
+Name: inner.api
 ListenOn: 127.0.0.1:10500
 
 Telemetry:
-  Name: cmd-rpc
-  Endpoint: http://localhost:14268/api/traces
+  Name: cmd-api
+  Endpoint: http://127.0.0.1:9092/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
 KqMsgBoxConsumerConf:
   Brokers:
-    - localhost:9092
+    - 127.0.0.1:9092
   Topic: send-box-topic
-  GroupId: inner-rpc
+  GroupId: inner-api
 
 KqMsgBoxProducerConf:
   Brokers:
-    - localhost:9092
+    - 127.0.0.1:9092
   Topic: recv-box-topic
 
 KqDbBoxProducerConf:
   Brokers:
-    - localhost:9092
+    - 127.0.0.1:9092
   Topic: db-box-topic

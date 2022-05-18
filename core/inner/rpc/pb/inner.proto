@@ -53,7 +53,7 @@ message InnerCsConnectPlayerResp{}
 message UpdateUserStatusReq{
   int64 type = 1;
   string uid = 2;
-  optional string game_id = 3;
+  string game_id = 3;
 }
 
 message UpdateUserStatusResp{}

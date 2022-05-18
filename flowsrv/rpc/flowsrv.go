@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-
 	"ylink/flowsrv/rpc/internal/config"
 	"ylink/flowsrv/rpc/internal/server"
 	"ylink/flowsrv/rpc/internal/svc"
@@ -35,6 +34,6 @@ func main() {
 	})
 	defer s.Stop()
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+	fmt.Printf("Starting api server at %s...\n", c.ListenOn)
 	s.Start()
 }

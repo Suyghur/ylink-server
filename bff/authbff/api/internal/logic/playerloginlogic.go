@@ -2,10 +2,14 @@ package logic
 
 import (
 	"context"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
+	"time"
 	"ylink/bff/authbff/api/internal/svc"
 	"ylink/bff/authbff/api/internal/types"
-	"ylink/core/auth/rpc/auth"
+	"ylink/comm/jwtkey"
+	"ylink/comm/result"
 )
 
 type PlayerLoginLogic struct {
@@ -23,14 +27,35 @@ func NewPlayerLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Playe
 }
 
 func (l *PlayerLoginLogic) PlayerLogin(req *types.PlayerAuthReq) (resp *types.AuthResp, err error) {
-	authResp, err := l.svcCtx.AuthRpc.PlayerAuth(l.ctx, &auth.PlayerAuthReq{
-		PlayerId: req.PlayerId,
-		GameId:   req.GameId,
-	})
+	now := time.Now().Unix()
+	token, err := l.generatePlayerToken(now, req.PlayerId, req.GameId)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(result.NewErrCode(result.TokenGenerateError), "")
 	}
 	return &types.AuthResp{
-		AccessToken: authResp.AccessToken,
+		AccessToken: token,
 	}, nil
+}
+
+//
+//  generatePlayerToken
+//  @Description: 玩家token签发
+//  @receiver l
+//  @param iat
+//  @param playerId
+//  @param gameId
+//  @return string
+//  @return error
+//
+func (l *PlayerLoginLogic) generatePlayerToken(iat int64, playerId string, gameId string) (string, error) {
+	secret := l.svcCtx.Config.JwtAuth.AccessSecret
+	expire := l.svcCtx.Config.JwtAuth.AccessExpire
+	claims := make(jwt.MapClaims)
+	claims["iat"] = iat
+	claims["exp"] = iat + expire
+	claims[jwtkey.PlayerId] = playerId
+	claims[jwtkey.GameId] = gameId
+	token := jwt.New(jwt.SigningMethodHS256)
+	token.Claims = claims
+	return token.SignedString([]byte(secret))
 }

@@ -2,14 +2,13 @@ Name: authbff
 Host: 0.0.0.0
 Port: 10000
 
-AuthRpcConf:
-  Endpoints:
-    - localhost:10400
-  NonBlock: true
-
 #链路追踪
 Telemetry:
   Name: authbff-api
-  Endpoint: http://localhost:14268/api/traces
+  Endpoint: http://127.0.0.1:9092/api/traces
   Sampler: 1.0
   Batcher: jaeger
+
+JwtAuth:
+  AccessSecret: ylink2022
+  AccessExpire: 604800

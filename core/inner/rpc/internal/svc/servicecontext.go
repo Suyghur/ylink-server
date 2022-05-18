@@ -2,6 +2,7 @@ package svc
 
 import (
 	treemap "github.com/liyue201/gostl/ds/map"
+	"github.com/liyue201/gostl/ds/set"
 	"ylink/comm/kafka"
 	"ylink/comm/model"
 	"ylink/core/inner/rpc/internal/config"
@@ -15,6 +16,8 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	fetchCsCenterInfo()
+	ext.Game2PlayerStatMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.CsStatSet = set.New(set.WithGoroutineSafe())
 	return &ServiceContext{
 		Config:           c,
 		KqMsgBoxProducer: kafka.NewKafkaProducer(c.KqMsgBoxProducerConf.Brokers, c.KqMsgBoxProducerConf.Topic),

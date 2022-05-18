@@ -7,6 +7,10 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	AuthRpcConf          zrpc.RpcClientConf
+	InnerRpcConf         zrpc.RpcClientConf
 	KqMsgBoxConsumerConf kafka.KqConsumerConfig
+	JwtAuth              struct {
+		AccessSecret string
+		AccessExpire int64
+	}
 }
