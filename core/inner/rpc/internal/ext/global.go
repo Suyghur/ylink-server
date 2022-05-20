@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	Game2PlayerMap     *treemap.Map
-	CsMap              *treemap.Map
-	Game2PlayerStatMap *treemap.Map
-	WaitingQueue       *simplelist.List
+	GameVipMap           *treemap.Map
+	CsInfoMap            *treemap.Map
+	Game2PlayerStatusMap *treemap.Map
+	GameConnMap          *treemap.Map
+	WaitingQueue         *simplelist.List
 )

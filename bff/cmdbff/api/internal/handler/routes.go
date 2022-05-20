@@ -29,11 +29,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/player/disconnect",
-				Handler: playerDisconnectHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
 				Path:    "/cs/fetch-player-queue",
 				Handler: csFetchPlayerQueueHandler(serverCtx),
 			},

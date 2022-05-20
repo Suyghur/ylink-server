@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	treemap "github.com/liyue201/gostl/ds/map"
+	"ylink/core/inner/rpc/internal/ext"
 	"ylink/core/inner/rpc/internal/svc"
 	"ylink/core/inner/rpc/pb"
 
@@ -23,7 +25,14 @@ func NewCsConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 }
 
 func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (*pb.InnerCsConnectPlayerResp, error) {
-	// todo: 建立玩家-客服的映射关系
+	if ext.GameConnMap.Contains(in.GameId) {
+		playerConnMap := ext.GameConnMap.Get(in.GameId).(*treemap.Map)
+		playerConnMap.Insert(in.PlayerId, in.CsId)
+	} else {
+		playerConnMap := treemap.New(treemap.WithGoroutineSafe())
+		playerConnMap.Insert(in.PlayerId, in.CsId)
+		ext.GameConnMap.Insert(in.GameId, playerConnMap)
+	}
 
 	return &pb.InnerCsConnectPlayerResp{}, nil
 }

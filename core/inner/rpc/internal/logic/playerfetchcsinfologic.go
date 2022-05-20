@@ -2,6 +2,11 @@ package logic
 
 import (
 	"context"
+	treemap "github.com/liyue201/gostl/ds/map"
+	"github.com/pkg/errors"
+	"ylink/comm/model"
+	"ylink/comm/result"
+	"ylink/core/inner/rpc/internal/ext"
 	"ylink/core/inner/rpc/internal/svc"
 	"ylink/core/inner/rpc/pb"
 
@@ -23,13 +28,19 @@ func NewPlayerFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(in *pb.InnerPlayerFetchCsInfoReq) (*pb.InnerPlayerFetchCsInfoResp, error) {
-	// todo: 修改玩家在线状态
-
-	return &pb.InnerPlayerFetchCsInfoResp{
-		CsId:         in.CsId,
-		CsNickname:   "vip客服1231",
-		CsAvatarUrl:  "https://www.baiduc.om",
-		CsSignature:  "服务时间：9:30-20:30",
-		OnlineStatus: 1,
-	}, nil
+	if ext.GameConnMap.Contains(in.GameId) {
+		playerConnMap := ext.GameConnMap.Get(in.GameId).(*treemap.Map)
+		csId := playerConnMap.Get(in.PlayerId).(string)
+		if ext.CsInfoMap.Contains(csId) {
+			csInfo := ext.CsInfoMap.Get(csId).(model.CsInfo)
+			return &pb.InnerPlayerFetchCsInfoResp{
+				CsId:         csInfo.CsId,
+				CsNickname:   csInfo.CsNickname,
+				CsAvatarUrl:  csInfo.CsAvatarUrl,
+				CsSignature:  csInfo.CsSignature,
+				OnlineStatus: csInfo.OnlineStatus,
+			}, nil
+		}
+	}
+	return nil, errors.Wrap(result.NewErrMsg("Customer service information does not exist"), "")
 }

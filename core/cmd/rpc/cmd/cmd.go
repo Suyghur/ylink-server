@@ -23,8 +23,6 @@ type (
 	CsFetchPlayerQueueResp    = pb.CsFetchPlayerQueueResp
 	CsSendMsgReq              = pb.CsSendMsgReq
 	CsSendMsgResp             = pb.CsSendMsgResp
-	PlayerDisconnectReq       = pb.PlayerDisconnectReq
-	PlayerDisconnectResp      = pb.PlayerDisconnectResp
 	PlayerFetchCsInfoReq      = pb.PlayerFetchCsInfoReq
 	PlayerFetchCsInfoResp     = pb.PlayerFetchCsInfoResp
 	PlayerFetchHistoryMsgReq  = pb.PlayerFetchHistoryMsgReq
@@ -36,7 +34,6 @@ type (
 		PlayerFetchCsInfo(ctx context.Context, in *PlayerFetchCsInfoReq, opts ...grpc.CallOption) (*PlayerFetchCsInfoResp, error)
 		PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHistoryMsgReq, opts ...grpc.CallOption) (*PlayerFetchHistoryMsgResp, error)
 		PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*PlayerSendMsgResp, error)
-		PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*PlayerDisconnectResp, error)
 		CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQueueReq, opts ...grpc.CallOption) (*CsFetchPlayerQueueResp, error)
 		CsConnectPlayer(ctx context.Context, in *CsConnectPlayerReq, opts ...grpc.CallOption) (*CsConnectPlayerResp, error)
 		CsFetchHistoryChat(ctx context.Context, in *CsFetchHistoryChatReq, opts ...grpc.CallOption) (*CsFetchHistoryChatResp, error)
@@ -68,11 +65,6 @@ func (m *defaultCmd) PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchH
 func (m *defaultCmd) PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*PlayerSendMsgResp, error) {
 	client := pb.NewCmdClient(m.cli.Conn())
 	return client.PlayerSendMsg(ctx, in, opts...)
-}
-
-func (m *defaultCmd) PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*PlayerDisconnectResp, error) {
-	client := pb.NewCmdClient(m.cli.Conn())
-	return client.PlayerDisconnect(ctx, in, opts...)
 }
 
 func (m *defaultCmd) CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQueueReq, opts ...grpc.CallOption) (*CsFetchPlayerQueueResp, error) {

@@ -35,21 +35,21 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 	switch in.Type {
 	case globalkey.CONNECT_TYPE_PLAYER:
 		// 修改玩家在线状态
-		if ext.Game2PlayerStatMap.Contains(in.GameId) {
+		if ext.Game2PlayerStatusMap.Contains(in.GameId) {
 			// 有则取出玩家的set
-			playerStatSet := ext.Game2PlayerStatMap.Get(in.GameId).(*set.Set)
+			playerStatSet := ext.Game2PlayerStatusMap.Get(in.GameId).(*set.Set)
 			if !playerStatSet.Contains(in.Uid) {
 				playerStatSet.Insert(in.Uid)
 			}
 		} else {
 			playerStatSet := set.New()
 			playerStatSet.Insert(in.Uid)
-			ext.Game2PlayerStatMap.Insert(in.GameId, playerStatSet)
+			ext.Game2PlayerStatusMap.Insert(in.GameId, playerStatSet)
 		}
 
 		// 判断是否有专属客服，没有则放入等待队列
-		if ext.Game2PlayerMap.Contains(in.GameId) {
-			p2cMap := ext.Game2PlayerMap.Get(in.GameId).(*treemap.Map)
+		if ext.GameVipMap.Contains(in.GameId) {
+			p2cMap := ext.GameVipMap.Get(in.GameId).(*treemap.Map)
 			if !p2cMap.Contains(in.Uid) {
 				ext.WaitingQueue.PushBack(&model.PlayerWaitingInfo{
 					PlayerId:    in.Uid,
@@ -67,7 +67,7 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 		l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue.String())
 	case globalkey.CONNECT_TYPE_CS:
 		// 修改客服在线状态
-		csInfo := ext.CsMap.Get(in.Uid).(*model.CsInfo)
+		csInfo := ext.CsInfoMap.Get(in.Uid).(*model.CsInfo)
 		csInfo.OnlineStatus = 1
 	default:
 		return nil, errors.Wrap(result.NewErrMsg("no such user type"), "")

@@ -28,10 +28,6 @@ service cmdbff {
 	@handler playerSendMsg
 	post /player/send-msg (PlayerSendMsgReq)
 	
-	@doc "玩家断开连接客服"
-	@handler playerDisconnect
-	post /player/disconnect
-	
 	@doc "客服获取玩家等待队列"
 	@handler csFetchPlayerQueue
 	post /cs/fetch-player-queue (CsFetchPlayerQueueReq) returns (CsFetchPlayerQueueResp)

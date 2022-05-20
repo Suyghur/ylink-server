@@ -72,7 +72,7 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 		trace.StartTrace(ctx, "InnerServer.handleMessage.SendMessage", func(ctx context.Context) {
 			if len(message.ReceiverId) == 0 || message.ReceiverId == "" {
 				// 玩家发的消息
-				p2cMap := ext.Game2PlayerMap.Get(message.GameId).(*treemap.Map)
+				p2cMap := ext.GameVipMap.Get(message.GameId).(*treemap.Map)
 				message.ReceiverId = p2cMap.Get(message.SenderId).(string)
 				logx.WithContext(ctx).Infof("receiver: %s", message.ReceiverId)
 				kMsg, _ := json.Marshal(message)
@@ -91,7 +91,8 @@ func (s *ServiceContext) subscribe() {
 
 func fetchCsCenterInfo() {
 	// mock info
-	ext.Game2PlayerStatMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.Game2PlayerStatusMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.GameConnMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.WaitingQueue = simplelist.New()
 	mockInfo()
 }
@@ -101,22 +102,22 @@ func loadGameList() {
 }
 
 func loadCsInfo() {
-	ext.CsMap = treemap.New(treemap.WithGoroutineSafe())
-	ext.CsMap.Insert("cs_1231", &model.CsInfo{
+	ext.CsInfoMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.CsInfoMap.Insert("cs_1231", &model.CsInfo{
 		CsId:         "cs_1231",
 		CsNickname:   "客服1231",
 		CsAvatarUrl:  "https://www.baidu.com",
 		CsSignature:  "我是客服1231",
 		OnlineStatus: 0,
 	})
-	ext.CsMap.Insert("cs_1111", &model.CsInfo{
+	ext.CsInfoMap.Insert("cs_1111", &model.CsInfo{
 		CsId:         "cs_1111",
 		CsNickname:   "客服1111",
 		CsAvatarUrl:  "https://www.baidu.com",
 		CsSignature:  "我是客服1111",
 		OnlineStatus: 0,
 	})
-	ext.CsMap.Insert("cs_2222", &model.CsInfo{
+	ext.CsInfoMap.Insert("cs_2222", &model.CsInfo{
 		CsId:         "cs_2222",
 		CsNickname:   "客服2222",
 		CsAvatarUrl:  "https://www.baidu.com",
@@ -126,8 +127,8 @@ func loadCsInfo() {
 }
 
 func mockInfo() {
-	ext.Game2PlayerMap = treemap.New(treemap.WithGoroutineSafe())
-	ext.CsMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.GameVipMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.CsInfoMap = treemap.New(treemap.WithGoroutineSafe())
 
 	// 已连接的映射
 
@@ -139,24 +140,24 @@ func mockInfo() {
 	game1111P2cMap := treemap.New(treemap.WithGoroutineSafe())
 	game1111P2cMap.Insert("player1231", "cs_1111")
 
-	ext.Game2PlayerMap.Insert("game1231", game1231P2cMap)
-	ext.Game2PlayerMap.Insert("game1111", game1111P2cMap)
+	ext.GameVipMap.Insert("game1231", game1231P2cMap)
+	ext.GameVipMap.Insert("game1111", game1111P2cMap)
 
-	ext.CsMap.Insert("cs_1231", &model.CsInfo{
+	ext.CsInfoMap.Insert("cs_1231", &model.CsInfo{
 		CsId:         "cs_1231",
 		CsNickname:   "客服1231",
 		CsAvatarUrl:  "https://www.baidu.com",
 		CsSignature:  "我是客服1231",
 		OnlineStatus: 0,
 	})
-	ext.CsMap.Insert("cs_1111", &model.CsInfo{
+	ext.CsInfoMap.Insert("cs_1111", &model.CsInfo{
 		CsId:         "cs_1111",
 		CsNickname:   "客服1111",
 		CsAvatarUrl:  "https://www.baidu.com",
 		CsSignature:  "我是客服1111",
 		OnlineStatus: 0,
 	})
-	ext.CsMap.Insert("cs_2222", &model.CsInfo{
+	ext.CsInfoMap.Insert("cs_2222", &model.CsInfo{
 		CsId:         "cs_2222",
 		CsNickname:   "客服2222",
 		CsAvatarUrl:  "https://www.baidu.com",

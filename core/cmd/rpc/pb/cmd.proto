@@ -45,13 +45,6 @@ message PlayerSendMsgReq{
 
 message PlayerSendMsgResp{}
 
-message PlayerDisconnectReq{
-  string player_id = 1;
-  string game_id = 2;
-}
-
-message PlayerDisconnectResp{}
-
 /**
 Cs Command Request Bean
  */
@@ -113,7 +106,6 @@ service Cmd {
   rpc playerFetchCsInfo (PlayerFetchCsInfoReq) returns (PlayerFetchCsInfoResp);
   rpc playerFetchHistoryMsg (PlayerFetchHistoryMsgReq) returns (PlayerFetchHistoryMsgResp);
   rpc playerSendMsg (PlayerSendMsgReq) returns (PlayerSendMsgResp);
-  rpc playerDisconnect (PlayerDisconnectReq) returns (PlayerDisconnectResp);
 
   rpc csFetchPlayerQueue (CsFetchPlayerQueueReq) returns (CsFetchPlayerQueueResp);
   rpc csConnectPlayer (CsConnectPlayerReq) returns (CsConnectPlayerResp);

@@ -25,7 +25,6 @@ type CmdClient interface {
 	PlayerFetchCsInfo(ctx context.Context, in *PlayerFetchCsInfoReq, opts ...grpc.CallOption) (*PlayerFetchCsInfoResp, error)
 	PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHistoryMsgReq, opts ...grpc.CallOption) (*PlayerFetchHistoryMsgResp, error)
 	PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*PlayerSendMsgResp, error)
-	PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*PlayerDisconnectResp, error)
 	CsFetchPlayerQueue(ctx context.Context, in *CsFetchPlayerQueueReq, opts ...grpc.CallOption) (*CsFetchPlayerQueueResp, error)
 	CsConnectPlayer(ctx context.Context, in *CsConnectPlayerReq, opts ...grpc.CallOption) (*CsConnectPlayerResp, error)
 	CsFetchHistoryChat(ctx context.Context, in *CsFetchHistoryChatReq, opts ...grpc.CallOption) (*CsFetchHistoryChatResp, error)
@@ -62,15 +61,6 @@ func (c *cmdClient) PlayerFetchHistoryMsg(ctx context.Context, in *PlayerFetchHi
 func (c *cmdClient) PlayerSendMsg(ctx context.Context, in *PlayerSendMsgReq, opts ...grpc.CallOption) (*PlayerSendMsgResp, error) {
 	out := new(PlayerSendMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.Cmd/playerSendMsg", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *cmdClient) PlayerDisconnect(ctx context.Context, in *PlayerDisconnectReq, opts ...grpc.CallOption) (*PlayerDisconnectResp, error) {
-	out := new(PlayerDisconnectResp)
-	err := c.cc.Invoke(ctx, "/pb.Cmd/playerDisconnect", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +119,6 @@ type CmdServer interface {
 	PlayerFetchCsInfo(context.Context, *PlayerFetchCsInfoReq) (*PlayerFetchCsInfoResp, error)
 	PlayerFetchHistoryMsg(context.Context, *PlayerFetchHistoryMsgReq) (*PlayerFetchHistoryMsgResp, error)
 	PlayerSendMsg(context.Context, *PlayerSendMsgReq) (*PlayerSendMsgResp, error)
-	PlayerDisconnect(context.Context, *PlayerDisconnectReq) (*PlayerDisconnectResp, error)
 	CsFetchPlayerQueue(context.Context, *CsFetchPlayerQueueReq) (*CsFetchPlayerQueueResp, error)
 	CsConnectPlayer(context.Context, *CsConnectPlayerReq) (*CsConnectPlayerResp, error)
 	CsFetchHistoryChat(context.Context, *CsFetchHistoryChatReq) (*CsFetchHistoryChatResp, error)
@@ -150,9 +139,6 @@ func (UnimplementedCmdServer) PlayerFetchHistoryMsg(context.Context, *PlayerFetc
 }
 func (UnimplementedCmdServer) PlayerSendMsg(context.Context, *PlayerSendMsgReq) (*PlayerSendMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerSendMsg not implemented")
-}
-func (UnimplementedCmdServer) PlayerDisconnect(context.Context, *PlayerDisconnectReq) (*PlayerDisconnectResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PlayerDisconnect not implemented")
 }
 func (UnimplementedCmdServer) CsFetchPlayerQueue(context.Context, *CsFetchPlayerQueueReq) (*CsFetchPlayerQueueResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsFetchPlayerQueue not implemented")
@@ -232,24 +218,6 @@ func _Cmd_PlayerSendMsg_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CmdServer).PlayerSendMsg(ctx, req.(*PlayerSendMsgReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Cmd_PlayerDisconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PlayerDisconnectReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CmdServer).PlayerDisconnect(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Cmd/playerDisconnect",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CmdServer).PlayerDisconnect(ctx, req.(*PlayerDisconnectReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -362,10 +330,6 @@ var Cmd_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "playerSendMsg",
 			Handler:    _Cmd_PlayerSendMsg_Handler,
-		},
-		{
-			MethodName: "playerDisconnect",
-			Handler:    _Cmd_PlayerDisconnect_Handler,
 		},
 		{
 			MethodName: "csFetchPlayerQueue",

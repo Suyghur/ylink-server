@@ -33,9 +33,9 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 	switch in.Type {
 	case globalkey.CONNECT_TYPE_PLAYER:
 		// 修改玩家在线状态
-		if ext.Game2PlayerStatMap.Contains(in.GameId) {
+		if ext.Game2PlayerStatusMap.Contains(in.GameId) {
 			// 有则取出玩家的set
-			playerStatSet := ext.Game2PlayerStatMap.Get(in.GameId).(*set.Set)
+			playerStatSet := ext.Game2PlayerStatusMap.Get(in.GameId).(*set.Set)
 			if playerStatSet.Contains(in.Uid) {
 				// 有则清除，代表下线
 				playerStatSet.Erase(in.Uid)
@@ -50,11 +50,9 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 				break
 			}
 		}
-		l.Logger.Infof("waiting queue size: %d", ext.WaitingQueue.Len())
-		l.Logger.Infof("waiting queue: %s", ext.WaitingQueue.String())
 	case globalkey.CONNECT_TYPE_CS:
 		// 修改客服在线状态
-		csInfo := ext.CsMap.Get(in.Uid).(*model.CsInfo)
+		csInfo := ext.CsInfoMap.Get(in.Uid).(*model.CsInfo)
 		csInfo.OnlineStatus = 0
 	default:
 		return nil, errors.Wrap(result.NewErrMsg("no such user type"), "")
