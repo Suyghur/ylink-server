@@ -23,13 +23,6 @@ message InnerPlayerFetchCsInfoResp{
   int64 online_status = 5;
 }
 
-message InnerPlayerDisconnectReq{
-  string player_id = 1;
-  string game_id = 2;
-}
-
-message InnerPlayerDisconnectResp{}
-
 /**
 Cs Command Request Bean
  */
@@ -50,20 +43,22 @@ message InnerCsConnectPlayerReq{
 
 message InnerCsConnectPlayerResp{}
 
-message UpdateUserStatusReq{
+
+message NotifyUserStatusReq{
   int64 type = 1;
   string uid = 2;
   string game_id = 3;
 }
 
-message UpdateUserStatusResp{}
+message NotifyUserStatusResp{}
 
 service Inner {
   rpc playerFetchCsInfo (InnerPlayerFetchCsInfoReq) returns (InnerPlayerFetchCsInfoResp);
-  rpc playerDisconnect (InnerPlayerDisconnectReq) returns (InnerPlayerDisconnectResp);
 
   rpc csFetchPlayerQueue (InnerCsFetchPlayerQueueReq) returns (InnerCsFetchPlayerQueueResp);
   rpc csConnectPlayer (InnerCsConnectPlayerReq) returns (InnerCsConnectPlayerResp);
 
-  rpc updateUserStatus (UpdateUserStatusReq) returns (UpdateUserStatusResp);
+  rpc notifyUserOnline (NotifyUserStatusReq) returns (NotifyUserStatusResp);
+  rpc notifyUserOffline (NotifyUserStatusReq) returns (NotifyUserStatusResp);
+
 }

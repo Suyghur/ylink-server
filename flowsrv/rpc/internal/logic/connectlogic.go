@@ -39,7 +39,7 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 			Data: nil,
 		})
 	}
-	_, err = l.svcCtx.InnerRpc.UpdateUserStatus(l.ctx, &inner.UpdateUserStatusReq{
+	_, err = l.svcCtx.InnerRpc.NotifyUserOnline(l.ctx, &inner.NotifyUserStatusReq{
 		Type:   in.Type,
 		Uid:    uid,
 		GameId: gameId,

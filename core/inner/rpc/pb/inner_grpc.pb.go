@@ -23,10 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InnerClient interface {
 	PlayerFetchCsInfo(ctx context.Context, in *InnerPlayerFetchCsInfoReq, opts ...grpc.CallOption) (*InnerPlayerFetchCsInfoResp, error)
-	PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error)
 	CsFetchPlayerQueue(ctx context.Context, in *InnerCsFetchPlayerQueueReq, opts ...grpc.CallOption) (*InnerCsFetchPlayerQueueResp, error)
 	CsConnectPlayer(ctx context.Context, in *InnerCsConnectPlayerReq, opts ...grpc.CallOption) (*InnerCsConnectPlayerResp, error)
-	UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error)
+	NotifyUserOnline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error)
+	NotifyUserOffline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error)
 }
 
 type innerClient struct {
@@ -40,15 +40,6 @@ func NewInnerClient(cc grpc.ClientConnInterface) InnerClient {
 func (c *innerClient) PlayerFetchCsInfo(ctx context.Context, in *InnerPlayerFetchCsInfoReq, opts ...grpc.CallOption) (*InnerPlayerFetchCsInfoResp, error) {
 	out := new(InnerPlayerFetchCsInfoResp)
 	err := c.cc.Invoke(ctx, "/pb.Inner/playerFetchCsInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *innerClient) PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error) {
-	out := new(InnerPlayerDisconnectResp)
-	err := c.cc.Invoke(ctx, "/pb.Inner/playerDisconnect", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,9 +64,18 @@ func (c *innerClient) CsConnectPlayer(ctx context.Context, in *InnerCsConnectPla
 	return out, nil
 }
 
-func (c *innerClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error) {
-	out := new(UpdateUserStatusResp)
-	err := c.cc.Invoke(ctx, "/pb.Inner/updateUserStatus", in, out, opts...)
+func (c *innerClient) NotifyUserOnline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error) {
+	out := new(NotifyUserStatusResp)
+	err := c.cc.Invoke(ctx, "/pb.Inner/notifyUserOnline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *innerClient) NotifyUserOffline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error) {
+	out := new(NotifyUserStatusResp)
+	err := c.cc.Invoke(ctx, "/pb.Inner/notifyUserOffline", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +87,10 @@ func (c *innerClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatus
 // for forward compatibility
 type InnerServer interface {
 	PlayerFetchCsInfo(context.Context, *InnerPlayerFetchCsInfoReq) (*InnerPlayerFetchCsInfoResp, error)
-	PlayerDisconnect(context.Context, *InnerPlayerDisconnectReq) (*InnerPlayerDisconnectResp, error)
 	CsFetchPlayerQueue(context.Context, *InnerCsFetchPlayerQueueReq) (*InnerCsFetchPlayerQueueResp, error)
 	CsConnectPlayer(context.Context, *InnerCsConnectPlayerReq) (*InnerCsConnectPlayerResp, error)
-	UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*UpdateUserStatusResp, error)
+	NotifyUserOnline(context.Context, *NotifyUserStatusReq) (*NotifyUserStatusResp, error)
+	NotifyUserOffline(context.Context, *NotifyUserStatusReq) (*NotifyUserStatusResp, error)
 	mustEmbedUnimplementedInnerServer()
 }
 
@@ -101,17 +101,17 @@ type UnimplementedInnerServer struct {
 func (UnimplementedInnerServer) PlayerFetchCsInfo(context.Context, *InnerPlayerFetchCsInfoReq) (*InnerPlayerFetchCsInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerFetchCsInfo not implemented")
 }
-func (UnimplementedInnerServer) PlayerDisconnect(context.Context, *InnerPlayerDisconnectReq) (*InnerPlayerDisconnectResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PlayerDisconnect not implemented")
-}
 func (UnimplementedInnerServer) CsFetchPlayerQueue(context.Context, *InnerCsFetchPlayerQueueReq) (*InnerCsFetchPlayerQueueResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsFetchPlayerQueue not implemented")
 }
 func (UnimplementedInnerServer) CsConnectPlayer(context.Context, *InnerCsConnectPlayerReq) (*InnerCsConnectPlayerResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsConnectPlayer not implemented")
 }
-func (UnimplementedInnerServer) UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*UpdateUserStatusResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserStatus not implemented")
+func (UnimplementedInnerServer) NotifyUserOnline(context.Context, *NotifyUserStatusReq) (*NotifyUserStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NotifyUserOnline not implemented")
+}
+func (UnimplementedInnerServer) NotifyUserOffline(context.Context, *NotifyUserStatusReq) (*NotifyUserStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NotifyUserOffline not implemented")
 }
 func (UnimplementedInnerServer) mustEmbedUnimplementedInnerServer() {}
 
@@ -140,24 +140,6 @@ func _Inner_PlayerFetchCsInfo_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(InnerServer).PlayerFetchCsInfo(ctx, req.(*InnerPlayerFetchCsInfoReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Inner_PlayerDisconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InnerPlayerDisconnectReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InnerServer).PlayerDisconnect(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Inner/playerDisconnect",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InnerServer).PlayerDisconnect(ctx, req.(*InnerPlayerDisconnectReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -198,20 +180,38 @@ func _Inner_CsConnectPlayer_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Inner_UpdateUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserStatusReq)
+func _Inner_NotifyUserOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NotifyUserStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InnerServer).UpdateUserStatus(ctx, in)
+		return srv.(InnerServer).NotifyUserOnline(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Inner/updateUserStatus",
+		FullMethod: "/pb.Inner/notifyUserOnline",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InnerServer).UpdateUserStatus(ctx, req.(*UpdateUserStatusReq))
+		return srv.(InnerServer).NotifyUserOnline(ctx, req.(*NotifyUserStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Inner_NotifyUserOffline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NotifyUserStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InnerServer).NotifyUserOffline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Inner/notifyUserOffline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InnerServer).NotifyUserOffline(ctx, req.(*NotifyUserStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -228,10 +228,6 @@ var Inner_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Inner_PlayerFetchCsInfo_Handler,
 		},
 		{
-			MethodName: "playerDisconnect",
-			Handler:    _Inner_PlayerDisconnect_Handler,
-		},
-		{
 			MethodName: "csFetchPlayerQueue",
 			Handler:    _Inner_CsFetchPlayerQueue_Handler,
 		},
@@ -240,8 +236,12 @@ var Inner_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Inner_CsConnectPlayer_Handler,
 		},
 		{
-			MethodName: "updateUserStatus",
-			Handler:    _Inner_UpdateUserStatus_Handler,
+			MethodName: "notifyUserOnline",
+			Handler:    _Inner_NotifyUserOnline_Handler,
+		},
+		{
+			MethodName: "notifyUserOffline",
+			Handler:    _Inner_NotifyUserOffline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

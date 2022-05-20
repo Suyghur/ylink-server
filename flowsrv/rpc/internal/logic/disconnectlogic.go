@@ -39,7 +39,7 @@ func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error)
 			Data: nil,
 		}, err
 	}
-	_, err = l.svcCtx.InnerRpc.UpdateUserStatus(l.ctx, &inner.UpdateUserStatusReq{
+	_, err = l.svcCtx.InnerRpc.NotifyUserOffline(l.ctx, &inner.NotifyUserStatusReq{
 		Type:   in.Type,
 		Uid:    uid,
 		GameId: gameId,
@@ -53,7 +53,7 @@ func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error)
 	}
 
 	mgr.GetFlowMgrInstance().RemoveFlow(uid)
-	
+
 	return &pb.CommandResp{
 		Code: result.Ok,
 		Msg:  "success",

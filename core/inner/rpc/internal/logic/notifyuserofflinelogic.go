@@ -5,6 +5,7 @@ import (
 	"github.com/liyue201/gostl/ds/set"
 	"github.com/pkg/errors"
 	"ylink/comm/globalkey"
+	"ylink/comm/model"
 	"ylink/comm/result"
 	"ylink/core/inner/rpc/internal/ext"
 
@@ -14,21 +15,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type UpdateUserStatusLogic struct {
+type NotifyUserOfflineLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewUpdateUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateUserStatusLogic {
-	return &UpdateUserStatusLogic{
+func NewNotifyUserOfflineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *NotifyUserOfflineLogic {
+	return &NotifyUserOfflineLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *UpdateUserStatusLogic) UpdateUserStatus(in *pb.UpdateUserStatusReq) (*pb.UpdateUserStatusResp, error) {
+func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (*pb.NotifyUserStatusResp, error) {
 	switch in.Type {
 	case globalkey.CONNECT_TYPE_PLAYER:
 		// 修改玩家在线状态
@@ -38,24 +39,25 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(in *pb.UpdateUserStatusReq) (*p
 			if playerStatSet.Contains(in.Uid) {
 				// 有则清除，代表下线
 				playerStatSet.Erase(in.Uid)
-			} else {
-				playerStatSet.Insert(in.Uid)
 			}
-		} else {
-			playerStatSet := set.New()
-			playerStatSet.Insert(in.Uid)
-			ext.Game2PlayerStatMap.Insert(in.GameId, playerStatSet)
 		}
+
+		for n := ext.WaitingQueue.FrontNode(); n != nil; n = n.Next() {
+			info := n.Value.(*model.PlayerWaitingInfo)
+			if info.GameId == in.GameId && info.PlayerId == in.Uid {
+				l.Logger.Infof("remove the player from the queue, game_id: %s, player_id: %s", in.GameId, in.Uid)
+				ext.WaitingQueue.Remove(nil, n)
+				break
+			}
+		}
+		l.Logger.Infof("waiting queue size: %d", ext.WaitingQueue.Len())
+		l.Logger.Infof("waiting queue: %s", ext.WaitingQueue.String())
 	case globalkey.CONNECT_TYPE_CS:
 		// 修改客服在线状态
-		if ext.CsStatSet.Contains(in.Uid) {
-			// 有则清除，代表下线
-			ext.CsStatSet.Erase(in.Uid)
-		} else {
-			ext.CsStatSet.Insert(in.Uid)
-		}
+		csInfo := ext.CsMap.Get(in.Uid).(*model.CsInfo)
+		csInfo.OnlineStatus = 0
 	default:
 		return nil, errors.Wrap(result.NewErrMsg("no such user type"), "")
 	}
-	return &pb.UpdateUserStatusResp{}, nil
+	return &pb.NotifyUserStatusResp{}, nil
 }

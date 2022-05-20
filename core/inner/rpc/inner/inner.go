@@ -17,19 +17,17 @@ type (
 	InnerCsConnectPlayerResp    = pb.InnerCsConnectPlayerResp
 	InnerCsFetchPlayerQueueReq  = pb.InnerCsFetchPlayerQueueReq
 	InnerCsFetchPlayerQueueResp = pb.InnerCsFetchPlayerQueueResp
-	InnerPlayerDisconnectReq    = pb.InnerPlayerDisconnectReq
-	InnerPlayerDisconnectResp   = pb.InnerPlayerDisconnectResp
 	InnerPlayerFetchCsInfoReq   = pb.InnerPlayerFetchCsInfoReq
 	InnerPlayerFetchCsInfoResp  = pb.InnerPlayerFetchCsInfoResp
-	UpdateUserStatusReq         = pb.UpdateUserStatusReq
-	UpdateUserStatusResp        = pb.UpdateUserStatusResp
+	NotifyUserStatusReq         = pb.NotifyUserStatusReq
+	NotifyUserStatusResp        = pb.NotifyUserStatusResp
 
 	Inner interface {
 		PlayerFetchCsInfo(ctx context.Context, in *InnerPlayerFetchCsInfoReq, opts ...grpc.CallOption) (*InnerPlayerFetchCsInfoResp, error)
-		PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error)
 		CsFetchPlayerQueue(ctx context.Context, in *InnerCsFetchPlayerQueueReq, opts ...grpc.CallOption) (*InnerCsFetchPlayerQueueResp, error)
 		CsConnectPlayer(ctx context.Context, in *InnerCsConnectPlayerReq, opts ...grpc.CallOption) (*InnerCsConnectPlayerResp, error)
-		UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error)
+		NotifyUserOnline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error)
+		NotifyUserOffline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error)
 	}
 
 	defaultInner struct {
@@ -48,11 +46,6 @@ func (m *defaultInner) PlayerFetchCsInfo(ctx context.Context, in *InnerPlayerFet
 	return client.PlayerFetchCsInfo(ctx, in, opts...)
 }
 
-func (m *defaultInner) PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error) {
-	client := pb.NewInnerClient(m.cli.Conn())
-	return client.PlayerDisconnect(ctx, in, opts...)
-}
-
 func (m *defaultInner) CsFetchPlayerQueue(ctx context.Context, in *InnerCsFetchPlayerQueueReq, opts ...grpc.CallOption) (*InnerCsFetchPlayerQueueResp, error) {
 	client := pb.NewInnerClient(m.cli.Conn())
 	return client.CsFetchPlayerQueue(ctx, in, opts...)
@@ -63,7 +56,12 @@ func (m *defaultInner) CsConnectPlayer(ctx context.Context, in *InnerCsConnectPl
 	return client.CsConnectPlayer(ctx, in, opts...)
 }
 
-func (m *defaultInner) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*UpdateUserStatusResp, error) {
+func (m *defaultInner) NotifyUserOnline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error) {
 	client := pb.NewInnerClient(m.cli.Conn())
-	return client.UpdateUserStatus(ctx, in, opts...)
+	return client.NotifyUserOnline(ctx, in, opts...)
+}
+
+func (m *defaultInner) NotifyUserOffline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error) {
+	client := pb.NewInnerClient(m.cli.Conn())
+	return client.NotifyUserOffline(ctx, in, opts...)
 }

@@ -4,7 +4,10 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/structpb"
+	"time"
+	"ylink/comm/model"
 	"ylink/comm/result"
+	"ylink/core/inner/rpc/internal/ext"
 	"ylink/core/inner/rpc/internal/svc"
 	"ylink/core/inner/rpc/pb"
 
@@ -26,20 +29,32 @@ func NewCsFetchPlayerQueueLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQueueReq) (*pb.InnerCsFetchPlayerQueueResp, error) {
-	// todo: 查询等待用户的队列
+	queueLen := int64(ext.WaitingQueue.Len())
+	if queueLen == 0 {
+		// 等待队列为空直接返回
+		return &pb.InnerCsFetchPlayerQueueResp{
+			List: nil,
+		}, nil
+	}
 
-	list, err := structpb.NewList([]interface{}{
-		map[string]interface{}{
-			"player_id": "player1111",
-			"game_id":   "game1231",
-			"wait_time": 1000,
-		},
-		map[string]interface{}{
-			"player_id": "player2222",
-			"game_id":   "game1231",
-			"wait_time": 10,
-		},
-	})
+	var index int64 = 0
+	if in.Limit != 0 && in.Limit < queueLen {
+		queueLen = in.Limit
+	}
+
+	queue := make([]interface{}, queueLen)
+
+	for node := ext.WaitingQueue.FrontNode(); node != nil && index < queueLen; node = node.Next() {
+		info := node.Value.(*model.PlayerWaitingInfo)
+		queue[index] = map[string]interface{}{
+			"player_id": info.PlayerId,
+			"game_id":   info.GameId,
+			"wait_time": time.Now().Unix() - info.EnqueueTime,
+		}
+		index += 1
+	}
+
+	list, err := structpb.NewList(queue)
 	if err != nil {
 		return nil, errors.Wrap(result.NewErrMsg("fetch player wait queue error"), "")
 	}

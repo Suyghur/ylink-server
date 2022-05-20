@@ -21,8 +21,6 @@ type Producer struct {
 }
 
 func NewKafkaProducer(addr []string, topic string) *Producer {
-	logx.Infof("brokers: %v", addr)
-	logx.Infof("topic: %s", topic)
 	p := Producer{}
 	p.config = sarama.NewConfig()
 	// Whether to enable the successes channel to be notified after the message is sent successfully
@@ -47,6 +45,7 @@ func NewKafkaProducer(addr []string, topic string) *Producer {
 }
 
 func (p *Producer) SendMessage(ctx context.Context, m string, key ...string) (partition int32, offset int64, err error) {
+	logx.WithContext(ctx).Infof("send msg to kafka, msg: %s", m)
 	traceId := ctxdata.GetTraceIdFromCtx(ctx)
 	msg := &sarama.ProducerMessage{}
 	msg.Headers = []sarama.RecordHeader{{
