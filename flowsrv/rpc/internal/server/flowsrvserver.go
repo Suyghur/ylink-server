@@ -5,7 +5,7 @@ package server
 
 import (
 	"context"
-	"ylink/comm/kafka"
+
 	"ylink/flowsrv/rpc/internal/logic"
 	"ylink/flowsrv/rpc/internal/svc"
 	"ylink/flowsrv/rpc/pb"
@@ -14,14 +14,12 @@ import (
 type FlowsrvServer struct {
 	svcCtx *svc.ServiceContext
 	pb.UnimplementedFlowsrvServer
-	ConsumerGroup *kafka.ConsumerGroup
 }
 
 func NewFlowsrvServer(svcCtx *svc.ServiceContext) *FlowsrvServer {
 	return &FlowsrvServer{
 		svcCtx: svcCtx,
 	}
-
 }
 
 func (s *FlowsrvServer) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServer) error {

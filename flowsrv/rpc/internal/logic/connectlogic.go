@@ -9,7 +9,7 @@ import (
 	"ylink/comm/result"
 	"ylink/core/inner/rpc/inner"
 	"ylink/flowsrv/rpc/internal/mgr"
-
+	"ylink/flowsrv/rpc/internal/model"
 	"ylink/flowsrv/rpc/internal/svc"
 	"ylink/flowsrv/rpc/pb"
 
@@ -52,13 +52,59 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 		})
 	}
 
-	mgr.GetFlowMgrInstance().SetFlow(uid, stream)
+	flow := &model.Flow{
+		EndFlow: make(chan int),
+		Message: make(chan string),
+		Stream:  stream,
+		Ctx:     l.ctx,
+		SvcCtx:  l.svcCtx,
+		Logger:  l.Logger,
+		User: &model.User{
+			Type:   in.Type,
+			Uid:    uid,
+			GameId: gameId,
+		},
+	}
+	defer func() {
+		close(flow.EndFlow)
+		flow = nil
+	}()
 
-	return stream.Send(&pb.CommandResp{
-		Code: result.Ok,
-		Msg:  "success",
-		Data: nil,
-	})
+	mgr.GetFlowMgrInstance().Register(flow)
+
+	//go func() {
+	//	for {
+	//		select {
+	//		case <-stream.Context().Done():
+	//			if mgr.GetFlowMgrInstance().Has(uid) {
+	//				l.Logger.Infof("flowstream was disconnected abnormally")
+	//				mgr.GetFlowMgrInstance().UnRegister(uid)
+	//				_, err = l.svcCtx.InnerRpc.NotifyUserOffline(l.ctx, &inner.NotifyUserStatusReq{
+	//					Type:   in.Type,
+	//					Uid:    uid,
+	//					GameId: gameId,
+	//				})
+	//			}
+	//			flow.EndFlow <- 1
+	//			return
+	//		case msg, open := <-flow.Message:
+	//			if open {
+	//				stream.Send(&pb.CommandResp{
+	//					Code: result.Ok,
+	//					Msg:  "success",
+	//					Data: []byte(msg),
+	//				})
+	//			} else {
+	//				l.Logger.Error("message channel is close")
+	//				return
+	//			}
+	//		}
+	//	}
+	//}()
+
+	<-flow.EndFlow
+	l.Logger.Infof("end flow")
+	return nil
 }
 
 func (l *ConnectLogic) checkAuth(in *pb.CommandReq) (string, string, error) {

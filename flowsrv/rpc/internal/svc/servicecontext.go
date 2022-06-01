@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Shopify/sarama"
+	"github.com/go-redis/redis/v8"
 	"github.com/zeromicro/go-zero/core/logx"
 	gozerotrace "github.com/zeromicro/go-zero/core/trace"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -24,12 +25,22 @@ type ServiceContext struct {
 	Config        config.Config
 	InnerRpc      inner.Inner
 	ConsumerGroup *kafka.ConsumerGroup
+	RedisClient   *redis.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	svcCtx := &ServiceContext{
 		Config:   c,
 		InnerRpc: inner.NewInner(zrpc.MustNewClient(c.InnerRpcConf)),
+
+		RedisClient: redis.NewClient(&redis.Options{
+			Addr:     c.Redis.Host,
+			Password: c.Redis.Pass,
+		}),
+		//RedisClient: redis.New(c.Redis.Host, func(r *redis.Redis) {
+		//	r.Type = c.Redis.Type
+		//	r.Pass = c.Redis.Pass
+		//}),
 		ConsumerGroup: kafka.NewConsumerGroup(&kafka.ConsumerGroupConfig{
 			KafkaVersion:   sarama.V1_0_0_0,
 			OffsetsInitial: sarama.OffsetNewest,
@@ -83,19 +94,16 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 			return
 		}
 		trace.StartTrace(ctx, "FlowsrvServer.handleMessage.PushMessage", func(ctx context.Context) {
-			//if len(message.ReceiverId) == 0 || message.ReceiverId == "" {
-			//	// 玩家发的消息
-			//	p2cMap := ext.IdMap.Get(message.GameId).(*treemap.Map)
-			//	message.ReceiverId = p2cMap.Get(message.SenderId).(string)
-			//	logx.Infof("receiver: %s", message.ReceiverId)
-			//	b, _ := json.Marshal(message)
-			//	s.svcCtx.KqMsgBoxProducer.SendMessage(ctx, string(b), message.ReceiverId)
-			//} else {
-			//	s.svcCtx.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), message.ReceiverId)
+			// 投递到receiver_id对应的redis队列暂存
+			intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
+			if size, err := intCmd.Result(); err != nil {
+				logx.WithContext(ctx).Errorf("push message rmq err %v", err)
+			} else {
+				logx.WithContext(ctx).Infof("current rmq size: %d", size)
+			}
+			//if _, err := s.RedisClient.(message.ReceiverId, string(msg.Value)); err != nil {
+			//	logx.WithContext(ctx).Errorf("push message err %v", err)
 			//}
-			logx.WithContext(ctx).Infof("headers: %v", msg.Headers)
-			logx.WithContext(ctx).Infof("traceId: %s", msg.Headers[0].Value)
-			logx.WithContext(ctx).Infof("flowsrv recv message: %v", string(msg.Value))
 			sess.MarkMessage(msg, "")
 		}, attribute.String("msg.key", string(msg.Key)))
 	})

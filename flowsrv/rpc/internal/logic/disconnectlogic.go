@@ -9,7 +9,6 @@ import (
 	"ylink/comm/result"
 	"ylink/core/inner/rpc/inner"
 	"ylink/flowsrv/rpc/internal/mgr"
-
 	"ylink/flowsrv/rpc/internal/svc"
 	"ylink/flowsrv/rpc/pb"
 
@@ -52,7 +51,7 @@ func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error)
 		}, err
 	}
 
-	mgr.GetFlowMgrInstance().RemoveFlow(uid)
+	mgr.GetFlowMgrInstance().UnRegister(uid)
 
 	return &pb.CommandResp{
 		Code: result.Ok,

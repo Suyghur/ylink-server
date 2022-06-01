@@ -15,7 +15,7 @@ message CommandReq {
 message CommandResp {
   int64 code = 1;
   string  msg = 2;
-  google.protobuf.Struct data = 3;
+  bytes data = 3;
 }
 
 service Flowsrv {

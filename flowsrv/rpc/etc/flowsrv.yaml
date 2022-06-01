@@ -23,6 +23,11 @@ KqMsgBoxConsumerConf:
   Topic: recv-box-topic
   GroupId: flowsrv-api
 
+Redis:
+  Host: 127.0.0.1:6379
+  Type: node
+  Pass: ylink
+
 JwtAuth:
   AccessSecret: ylink2022
   AccessExpire: 604800

@@ -71,12 +71,44 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 		logx.WithContext(ctx).Infof("handle message: %s", msg.Value)
 		trace.StartTrace(ctx, "InnerServer.handleMessage.SendMessage", func(ctx context.Context) {
 			if len(message.ReceiverId) == 0 || message.ReceiverId == "" {
-				// 玩家发的消息
-				p2cMap := ext.GameVipMap.Get(message.GameId).(*treemap.Map)
-				message.ReceiverId = p2cMap.Get(message.SenderId).(string)
-				logx.WithContext(ctx).Infof("receiver: %s", message.ReceiverId)
-				kMsg, _ := json.Marshal(message)
-				s.KqMsgBoxProducer.SendMessage(ctx, string(kMsg), message.ReceiverId)
+				// 玩家发的消息，先从connMap找对应的客服，没有则从vipMap找，都没有则丢弃信息不投递
+				if ext.GameConnMap.Contains(message.GameId) {
+					// 先从connMap找对应的客服映射
+					if playerConnMap := ext.GameConnMap.Get(message.GameId).(*treemap.Map); playerConnMap.Contains(message.SenderId) {
+						message.ReceiverId = playerConnMap.Get(message.SenderId).(string)
+					} else {
+						if ext.GameVipMap.Contains(message.GameId) {
+							// 从vipMap里面找
+							if playerVipMap := ext.GameVipMap.Get(message.GameId).(*treemap.Map); playerVipMap.Contains(message.SenderId) {
+								message.ReceiverId = playerVipMap.Get(message.SenderId).(string)
+							} else {
+								message.ReceiverId = ""
+							}
+						} else {
+							message.ReceiverId = ""
+						}
+					}
+				} else {
+					if ext.GameVipMap.Contains(message.GameId) {
+						// 从vipMap里面找
+						if playerVipMap := ext.GameVipMap.Get(message.GameId).(*treemap.Map); playerVipMap.Contains(message.SenderId) {
+							message.ReceiverId = playerVipMap.Get(message.SenderId).(string)
+						} else {
+							message.ReceiverId = ""
+						}
+					} else {
+						message.ReceiverId = ""
+					}
+				}
+
+				// 经过填补后receiver_id还是空的则有异常，丢弃信息不投递
+				if len(message.ReceiverId) != 0 && message.ReceiverId != "" {
+					logx.WithContext(ctx).Infof("receiver: %s", message.ReceiverId)
+					kMsg, _ := json.Marshal(message)
+					s.KqMsgBoxProducer.SendMessage(ctx, string(kMsg), message.ReceiverId)
+				} else {
+					logx.WithContext(ctx).Errorf("can not find receiver of the sender")
+				}
 			} else {
 				s.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), message.ReceiverId)
 			}
@@ -93,39 +125,10 @@ func fetchCsCenterInfo() {
 	// mock info
 	ext.Game2PlayerStatusMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.GameConnMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.CsInfoMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.WaitingQueue = simplelist.New()
 	mockInfo()
 }
-
-func loadGameList() {
-
-}
-
-func loadCsInfo() {
-	ext.CsInfoMap = treemap.New(treemap.WithGoroutineSafe())
-	ext.CsInfoMap.Insert("cs_1231", &model.CsInfo{
-		CsId:         "cs_1231",
-		CsNickname:   "客服1231",
-		CsAvatarUrl:  "https://www.baidu.com",
-		CsSignature:  "我是客服1231",
-		OnlineStatus: 0,
-	})
-	ext.CsInfoMap.Insert("cs_1111", &model.CsInfo{
-		CsId:         "cs_1111",
-		CsNickname:   "客服1111",
-		CsAvatarUrl:  "https://www.baidu.com",
-		CsSignature:  "我是客服1111",
-		OnlineStatus: 0,
-	})
-	ext.CsInfoMap.Insert("cs_2222", &model.CsInfo{
-		CsId:         "cs_2222",
-		CsNickname:   "客服2222",
-		CsAvatarUrl:  "https://www.baidu.com",
-		CsSignature:  "我是客服2222",
-		OnlineStatus: 0,
-	})
-}
-
 func mockInfo() {
 	ext.GameVipMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.CsInfoMap = treemap.New(treemap.WithGoroutineSafe())
@@ -134,14 +137,14 @@ func mockInfo() {
 
 	// 专属客服映射
 	game1231P2cMap := treemap.New(treemap.WithGoroutineSafe())
-	game1231P2cMap.Insert("player1231", "cs_1231")
-	game1231P2cMap.Insert("player1111", "cs_2222")
+	game1231P2cMap.Insert("player_1231", "cs_1231")
+	game1231P2cMap.Insert("player_1111", "cs_2222")
 
 	game1111P2cMap := treemap.New(treemap.WithGoroutineSafe())
-	game1111P2cMap.Insert("player1231", "cs_1111")
+	game1111P2cMap.Insert("player_1231", "cs_1111")
 
-	ext.GameVipMap.Insert("game1231", game1231P2cMap)
-	ext.GameVipMap.Insert("game1111", game1111P2cMap)
+	ext.GameVipMap.Insert("game_1231", game1231P2cMap)
+	ext.GameVipMap.Insert("game_1111", game1111P2cMap)
 
 	ext.CsInfoMap.Insert("cs_1231", &model.CsInfo{
 		CsId:         "cs_1231",
