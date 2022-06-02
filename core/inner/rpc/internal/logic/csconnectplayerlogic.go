@@ -25,13 +25,13 @@ func NewCsConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 }
 
 func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (*pb.InnerCsConnectPlayerResp, error) {
-	if ext.GameConnMap.Contains(in.GameId) {
-		playerConnMap := ext.GameConnMap.Get(in.GameId).(*treemap.Map)
+	if ext.GameConnectedMap.Contains(in.GameId) {
+		playerConnMap := ext.GameConnectedMap.Get(in.GameId).(*treemap.Map)
 		playerConnMap.Insert(in.PlayerId, in.CsId)
 	} else {
 		playerConnMap := treemap.New(treemap.WithGoroutineSafe())
 		playerConnMap.Insert(in.PlayerId, in.CsId)
-		ext.GameConnMap.Insert(in.GameId, playerConnMap)
+		ext.GameConnectedMap.Insert(in.GameId, playerConnMap)
 	}
 
 	return &pb.InnerCsConnectPlayerResp{}, nil

@@ -28,8 +28,8 @@ func NewPlayerFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(in *pb.InnerPlayerFetchCsInfoReq) (*pb.InnerPlayerFetchCsInfoResp, error) {
-	if ext.GameConnMap.Contains(in.GameId) {
-		playerConnMap := ext.GameConnMap.Get(in.GameId).(*treemap.Map)
+	if ext.GameConnectedMap.Contains(in.GameId) {
+		playerConnMap := ext.GameConnectedMap.Get(in.GameId).(*treemap.Map)
 		csId := playerConnMap.Get(in.PlayerId).(string)
 		if ext.CsInfoMap.Contains(csId) {
 			csInfo := ext.CsInfoMap.Get(csId).(model.CsInfo)

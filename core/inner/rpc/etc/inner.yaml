@@ -22,3 +22,10 @@ KqDbBoxProducerConf:
   Brokers:
     - 127.0.0.1:9092
   Topic: db-box-topic
+
+KqCmdBoxProducerConf:
+  Brokers:
+    - 127.0.0.1:9092
+  Topic: cmd-box-topic
+
+MockFolder: /Users/suyghur/Develop/yyxx/backend/ylink/core/inner/rpc/mock

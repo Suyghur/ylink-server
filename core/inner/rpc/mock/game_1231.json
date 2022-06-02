@@ -1,0 +1,16 @@
+[
+  {
+    "player_id": "player_1231",
+    "game_id": "game_1231",
+    "is_vip": 1,
+    "cs_id": "cs_1231",
+    "last_chat_ts": 1654155384
+  },
+  {
+    "player_id": "player_2222",
+    "game_id": "game_1231",
+    "is_vip": 1,
+    "cs_id": "cs_1231",
+    "last_chat_ts": 1654155384
+  }
+]

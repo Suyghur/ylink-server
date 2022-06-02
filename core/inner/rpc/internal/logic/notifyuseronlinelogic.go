@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	treemap "github.com/liyue201/gostl/ds/map"
-	"github.com/liyue201/gostl/ds/set"
 	"github.com/pkg/errors"
 	"time"
 	"ylink/comm/globalkey"
@@ -35,40 +34,61 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 	switch in.Type {
 	case globalkey.CONNECT_TYPE_PLAYER:
 		// 修改玩家在线状态
-		if ext.Game2PlayerStatusMap.Contains(in.GameId) {
-			// 有则取出玩家的set
-			playerStatSet := ext.Game2PlayerStatusMap.Get(in.GameId).(*set.Set)
-			if !playerStatSet.Contains(in.Uid) {
-				playerStatSet.Insert(in.Uid)
+		if ext.GameOnlinePlayerMap.Contains(in.GameId) {
+			// 有则取出玩家的map
+			onlinePlayerMap := ext.GameOnlinePlayerMap.Get(in.GameId).(*treemap.Map)
+			if onlinePlayerMap.Contains(in.Uid) {
+				l.Logger.Error("such player has been connected")
+			} else {
+				// 不存在换这个玩家，判断是否vip
+				if playerInfo := ext.GetVipPlayer(in.GameId, in.Uid); playerInfo != nil {
+					playerInfo.ConnectTs = time.Now().Unix()
+					onlinePlayerMap.Insert(in.Uid, playerInfo)
+				} else {
+					// 不是vip
+					onlinePlayerMap.Insert(in.Uid, &model.PlayerInfo{
+						PlayerId:  in.Uid,
+						GameId:    in.GameId,
+						ConnectTs: time.Now().Unix(),
+					})
+					// 放入等待队列
+					ext.WaitingQueue.PushBack(&model.PlayerWaitingInfo{
+						PlayerId:    in.Uid,
+						GameId:      in.GameId,
+						EnqueueTime: time.Now().Unix(),
+					})
+					l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue.String())
+				}
 			}
 		} else {
-			playerStatSet := set.New()
-			playerStatSet.Insert(in.Uid)
-			ext.Game2PlayerStatusMap.Insert(in.GameId, playerStatSet)
-		}
-
-		// 判断是否有专属客服，没有则放入等待队列
-		if ext.GameVipMap.Contains(in.GameId) {
-			p2cMap := ext.GameVipMap.Get(in.GameId).(*treemap.Map)
-			if !p2cMap.Contains(in.Uid) {
+			onlinePlayerMap := treemap.New(treemap.WithGoroutineSafe())
+			// 判断是不是vip玩家
+			if playerInfo := ext.GetVipPlayer(in.GameId, in.Uid); playerInfo != nil {
+				playerInfo.ConnectTs = time.Now().Unix()
+				onlinePlayerMap.Insert(in.Uid, playerInfo)
+			} else {
+				// 不是vip
+				onlinePlayerMap.Insert(in.Uid, &model.PlayerInfo{
+					PlayerId:  in.Uid,
+					GameId:    in.GameId,
+					ConnectTs: time.Now().Unix(),
+				})
+				// 放入等待队列
 				ext.WaitingQueue.PushBack(&model.PlayerWaitingInfo{
 					PlayerId:    in.Uid,
 					GameId:      in.GameId,
 					EnqueueTime: time.Now().Unix(),
 				})
+				l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue.String())
 			}
-		} else {
-			ext.WaitingQueue.PushBack(&model.PlayerWaitingInfo{
-				PlayerId:    in.Uid,
-				GameId:      in.GameId,
-				EnqueueTime: time.Now().Unix(),
-			})
+			ext.GameOnlinePlayerMap.Insert(in.GameId, onlinePlayerMap)
 		}
-		l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue.String())
 	case globalkey.CONNECT_TYPE_CS:
-		// 修改客服在线状态
-		csInfo := ext.CsInfoMap.Get(in.Uid).(*model.CsInfo)
-		csInfo.OnlineStatus = 1
+		if csInfo := ext.GetCsInfo(in.Uid); csInfo != nil {
+			csInfo.OnlineStatus = 1
+		} else {
+			return nil, errors.Wrap(result.NewErrMsg("no such user"), "")
+		}
 	default:
 		return nil, errors.Wrap(result.NewErrMsg("no such user type"), "")
 	}

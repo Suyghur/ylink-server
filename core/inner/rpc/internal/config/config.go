@@ -9,5 +9,8 @@ type Config struct {
 	zrpc.RpcServerConf
 	KqMsgBoxConsumerConf kafka.KqConsumerConfig
 	KqMsgBoxProducerConf kafka.KqProducerConfig
+	KqCmdBoxProducerConf kafka.KqProducerConfig
 	//KqDbBoxProducerConf  kafka.KqProducerConfig
+
+	MockFolder string
 }

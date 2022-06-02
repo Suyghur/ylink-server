@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Shopify/sarama"
+	"github.com/bytedance/sonic"
 	"github.com/liyue201/gostl/ds/list/simplelist"
 	treemap "github.com/liyue201/gostl/ds/map"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/attribute"
+	"io/ioutil"
 	"ylink/comm/kafka"
 	"ylink/comm/model"
 	"ylink/comm/trace"
@@ -18,14 +20,15 @@ import (
 type ServiceContext struct {
 	Config           config.Config
 	KqMsgBoxProducer *kafka.Producer
+	KqCmdBoxProducer *kafka.Producer
 	ConsumerGroup    *kafka.ConsumerGroup
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	fetchCsCenterInfo()
 	svcCtx := &ServiceContext{
 		Config:           c,
 		KqMsgBoxProducer: kafka.NewKafkaProducer(c.KqMsgBoxProducerConf.Brokers, c.KqMsgBoxProducerConf.Topic),
+		KqCmdBoxProducer: kafka.NewKafkaProducer(c.KqCmdBoxProducerConf.Brokers, c.KqCmdBoxProducerConf.Topic),
 		ConsumerGroup: kafka.NewConsumerGroup(&kafka.ConsumerGroupConfig{
 			KafkaVersion:   sarama.V1_0_0_0,
 			OffsetsInitial: sarama.OffsetNewest,
@@ -36,7 +39,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			c.KqMsgBoxConsumerConf.GroupId),
 	}
 	go svcCtx.subscribe()
-	go fetchCsCenterInfo()
+	fetchCsCenterInfo(c)
 	return svcCtx
 }
 
@@ -72,9 +75,9 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 		trace.StartTrace(ctx, "InnerServer.handleMessage.SendMessage", func(ctx context.Context) {
 			if len(message.ReceiverId) == 0 || message.ReceiverId == "" {
 				// 玩家发的消息，先从connMap找对应的客服，没有则从vipMap找，都没有则丢弃信息不投递
-				if ext.GameConnMap.Contains(message.GameId) {
+				if ext.GameConnectedMap.Contains(message.GameId) {
 					// 先从connMap找对应的客服映射
-					if playerConnMap := ext.GameConnMap.Get(message.GameId).(*treemap.Map); playerConnMap.Contains(message.SenderId) {
+					if playerConnMap := ext.GameConnectedMap.Get(message.GameId).(*treemap.Map); playerConnMap.Contains(message.SenderId) {
 						message.ReceiverId = playerConnMap.Get(message.SenderId).(string)
 					} else {
 						if ext.GameVipMap.Contains(message.GameId) {
@@ -121,50 +124,51 @@ func (s *ServiceContext) subscribe() {
 	go s.ConsumerGroup.RegisterHandleAndConsumer(s)
 }
 
-func fetchCsCenterInfo() {
+func fetchCsCenterInfo(c config.Config) {
 	// mock info
-	ext.Game2PlayerStatusMap = treemap.New(treemap.WithGoroutineSafe())
-	ext.GameConnMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.CsInfoMap = treemap.New(treemap.WithGoroutineSafe())
-	ext.WaitingQueue = simplelist.New()
-	mockInfo()
-}
-func mockInfo() {
 	ext.GameVipMap = treemap.New(treemap.WithGoroutineSafe())
-	ext.CsInfoMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.GameOnlinePlayerMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.GameConnectedMap = treemap.New(treemap.WithGoroutineSafe())
+	ext.WaitingQueue = simplelist.New()
+	go loadMockInfo(c)
+}
+func loadMockInfo(c config.Config) {
+	// 加载游戏列表
+	logx.Info("加载游戏列表")
+	var gameIds []string
+	gameIdsData, err := ioutil.ReadFile(c.MockFolder + "/game_id.json")
+	if err != nil {
+		logx.Errorf("parse game_id.json has some error: %v", err)
+		return
+	}
+	if err := sonic.Unmarshal(gameIdsData, &gameIds); err != nil {
+		return
+	}
 
-	// 已连接的映射
+	// 加载vip玩家信息
+	logx.Info("加载vip玩家信息")
+	for _, gameId := range gameIds {
+		vipPlayerMap := treemap.New(treemap.WithGoroutineSafe())
+		var playerInfos []*model.PlayerInfo
+		playerInfosData, _ := ioutil.ReadFile(c.MockFolder + "/" + gameId + ".json")
+		if err := sonic.Unmarshal(playerInfosData, &playerInfos); err != nil {
+			return
+		}
+		for _, playerInfo := range playerInfos {
+			vipPlayerMap.Insert(playerInfo.PlayerId, playerInfo)
+		}
+		ext.GameVipMap.Insert(gameId, vipPlayerMap)
+	}
 
-	// 专属客服映射
-	game1231P2cMap := treemap.New(treemap.WithGoroutineSafe())
-	game1231P2cMap.Insert("player_1231", "cs_1231")
-	game1231P2cMap.Insert("player_1111", "cs_2222")
-
-	game1111P2cMap := treemap.New(treemap.WithGoroutineSafe())
-	game1111P2cMap.Insert("player_1231", "cs_1111")
-
-	ext.GameVipMap.Insert("game_1231", game1231P2cMap)
-	ext.GameVipMap.Insert("game_1111", game1111P2cMap)
-
-	ext.CsInfoMap.Insert("cs_1231", &model.CsInfo{
-		CsId:         "cs_1231",
-		CsNickname:   "客服1231",
-		CsAvatarUrl:  "https://www.baidu.com",
-		CsSignature:  "我是客服1231",
-		OnlineStatus: 0,
-	})
-	ext.CsInfoMap.Insert("cs_1111", &model.CsInfo{
-		CsId:         "cs_1111",
-		CsNickname:   "客服1111",
-		CsAvatarUrl:  "https://www.baidu.com",
-		CsSignature:  "我是客服1111",
-		OnlineStatus: 0,
-	})
-	ext.CsInfoMap.Insert("cs_2222", &model.CsInfo{
-		CsId:         "cs_2222",
-		CsNickname:   "客服2222",
-		CsAvatarUrl:  "https://www.baidu.com",
-		CsSignature:  "我是客服2222",
-		OnlineStatus: 0,
-	})
+	// 加载客服信息
+	logx.Info("加载客服信息")
+	var csInfos []*model.CsInfo
+	csInfosData, err := ioutil.ReadFile(c.MockFolder + "/cs_info.json")
+	if err := sonic.Unmarshal(csInfosData, &csInfos); err != nil {
+		return
+	}
+	for _, csInfo := range csInfos {
+		ext.CsInfoMap.Insert(csInfo.CsId, csInfo)
+	}
 }

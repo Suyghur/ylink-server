@@ -1,0 +1,20 @@
+[
+  {
+    "cs_id": "cs_1231",
+    "cs_name": "客服_1231",
+    "cs_avatar_url": "https://www.baidu.com",
+    "cs_signature": "我是客服1231"
+  },
+  {
+    "cs_id": "cs_1111",
+    "cs_name": "客服_1111",
+    "cs_avatar_url": "https://www.baidu.com",
+    "cs_signature": "我是客服1111"
+  },
+  {
+    "cs_id": "cs_2222",
+    "cs_name": "客服_2222",
+    "cs_avatar_url": "https://www.baidu.com",
+    "cs_signature": "我是客服2222"
+  }
+]

@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-	"github.com/liyue201/gostl/ds/set"
+	treemap "github.com/liyue201/gostl/ds/map"
 	"github.com/pkg/errors"
 	"ylink/comm/globalkey"
 	"ylink/comm/model"
@@ -33,12 +33,12 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 	switch in.Type {
 	case globalkey.CONNECT_TYPE_PLAYER:
 		// 修改玩家在线状态
-		if ext.Game2PlayerStatusMap.Contains(in.GameId) {
+		if ext.GameOnlinePlayerMap.Contains(in.GameId) {
 			// 有则取出玩家的set
-			playerStatSet := ext.Game2PlayerStatusMap.Get(in.GameId).(*set.Set)
-			if playerStatSet.Contains(in.Uid) {
+			onlinePlayerMap := ext.GameOnlinePlayerMap.Get(in.GameId).(*treemap.Map)
+			if onlinePlayerMap.Contains(in.Uid) {
 				// 有则清除，代表下线
-				playerStatSet.Erase(in.Uid)
+				onlinePlayerMap.Erase(in.Uid)
 			}
 		}
 
@@ -52,8 +52,11 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 		}
 	case globalkey.CONNECT_TYPE_CS:
 		// 修改客服在线状态
-		csInfo := ext.CsInfoMap.Get(in.Uid).(*model.CsInfo)
-		csInfo.OnlineStatus = 0
+		if csInfo := ext.GetCsInfo(in.Uid); csInfo != nil {
+			csInfo.OnlineStatus = 0
+		} else {
+			return nil, errors.Wrap(result.NewErrMsg("no such user"), "")
+		}
 	default:
 		return nil, errors.Wrap(result.NewErrMsg("no such user type"), "")
 	}
