@@ -4,6 +4,10 @@
 
 package model
 
+const (
+	CMD_CHAT_TIMEOUT = 2001
+)
+
 type KqMessage struct {
 	CreateTime string `json:"create_time"`
 	Content    string `json:"content"`
@@ -11,10 +15,11 @@ type KqMessage struct {
 	ReceiverId string `json:"receiver_id"`
 	SenderId   string `json:"sender_id"`
 	GameId     string `json:"game_id"`
+	Uid        string `json:"uid"`
 	Ext        string `json:"ext"`
 }
 
 type KqCmdMessage struct {
-	Opt int64  `json:"opt"`
-	Ext string `json:"ext"`
+	Opt int64       `json:"opt"`
+	Ext interface{} `json:"ext"`
 }

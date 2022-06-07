@@ -2,8 +2,8 @@ package svc
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/Shopify/sarama"
+	"github.com/bytedance/sonic"
 	"github.com/go-redis/redis/v8"
 	"github.com/zeromicro/go-zero/core/logx"
 	gozerotrace "github.com/zeromicro/go-zero/core/trace"
@@ -22,26 +22,22 @@ import (
 )
 
 type ServiceContext struct {
-	Config        config.Config
-	InnerRpc      inner.Inner
-	ConsumerGroup *kafka.ConsumerGroup
-	RedisClient   *redis.Client
+	Config               config.Config
+	InnerRpc             inner.Inner
+	MessageConsumerGroup *kafka.ConsumerGroup
+	CommandConsumerGroup *kafka.ConsumerGroup
+	RedisClient          *redis.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	svcCtx := &ServiceContext{
 		Config:   c,
 		InnerRpc: inner.NewInner(zrpc.MustNewClient(c.InnerRpcConf)),
-
 		RedisClient: redis.NewClient(&redis.Options{
 			Addr:     c.Redis.Host,
 			Password: c.Redis.Pass,
 		}),
-		//RedisClient: redis.New(c.Redis.Host, func(r *redis.Redis) {
-		//	r.Type = c.Redis.Type
-		//	r.Pass = c.Redis.Pass
-		//}),
-		ConsumerGroup: kafka.NewConsumerGroup(&kafka.ConsumerGroupConfig{
+		MessageConsumerGroup: kafka.NewConsumerGroup(&kafka.ConsumerGroupConfig{
 			KafkaVersion:   sarama.V1_0_0_0,
 			OffsetsInitial: sarama.OffsetNewest,
 			IsReturnErr:    false,
@@ -49,6 +45,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			c.KqMsgBoxConsumerConf.Brokers,
 			[]string{c.KqMsgBoxConsumerConf.Topic},
 			c.KqMsgBoxConsumerConf.GroupId),
+
+		CommandConsumerGroup: kafka.NewConsumerGroup(&kafka.ConsumerGroupConfig{
+			KafkaVersion:   sarama.V1_0_0_0,
+			OffsetsInitial: sarama.OffsetNewest,
+			IsReturnErr:    false,
+		},
+			c.KqCmdBoxConsumerConf.Brokers,
+			[]string{c.KqCmdBoxConsumerConf.Topic},
+			c.KqCmdBoxConsumerConf.GroupId),
 	}
 	go svcCtx.subscribe()
 	return svcCtx
@@ -64,8 +69,13 @@ func (s *ServiceContext) Cleanup(_ sarama.ConsumerGroupSession) error {
 
 func (s *ServiceContext) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
+
 		if msg.Topic == s.Config.KqMsgBoxConsumerConf.Topic {
+			logx.Info("handleMessage")
 			s.handleMessage(sess, msg)
+		} else if msg.Topic == s.Config.KqCmdBoxConsumerConf.Topic {
+			logx.Info("handleCommand")
+			s.handleCommand(sess, msg)
 		}
 	}
 	return nil
@@ -89,7 +99,7 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 	}
 	trace.RunOnTracing(traceId, func(ctx context.Context) {
 		var message model.KqMessage
-		if err := json.Unmarshal(msg.Value, &message); err != nil {
+		if err := sonic.Unmarshal(msg.Value, &message); err != nil {
 			logx.Errorf("unmarshal msg error: %v", err)
 			return
 		}
@@ -101,14 +111,39 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 			} else {
 				logx.WithContext(ctx).Infof("current rmq size: %d", size)
 			}
-			//if _, err := s.RedisClient.(message.ReceiverId, string(msg.Value)); err != nil {
-			//	logx.WithContext(ctx).Errorf("push message err %v", err)
+			sess.MarkMessage(msg, "")
+		}, attribute.String("msg.key", string(msg.Key)))
+	})
+}
+
+func (s *ServiceContext) handleCommand(sess sarama.ConsumerGroupSession, msg *sarama.ConsumerMessage) {
+	traceId := kafka.GetTraceFromHeader(msg.Headers)
+	if len(traceId) == 0 {
+		return
+	}
+	trace.RunOnTracing(traceId, func(ctx context.Context) {
+		var message model.KqCmdMessage
+		if err := sonic.Unmarshal(msg.Value, &message); err != nil {
+			logx.Errorf("unmarshal msg error: %v", err)
+			return
+		}
+		trace.StartTrace(ctx, "FlowsrvServer.handleCommand.PushMessage", func(ctx context.Context) {
+			logx.WithContext(ctx).Infof("recv command: %v", message)
+
+			//// 投递到receiver_id对应的redis队列暂存
+			//intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
+			//if size, err := intCmd.Result(); err != nil {
+			//	logx.WithContext(ctx).Errorf("push message rmq err %v", err)
+			//} else {
+			//	logx.WithContext(ctx).Infof("current rmq size: %d", size)
 			//}
+
 			sess.MarkMessage(msg, "")
 		}, attribute.String("msg.key", string(msg.Key)))
 	})
 }
 
 func (s *ServiceContext) subscribe() {
-	go s.ConsumerGroup.RegisterHandleAndConsumer(s)
+	go s.MessageConsumerGroup.RegisterHandleAndConsumer(s)
+	go s.CommandConsumerGroup.RegisterHandleAndConsumer(s)
 }

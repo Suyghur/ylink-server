@@ -9,6 +9,7 @@ type Config struct {
 	zrpc.RpcServerConf
 	InnerRpcConf         zrpc.RpcClientConf
 	KqMsgBoxConsumerConf kafka.KqConsumerConfig
+	KqCmdBoxConsumerConf kafka.KqConsumerConfig
 	JwtAuth              struct {
 		AccessSecret string
 		AccessExpire int64

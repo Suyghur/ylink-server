@@ -34,7 +34,7 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 	case globalkey.CONNECT_TYPE_PLAYER:
 		// 修改玩家在线状态
 		if ext.GameOnlinePlayerMap.Contains(in.GameId) {
-			// 有则取出玩家的set
+			// 有则取出玩家
 			onlinePlayerMap := ext.GameOnlinePlayerMap.Get(in.GameId).(*treemap.Map)
 			if onlinePlayerMap.Contains(in.Uid) {
 				// 有则清除，代表下线
@@ -42,11 +42,11 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 			}
 		}
 
-		for n := ext.WaitingQueue.FrontNode(); n != nil; n = n.Next() {
-			info := n.Value.(*model.PlayerWaitingInfo)
+		for n := ext.WaitingList.FrontNode(); n != nil; n = n.Next() {
+			info := n.Value.(*model.PlayerInfo)
 			if info.GameId == in.GameId && info.PlayerId == in.Uid {
 				l.Logger.Infof("remove the player from the queue, game_id: %s, player_id: %s", in.GameId, in.Uid)
-				ext.WaitingQueue.Remove(nil, n)
+				ext.WaitingList.Remove(nil, n)
 				break
 			}
 		}

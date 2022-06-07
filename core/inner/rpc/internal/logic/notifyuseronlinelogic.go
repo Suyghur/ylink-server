@@ -46,20 +46,20 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 					onlinePlayerMap.Insert(in.Uid, playerInfo)
 				} else {
 					// 不是vip
-					onlinePlayerMap.Insert(in.Uid, &model.PlayerInfo{
+					ts := time.Now().Unix()
+					playerInfo := model.PlayerInfo{
 						PlayerId:  in.Uid,
 						GameId:    in.GameId,
-						ConnectTs: time.Now().Unix(),
-					})
+						ConnectTs: ts,
+						EnqueueTs: ts,
+					}
+					onlinePlayerMap.Insert(in.Uid, &playerInfo)
 					// 放入等待队列
-					ext.WaitingQueue.PushBack(&model.PlayerWaitingInfo{
-						PlayerId:    in.Uid,
-						GameId:      in.GameId,
-						EnqueueTime: time.Now().Unix(),
-					})
-					l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue.String())
+					ext.WaitingList.PushBack(&playerInfo)
+					l.Logger.Infof("enqueue waiting list: %s", ext.WaitingList.String())
 				}
 			}
+			l.Logger.Infof("111111")
 		} else {
 			onlinePlayerMap := treemap.New(treemap.WithGoroutineSafe())
 			// 判断是不是vip玩家
@@ -68,20 +68,20 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 				onlinePlayerMap.Insert(in.Uid, playerInfo)
 			} else {
 				// 不是vip
-				onlinePlayerMap.Insert(in.Uid, &model.PlayerInfo{
+				ts := time.Now().Unix()
+				playerInfo := model.PlayerInfo{
 					PlayerId:  in.Uid,
 					GameId:    in.GameId,
-					ConnectTs: time.Now().Unix(),
-				})
+					ConnectTs: ts,
+					EnqueueTs: ts,
+				}
+				onlinePlayerMap.Insert(in.Uid, &playerInfo)
 				// 放入等待队列
-				ext.WaitingQueue.PushBack(&model.PlayerWaitingInfo{
-					PlayerId:    in.Uid,
-					GameId:      in.GameId,
-					EnqueueTime: time.Now().Unix(),
-				})
-				l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue.String())
+				ext.WaitingList.PushBack(&playerInfo)
+				l.Logger.Infof("enqueue waiting list: %s", ext.WaitingList.String())
 			}
 			ext.GameOnlinePlayerMap.Insert(in.GameId, onlinePlayerMap)
+			l.Logger.Infof("22222")
 		}
 	case globalkey.CONNECT_TYPE_CS:
 		if csInfo := ext.GetCsInfo(in.Uid); csInfo != nil {

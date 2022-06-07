@@ -11,12 +11,6 @@ import (
 	"ylink/flowsrv/rpc/pb"
 )
 
-type User struct {
-	Type   int64
-	Uid    string
-	GameId string
-}
-
 type Flow struct {
 	EndFlow chan int
 	Message chan string
@@ -24,5 +18,8 @@ type Flow struct {
 	SvcCtx  *svc.ServiceContext
 	Logger  logx.Logger
 	Stream  pb.Flowsrv_ConnectServer
-	User    *User
+	Type    int64
+	Uid     string
+	GameId  string
+	FlowId  string
 }

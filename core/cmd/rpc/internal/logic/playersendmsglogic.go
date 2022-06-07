@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
+	"github.com/bytedance/sonic"
 	"time"
 	"ylink/comm/model"
 	"ylink/core/cmd/rpc/internal/svc"
@@ -27,15 +27,16 @@ func NewPlayerSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pla
 
 func (l *PlayerSendMsgLogic) PlayerSendMsg(in *pb.PlayerSendMsgReq) (*pb.PlayerSendMsgResp, error) {
 	// 投递到自己的发件箱
-	msg, _ := json.Marshal(model.KqMessage{
+	message := &model.KqMessage{
 		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 		Content:    in.Content,
 		Pic:        in.Pic,
-		ReceiverId: "",
-		SenderId:   in.PlayerId,
+		SenderId:   in.GameId + "_" + in.PlayerId,
 		GameId:     in.GameId,
-	})
-	_, _, err := l.svcCtx.KqMsgBoxProducer.SendMessage(l.ctx, string(msg), in.PlayerId)
+		Uid:        in.PlayerId,
+	}
+	kMsg, _ := sonic.MarshalString(message)
+	_, _, err := l.svcCtx.KqMsgBoxProducer.SendMessage(l.ctx, kMsg, message.SenderId)
 	if err != nil {
 		return nil, err
 	}

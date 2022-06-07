@@ -2,11 +2,12 @@ package svc
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/Shopify/sarama"
 	"github.com/bytedance/sonic"
+	"github.com/gookit/event"
 	"github.com/liyue201/gostl/ds/list/simplelist"
 	treemap "github.com/liyue201/gostl/ds/map"
+	"github.com/robfig/cron/v3"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/attribute"
 	"io/ioutil"
@@ -18,10 +19,11 @@ import (
 )
 
 type ServiceContext struct {
-	Config           config.Config
-	KqMsgBoxProducer *kafka.Producer
-	KqCmdBoxProducer *kafka.Producer
-	ConsumerGroup    *kafka.ConsumerGroup
+	Config             config.Config
+	KqMsgBoxProducer   *kafka.Producer
+	KqCmdBoxProducer   *kafka.Producer
+	KqMsgConsumerGroup *kafka.ConsumerGroup
+	TimeoutCron        *cron.Cron
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -29,7 +31,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:           c,
 		KqMsgBoxProducer: kafka.NewKafkaProducer(c.KqMsgBoxProducerConf.Brokers, c.KqMsgBoxProducerConf.Topic),
 		KqCmdBoxProducer: kafka.NewKafkaProducer(c.KqCmdBoxProducerConf.Brokers, c.KqCmdBoxProducerConf.Topic),
-		ConsumerGroup: kafka.NewConsumerGroup(&kafka.ConsumerGroupConfig{
+		KqMsgConsumerGroup: kafka.NewConsumerGroup(&kafka.ConsumerGroupConfig{
 			KafkaVersion:   sarama.V1_0_0_0,
 			OffsetsInitial: sarama.OffsetNewest,
 			IsReturnErr:    false,
@@ -67,38 +69,20 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 	}
 	trace.RunOnTracing(traceId, func(ctx context.Context) {
 		var message model.KqMessage
-		if err := json.Unmarshal(msg.Value, &message); err != nil {
+		if err := sonic.Unmarshal(msg.Value, &message); err != nil {
 			logx.WithContext(ctx).Errorf("unmarshal msg error: %v", err)
 			return
 		}
 		logx.WithContext(ctx).Infof("handle message: %s", msg.Value)
 		trace.StartTrace(ctx, "InnerServer.handleMessage.SendMessage", func(ctx context.Context) {
 			if len(message.ReceiverId) == 0 || message.ReceiverId == "" {
-				// 玩家发的消息，先从connMap找对应的客服，没有则从vipMap找，都没有则丢弃信息不投递
-				if ext.GameConnectedMap.Contains(message.GameId) {
-					// 先从connMap找对应的客服映射
-					if playerConnMap := ext.GameConnectedMap.Get(message.GameId).(*treemap.Map); playerConnMap.Contains(message.SenderId) {
-						message.ReceiverId = playerConnMap.Get(message.SenderId).(string)
-					} else {
-						if ext.GameVipMap.Contains(message.GameId) {
-							// 从vipMap里面找
-							if playerVipMap := ext.GameVipMap.Get(message.GameId).(*treemap.Map); playerVipMap.Contains(message.SenderId) {
-								message.ReceiverId = playerVipMap.Get(message.SenderId).(string)
-							} else {
-								message.ReceiverId = ""
-							}
-						} else {
-							message.ReceiverId = ""
-						}
-					}
+				// receiverId为空代表这条消息是玩家发送的
+				// 玩家发的消息，先从connectedMap找对应的客服，没有则从vipMap找，都没有则丢弃信息不投递
+				if playerInfo := ext.GetConnectedPlayerInfo(message.GameId, message.Uid); playerInfo != nil {
+					message.ReceiverId = playerInfo.CsId
 				} else {
-					if ext.GameVipMap.Contains(message.GameId) {
-						// 从vipMap里面找
-						if playerVipMap := ext.GameVipMap.Get(message.GameId).(*treemap.Map); playerVipMap.Contains(message.SenderId) {
-							message.ReceiverId = playerVipMap.Get(message.SenderId).(string)
-						} else {
-							message.ReceiverId = ""
-						}
+					if playerInfo := ext.GetVipPlayer(message.GameId, message.Uid); playerInfo != nil {
+						message.ReceiverId = playerInfo.CsId
 					} else {
 						message.ReceiverId = ""
 					}
@@ -107,12 +91,13 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 				// 经过填补后receiver_id还是空的则有异常，丢弃信息不投递
 				if len(message.ReceiverId) != 0 && message.ReceiverId != "" {
 					logx.WithContext(ctx).Infof("receiver: %s", message.ReceiverId)
-					kMsg, _ := json.Marshal(message)
-					s.KqMsgBoxProducer.SendMessage(ctx, string(kMsg), message.ReceiverId)
+					kMsg, _ := sonic.MarshalString(message)
+					s.KqMsgBoxProducer.SendMessage(ctx, kMsg, message.ReceiverId)
 				} else {
 					logx.WithContext(ctx).Errorf("can not find receiver of the sender")
 				}
 			} else {
+				// receiverId不为空代表这条消息是客服发的
 				s.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), message.ReceiverId)
 			}
 			sess.MarkMessage(msg, "")
@@ -121,7 +106,19 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 }
 
 func (s *ServiceContext) subscribe() {
-	go s.ConsumerGroup.RegisterHandleAndConsumer(s)
+	go s.KqMsgConsumerGroup.RegisterHandleAndConsumer(s)
+
+	// 注册事件
+	event.On(ext.EVENT_REMOVE_TIMEOUT_JOB, event.ListenerFunc(func(e event.Event) error {
+		logx.Info("on event remove timeout job...")
+		entryId := e.Get("entry_id").(cron.EntryID)
+		s.TimeoutCron.Remove(entryId)
+		return nil
+	}), event.High)
+
+	// 初始化定时任务
+	s.TimeoutCron = cron.New(cron.WithSeconds())
+	s.TimeoutCron.Start()
 }
 
 func fetchCsCenterInfo(c config.Config) {
@@ -130,9 +127,10 @@ func fetchCsCenterInfo(c config.Config) {
 	ext.GameVipMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.GameOnlinePlayerMap = treemap.New(treemap.WithGoroutineSafe())
 	ext.GameConnectedMap = treemap.New(treemap.WithGoroutineSafe())
-	ext.WaitingQueue = simplelist.New()
+	ext.WaitingList = simplelist.New()
 	go loadMockInfo(c)
 }
+
 func loadMockInfo(c config.Config) {
 	// 加载游戏列表
 	logx.Info("加载游戏列表")

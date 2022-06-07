@@ -51,7 +51,13 @@ func (l *DisconnectLogic) Disconnect(in *pb.CommandReq) (*pb.CommandResp, error)
 		}, err
 	}
 
-	mgr.GetFlowMgrInstance().UnRegister(uid)
+	var flowId string
+	if in.Type == globalkey.CONNECT_TYPE_PLAYER {
+		flowId = gameId + "_" + uid
+	} else {
+		flowId = uid
+	}
+	mgr.GetFlowMgrInstance().UnRegister(flowId)
 
 	return &pb.CommandResp{
 		Code: result.Ok,

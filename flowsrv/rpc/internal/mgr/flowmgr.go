@@ -35,7 +35,7 @@ func GetFlowMgrInstance() *flowManager {
 func (manager *flowManager) Register(flow *model.Flow) {
 	//go registerWorker(flow)
 	go manager.registerFlow(flow)
-	manager.flowMap.Insert(flow.User.Uid, flow)
+	manager.flowMap.Insert(flow.FlowId, flow)
 }
 
 func (manager *flowManager) registerFlow(flow *model.Flow) {
@@ -43,13 +43,13 @@ func (manager *flowManager) registerFlow(flow *model.Flow) {
 	for {
 		select {
 		case <-flow.Stream.Context().Done():
-			if manager.Has(flow.User.Uid) {
+			if manager.Has(flow.FlowId) {
 				flow.Logger.Infof("flowstream was disconnected abnormally")
-				manager.UnRegister(flow.User.Uid)
+				manager.UnRegister(flow.FlowId)
 				flow.SvcCtx.InnerRpc.NotifyUserOffline(flow.Ctx, &inner.NotifyUserStatusReq{
-					Type:   flow.User.Type,
-					Uid:    flow.User.Uid,
-					GameId: flow.User.GameId,
+					Type:   flow.Type,
+					Uid:    flow.Uid,
+					GameId: flow.GameId,
 				})
 			}
 			flow.EndFlow <- 1
@@ -76,9 +76,9 @@ func (manager *flowManager) subscribeRmq(flow *model.Flow) {
 			flow.Logger.Infof("unsubscribe rmq...")
 			return
 		default:
-			resultCmd := flow.SvcCtx.RedisClient.BRPop(flow.Ctx, 10*time.Second, flow.User.Uid)
+			resultCmd := flow.SvcCtx.RedisClient.BRPop(flow.Ctx, 10*time.Second, flow.FlowId)
 			if message, err := resultCmd.Result(); err != nil {
-				flow.Logger.Errorf("get message from redis err: %v", err)
+				flow.Logger.Errorf("get message from redis, key: %s, err: %v", flow.FlowId, err)
 			} else {
 				flow.Message <- message[1]
 			}
@@ -86,19 +86,19 @@ func (manager *flowManager) subscribeRmq(flow *model.Flow) {
 	}
 }
 
-func (manager *flowManager) Get(uid string) *model.Flow {
-	return manager.flowMap.Get(uid).(*model.Flow)
+func (manager *flowManager) Get(flowId string) *model.Flow {
+	return manager.flowMap.Get(flowId).(*model.Flow)
 }
 
-func (manager *flowManager) UnRegister(uid string) {
-	if manager.flowMap.Contains(uid) {
-		flow := manager.Get(uid)
+func (manager *flowManager) UnRegister(flowId string) {
+	if manager.flowMap.Contains(flowId) {
+		flow := manager.Get(flowId)
 		close(flow.Message)
 		//flow.EndRmq <- 0
-		manager.flowMap.Erase(uid)
+		manager.flowMap.Erase(flowId)
 	}
 }
 
-func (manager *flowManager) Has(uid string) bool {
-	return manager.flowMap.Contains(uid)
+func (manager *flowManager) Has(flowId string) bool {
+	return manager.flowMap.Contains(flowId)
 }

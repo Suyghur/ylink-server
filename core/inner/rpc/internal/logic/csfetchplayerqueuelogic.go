@@ -29,7 +29,7 @@ func NewCsFetchPlayerQueueLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQueueReq) (*pb.InnerCsFetchPlayerQueueResp, error) {
-	queueLen := int64(ext.WaitingQueue.Len())
+	queueLen := int64(ext.WaitingList.Len())
 	if queueLen == 0 {
 		// 等待队列为空直接返回
 		return &pb.InnerCsFetchPlayerQueueResp{
@@ -44,12 +44,12 @@ func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQu
 
 	queue := make([]interface{}, queueLen)
 
-	for node := ext.WaitingQueue.FrontNode(); node != nil && index < queueLen; node = node.Next() {
-		info := node.Value.(*model.PlayerWaitingInfo)
+	for node := ext.WaitingList.FrontNode(); node != nil && index < queueLen; node = node.Next() {
+		info := node.Value.(*model.PlayerInfo)
 		queue[index] = map[string]interface{}{
 			"player_id": info.PlayerId,
 			"game_id":   info.GameId,
-			"wait_time": time.Now().Unix() - info.EnqueueTime,
+			"wait_time": time.Now().Unix() - info.EnqueueTs,
 		}
 		index += 1
 	}

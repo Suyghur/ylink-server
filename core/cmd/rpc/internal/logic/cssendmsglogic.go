@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/bytedance/sonic"
+	"time"
+	"ylink/comm/model"
 
 	"ylink/core/cmd/rpc/internal/svc"
 	"ylink/core/cmd/rpc/pb"
@@ -24,7 +27,20 @@ func NewCsSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsSendM
 }
 
 func (l *CsSendMsgLogic) CsSendMsg(in *pb.CsSendMsgReq) (*pb.CsSendMsgResp, error) {
-	// todo 投递到对应客服的收件箱
-	// todo 写入db
+	// 投递到自己的发件箱
+	message := &model.KqMessage{
+		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
+		Content:    in.Content,
+		Pic:        in.Pic,
+		ReceiverId: in.GameId + "_" + in.PlayerId,
+		SenderId:   in.CsId,
+		GameId:     in.GameId,
+		Uid:        in.CsId,
+	}
+	kMsg, _ := sonic.MarshalString(message)
+	_, _, err := l.svcCtx.KqMsgBoxProducer.SendMessage(l.ctx, kMsg, message.SenderId)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.CsSendMsgResp{}, nil
 }
