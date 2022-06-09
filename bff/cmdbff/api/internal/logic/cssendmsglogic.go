@@ -29,8 +29,8 @@ func (l *CsSendMsgLogic) CsSendMsg(req *types.CsSendMsgReq) error {
 	csId := ctxdata.GetCsIdFromCtx(l.ctx)
 	_, err := l.svcCtx.CmdRpc.CsSendMsg(l.ctx, &cmd.CsSendMsgReq{
 		CsId:     csId,
-		PlayerId: req.PlayerId,
 		GameId:   req.GameId,
+		PlayerId: req.PlayerId,
 		Content:  req.Content,
 		Pic:      req.Pic,
 	})

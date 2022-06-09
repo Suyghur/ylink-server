@@ -31,7 +31,7 @@ func NewNotifyUserOfflineLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (*pb.NotifyUserStatusResp, error) {
 	switch in.Type {
-	case globalkey.CONNECT_TYPE_PLAYER:
+	case globalkey.ConnectTypePlayer:
 		// 修改玩家在线状态
 		if ext.GameOnlinePlayerMap.Contains(in.GameId) {
 			// 有则取出玩家
@@ -50,7 +50,7 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 				break
 			}
 		}
-	case globalkey.CONNECT_TYPE_CS:
+	case globalkey.ConnectTypeCs:
 		// 修改客服在线状态
 		if csInfo := ext.GetCsInfo(in.Uid); csInfo != nil {
 			csInfo.OnlineStatus = 0

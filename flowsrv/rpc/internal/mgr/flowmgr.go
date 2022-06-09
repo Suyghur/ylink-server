@@ -44,7 +44,7 @@ func (manager *flowManager) registerFlow(flow *model.Flow) {
 		select {
 		case <-flow.Stream.Context().Done():
 			if manager.Has(flow.FlowId) {
-				flow.Logger.Infof("flowstream was disconnected abnormally")
+				flow.Logger.Infof("stream was disconnected abnormally")
 				manager.UnRegister(flow.FlowId)
 				flow.SvcCtx.InnerRpc.NotifyUserOffline(flow.Ctx, &inner.NotifyUserStatusReq{
 					Type:   flow.Type,
@@ -94,7 +94,6 @@ func (manager *flowManager) UnRegister(flowId string) {
 	if manager.flowMap.Contains(flowId) {
 		flow := manager.Get(flowId)
 		close(flow.Message)
-		//flow.EndRmq <- 0
 		manager.flowMap.Erase(flowId)
 	}
 }

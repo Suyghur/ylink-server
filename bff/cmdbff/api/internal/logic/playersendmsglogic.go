@@ -26,11 +26,11 @@ func NewPlayerSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pla
 }
 
 func (l *PlayerSendMsgLogic) PlayerSendMsg(req *types.PlayerSendMsgReq) error {
-	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	_, err := l.svcCtx.CmdRpc.PlayerSendMsg(l.ctx, &pb.PlayerSendMsgReq{
-		PlayerId: playerId,
 		GameId:   gameId,
+		PlayerId: playerId,
 		Content:  req.Content,
 		Pic:      req.Pic,
 	})

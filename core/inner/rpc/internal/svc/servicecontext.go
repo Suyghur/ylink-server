@@ -11,6 +11,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/attribute"
 	"io/ioutil"
+	"ylink/comm/globalkey"
 	"ylink/comm/kafka"
 	"ylink/comm/model"
 	"ylink/comm/trace"
@@ -109,9 +110,10 @@ func (s *ServiceContext) subscribe() {
 	go s.KqMsgConsumerGroup.RegisterHandleAndConsumer(s)
 
 	// 注册事件
-	event.On(ext.EVENT_REMOVE_TIMEOUT_JOB, event.ListenerFunc(func(e event.Event) error {
+	event.On(globalkey.EventRemoveTimeoutJob, event.ListenerFunc(func(e event.Event) error {
 		logx.Info("on event remove timeout job...")
 		entryId := e.Get("entry_id").(cron.EntryID)
+
 		s.TimeoutCron.Remove(entryId)
 		return nil
 	}), event.High)

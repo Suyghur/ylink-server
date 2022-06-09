@@ -3,7 +3,7 @@ ListenOn: 0.0.0.0:10200
 
 Telemetry:
   Name: flowsrv-api
-  Endpoint: http://127.0.0.1:14268/api/traces
+  Endpoint: http://localhost:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
@@ -19,18 +19,18 @@ InnerRpcConf:
 
 KqMsgBoxConsumerConf:
   Brokers:
-    - 127.0.0.1:9092
+    - localhost:9092
   Topic: recv-box-topic
   GroupId: flowsrv-api
 
 KqCmdBoxConsumerConf:
   Brokers:
-    - 127.0.0.1:9092
+    - localhost:9092
   Topic: cmd-box-topic
   GroupId: flowsrv-api
 
 Redis:
-  Host: 127.0.0.1:6379
+  Host: localhost:6379
   Type: node
   Pass: ylink
 

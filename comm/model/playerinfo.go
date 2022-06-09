@@ -5,8 +5,8 @@
 package model
 
 type PlayerInfo struct {
-	PlayerId   string `json:"player_id"`
 	GameId     string `json:"game_id"`
+	PlayerId   string `json:"player_id"`
 	IsVip      int64  `json:"is_vip"`
 	CsId       string `json:"cs_id"`
 	ConnectTs  int64  `json:"connect_ts"`

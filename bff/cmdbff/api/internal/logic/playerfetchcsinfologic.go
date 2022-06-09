@@ -26,16 +26,14 @@ func NewPlayerFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(req *types.PlayerFetchCsInfoReq) (resp *types.PlayerFetchCsInfoResp, err error) {
-	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
-	l.Logger.Infof("player id: %s", playerId)
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchCsInfo(l.ctx, &cmd.PlayerFetchCsInfoReq{
-		PlayerId: playerId,
 		GameId:   gameId,
+		PlayerId: playerId,
 		CsId:     req.CsId,
 	})
 	if err != nil {
-		l.Logger.Info(err.Error())
 		return nil, err
 	}
 	return &types.PlayerFetchCsInfoResp{

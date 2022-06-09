@@ -10,8 +10,8 @@ import "google/protobuf/struct.proto";
 Player Command Request Bean
  */
 message InnerPlayerFetchCsInfoReq{
-  string player_id = 1;
-  string game_id = 2;
+  string game_id = 1;
+  string player_id = 2;
   string cs_id = 3;
 }
 
@@ -22,6 +22,13 @@ message InnerPlayerFetchCsInfoResp{
   string cs_signature = 4;
   int64 online_status = 5;
 }
+
+message InnerPlayerDisconnectReq{
+  string player_id = 1;
+  string game_id = 2;
+}
+
+message InnerPlayerDisconnectResp{}
 
 /**
 Cs Command Request Bean
@@ -37,8 +44,8 @@ message InnerCsFetchPlayerQueueResp{
 
 message InnerCsConnectPlayerReq{
   string cs_id = 1;
-  string player_id = 2;
-  string game_id = 3;
+  string game_id = 2;
+  string player_id = 3;
 }
 
 message InnerCsConnectPlayerResp{}
@@ -54,6 +61,7 @@ message NotifyUserStatusResp{}
 
 service Inner {
   rpc playerFetchCsInfo (InnerPlayerFetchCsInfoReq) returns (InnerPlayerFetchCsInfoResp);
+  rpc playerDisconnect (InnerPlayerDisconnectReq) returns (InnerPlayerDisconnectResp);
 
   rpc csFetchPlayerQueue (InnerCsFetchPlayerQueueReq) returns (InnerCsFetchPlayerQueueResp);
   rpc csConnectPlayer (InnerCsConnectPlayerReq) returns (InnerCsConnectPlayerResp);

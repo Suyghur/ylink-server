@@ -29,8 +29,8 @@ func (l *CsConnectPlayerLogic) CsConnectPlayer(req *types.CsConnectPlayerReq) er
 	csId := ctxdata.GetCsIdFromCtx(l.ctx)
 	_, err := l.svcCtx.CmdRpc.CsConnectPlayer(l.ctx, &cmd.CsConnectPlayerReq{
 		CsId:     csId,
-		PlayerId: req.PlayerId,
 		GameId:   req.GameId,
+		PlayerId: req.PlayerId,
 	})
 	if err != nil {
 		return err

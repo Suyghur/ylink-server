@@ -10,8 +10,8 @@ import "google/protobuf/struct.proto";
 Player Command Request Bean
  */
 message PlayerFetchCsInfoReq{
-  string player_id = 1;
-  string game_id = 2;
+  string game_id = 1;
+  string player_id = 2;
   string cs_id = 3;
 }
 
@@ -24,8 +24,8 @@ message PlayerFetchCsInfoResp{
 }
 
 message PlayerFetchHistoryMsgReq{
-  string player_id = 1;
-  string game_id = 2;
+  string game_id = 1;
+  string player_id = 2;
   int64 page = 3;
   int64 limit = 4;
 }
@@ -37,13 +37,20 @@ message PlayerFetchHistoryMsgResp{
 }
 
 message PlayerSendMsgReq{
-  string player_id = 1;
-  string game_id = 2;
+  string game_id = 1;
+  string player_id = 2;
   string content = 4;
   string pic = 5;
 }
 
 message PlayerSendMsgResp{}
+
+message PlayerDisconnectReq{
+  string game_id = 1;
+  string player_id = 2;
+}
+
+message PlayerDisconnectResp{}
 
 /**
 Cs Command Request Bean
@@ -59,8 +66,8 @@ message CsFetchPlayerQueueResp{
 
 message CsConnectPlayerReq{
   string cs_id = 1;
-  string player_id = 2;
-  string game_id = 3;
+  string game_id = 2;
+  string player_id = 3;
 }
 
 message CsConnectPlayerResp{}
@@ -79,8 +86,8 @@ message CsFetchHistoryChatResp{
 
 message CsFetchHistoryMsgReq{
   string cs_id = 1;
-  string player_id = 2;
-  string game_id = 3;
+  string game_id = 2;
+  string player_id = 3;
   int64 page = 4;
   int64 limit = 5;
 }
@@ -94,8 +101,8 @@ message CsFetchHistoryMsgResp{
 
 message CsSendMsgReq{
   string cs_id = 1;
-  string player_id = 2;
-  string game_id = 3;
+  string game_id = 2;
+  string player_id = 3;
   string content = 4;
   string pic = 5;
 }
@@ -106,6 +113,7 @@ service Cmd {
   rpc playerFetchCsInfo (PlayerFetchCsInfoReq) returns (PlayerFetchCsInfoResp);
   rpc playerFetchHistoryMsg (PlayerFetchHistoryMsgReq) returns (PlayerFetchHistoryMsgResp);
   rpc playerSendMsg (PlayerSendMsgReq) returns (PlayerSendMsgResp);
+  rpc playerDisconnect (PlayerDisconnectReq) returns (PlayerDisconnectResp);
 
   rpc csFetchPlayerQueue (CsFetchPlayerQueueReq) returns (CsFetchPlayerQueueResp);
   rpc csConnectPlayer (CsConnectPlayerReq) returns (CsConnectPlayerResp);

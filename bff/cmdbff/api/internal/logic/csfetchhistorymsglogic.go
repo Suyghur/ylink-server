@@ -29,8 +29,8 @@ func (l *CsFetchHistoryMsgLogic) CsFetchHistoryMsg(req *types.CsFetchHistoryMsgR
 	csId := ctxdata.GetCsIdFromCtx(l.ctx)
 	cmdResp, err := l.svcCtx.CmdRpc.CsFetchHistoryMsg(l.ctx, &cmd.CsFetchHistoryMsgReq{
 		CsId:     csId,
-		PlayerId: req.PlayerId,
 		GameId:   req.GameId,
+		PlayerId: req.PlayerId,
 		Page:     req.Page,
 		Limit:    req.Limit,
 	})

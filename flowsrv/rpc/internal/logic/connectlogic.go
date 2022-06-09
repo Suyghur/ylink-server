@@ -53,7 +53,7 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 	}
 
 	var flowId string
-	if in.Type == globalkey.CONNECT_TYPE_PLAYER {
+	if in.Type == globalkey.ConnectTypePlayer {
 		flowId = gameId + "_" + uid
 	} else {
 		flowId = uid
@@ -93,7 +93,7 @@ func (l *ConnectLogic) checkAuth(in *pb.CommandReq) (string, string, error) {
 	if token.Valid {
 		//将获取的token中的Claims强转为MapClaims
 		claims, _ := token.Claims.(jwt.MapClaims)
-		if in.Type == globalkey.CONNECT_TYPE_PLAYER {
+		if in.Type == globalkey.ConnectTypePlayer {
 			uid = claims[jwtkey.PlayerId].(string)
 			gameId = claims[jwtkey.GameId].(string)
 		} else {

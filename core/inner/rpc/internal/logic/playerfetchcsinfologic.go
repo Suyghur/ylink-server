@@ -2,9 +2,7 @@ package logic
 
 import (
 	"context"
-	treemap "github.com/liyue201/gostl/ds/map"
 	"github.com/pkg/errors"
-	"ylink/comm/model"
 	"ylink/comm/result"
 	"ylink/core/inner/rpc/internal/ext"
 	"ylink/core/inner/rpc/internal/svc"
@@ -28,11 +26,9 @@ func NewPlayerFetchCsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(in *pb.InnerPlayerFetchCsInfoReq) (*pb.InnerPlayerFetchCsInfoResp, error) {
-	if ext.GameConnectedMap.Contains(in.GameId) {
-		playerConnMap := ext.GameConnectedMap.Get(in.GameId).(*treemap.Map)
-		csId := playerConnMap.Get(in.PlayerId).(string)
-		if ext.CsInfoMap.Contains(csId) {
-			csInfo := ext.CsInfoMap.Get(csId).(model.CsInfo)
+	if playerInfo := ext.GetConnectedPlayerInfo(in.GameId, in.PlayerId); playerInfo != nil {
+		// 玩家已连接
+		if csInfo := ext.GetCsInfo(playerInfo.CsId); csInfo != nil {
 			return &pb.InnerPlayerFetchCsInfoResp{
 				CsId:         csInfo.CsId,
 				CsNickname:   csInfo.CsNickname,
@@ -41,6 +37,8 @@ func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(in *pb.InnerPlayerFetchCsInfo
 				OnlineStatus: csInfo.OnlineStatus,
 			}, nil
 		}
+		return nil, errors.Wrap(result.NewErrMsg("Customer service information does not exist"), "")
 	}
-	return nil, errors.Wrap(result.NewErrMsg("Customer service information does not exist"), "")
+	return nil, errors.Wrap(result.NewErrMsg("The player is not connected"), "")
+
 }

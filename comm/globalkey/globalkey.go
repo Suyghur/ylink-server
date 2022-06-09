@@ -5,6 +5,11 @@
 package globalkey
 
 const (
-	CONNECT_TYPE_PLAYER = 0
-	CONNECT_TYPE_CS     = 1
+	ConnectTypePlayer = 0
+	ConnectTypeCs     = 1
+)
+
+const (
+	EventRemoveTimeoutJob = "EventRemoveTimeoutJob"
+	EventUnsubscribeRmq   = "EventUnsubscribeRmq"
 )

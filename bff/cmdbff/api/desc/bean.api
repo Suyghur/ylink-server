@@ -46,8 +46,8 @@ type (
     }
 
     CsConnectPlayerReq {
-        PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
+        PlayerId string `json:"player_id"`
     }
 
     CsFetchHistoryChatReq {
@@ -62,8 +62,8 @@ type (
     }
 
     CsFetchHistoryMsgReq {
-        PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
+        PlayerId string `json:"player_id"`
         Page int64 `json:"page"`
         Limit int64 `json:"limit"`
     }
@@ -75,13 +75,13 @@ type (
     }
 
     CsFetchMsgReq {
-        PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
+        PlayerId string `json:"player_id"`
     }
 
     CsSendMsgReq {
-        PlayerId string `json:"player_id"`
         GameId string `json:"game_id"`
+        PlayerId string `json:"player_id"`
         Content string `json:"content"`
         Pic string `json:"pic"`
     }

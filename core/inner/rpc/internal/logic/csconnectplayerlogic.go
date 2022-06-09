@@ -5,10 +5,13 @@ import (
 	"github.com/bytedance/sonic"
 	"github.com/gookit/event"
 	treemap "github.com/liyue201/gostl/ds/map"
+	"github.com/pkg/errors"
 	"github.com/robfig/cron/v3"
 	"github.com/zeromicro/go-zero/core/logx"
 	"time"
+	"ylink/comm/globalkey"
 	"ylink/comm/model"
+	"ylink/comm/result"
 	"ylink/core/inner/rpc/internal/ext"
 	"ylink/core/inner/rpc/internal/svc"
 	"ylink/core/inner/rpc/pb"
@@ -31,6 +34,10 @@ func NewCsConnectPlayerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (*pb.InnerCsConnectPlayerResp, error) {
 
 	playerInfo := ext.GetOnlinePlayerInfo(in.GameId, in.PlayerId)
+
+	if playerInfo == nil {
+		return nil, errors.Wrapf(result.NewErrMsg("The player is not connected"), "")
+	}
 	playerInfo.CsId = in.CsId
 	playerInfo.DequeueTs = time.Now().Unix()
 
@@ -63,16 +70,18 @@ func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (
 			timeoutTs = time.Now().Unix() - playerInfo.LastChatTs
 		}
 		if timeoutTs >= 300 {
-			_ = event.MustFire(ext.EVENT_REMOVE_TIMEOUT_JOB, event.M{"entry_id": entryId})
+			// 释放计时器任务
+			_ = event.MustFire(globalkey.EventRemoveTimeoutJob, event.M{"entry_id": entryId})
 			l.Logger.Infof("trigger timeout event, remove cron job, entry id: %d", entryId)
 
-			// 发下线command
-			//ext, _ := sonic.Marshal(playerInfo)
+			// 发踢下线的command指令
 			message, _ := sonic.MarshalString(&model.KqCmdMessage{
-				Opt: model.CMD_CHAT_TIMEOUT,
-				Ext: playerInfo,
+				Opt:        model.CMD_CHAT_TIMEOUT,
+				ReceiverId: in.GameId + "_" + in.PlayerId,
+				GameId:     in.GameId,
+				Uid:        in.PlayerId,
 			})
-			l.svcCtx.KqCmdBoxProducer.SendMessage(l.ctx, message, in.PlayerId)
+			l.svcCtx.KqCmdBoxProducer.SendMessage(l.ctx, message, in.GameId+"_"+in.PlayerId)
 		}
 	})
 

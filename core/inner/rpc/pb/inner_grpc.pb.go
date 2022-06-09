@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InnerClient interface {
 	PlayerFetchCsInfo(ctx context.Context, in *InnerPlayerFetchCsInfoReq, opts ...grpc.CallOption) (*InnerPlayerFetchCsInfoResp, error)
+	PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error)
 	CsFetchPlayerQueue(ctx context.Context, in *InnerCsFetchPlayerQueueReq, opts ...grpc.CallOption) (*InnerCsFetchPlayerQueueResp, error)
 	CsConnectPlayer(ctx context.Context, in *InnerCsConnectPlayerReq, opts ...grpc.CallOption) (*InnerCsConnectPlayerResp, error)
 	NotifyUserOnline(ctx context.Context, in *NotifyUserStatusReq, opts ...grpc.CallOption) (*NotifyUserStatusResp, error)
@@ -40,6 +41,15 @@ func NewInnerClient(cc grpc.ClientConnInterface) InnerClient {
 func (c *innerClient) PlayerFetchCsInfo(ctx context.Context, in *InnerPlayerFetchCsInfoReq, opts ...grpc.CallOption) (*InnerPlayerFetchCsInfoResp, error) {
 	out := new(InnerPlayerFetchCsInfoResp)
 	err := c.cc.Invoke(ctx, "/pb.Inner/playerFetchCsInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *innerClient) PlayerDisconnect(ctx context.Context, in *InnerPlayerDisconnectReq, opts ...grpc.CallOption) (*InnerPlayerDisconnectResp, error) {
+	out := new(InnerPlayerDisconnectResp)
+	err := c.cc.Invoke(ctx, "/pb.Inner/playerDisconnect", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,6 +97,7 @@ func (c *innerClient) NotifyUserOffline(ctx context.Context, in *NotifyUserStatu
 // for forward compatibility
 type InnerServer interface {
 	PlayerFetchCsInfo(context.Context, *InnerPlayerFetchCsInfoReq) (*InnerPlayerFetchCsInfoResp, error)
+	PlayerDisconnect(context.Context, *InnerPlayerDisconnectReq) (*InnerPlayerDisconnectResp, error)
 	CsFetchPlayerQueue(context.Context, *InnerCsFetchPlayerQueueReq) (*InnerCsFetchPlayerQueueResp, error)
 	CsConnectPlayer(context.Context, *InnerCsConnectPlayerReq) (*InnerCsConnectPlayerResp, error)
 	NotifyUserOnline(context.Context, *NotifyUserStatusReq) (*NotifyUserStatusResp, error)
@@ -100,6 +111,9 @@ type UnimplementedInnerServer struct {
 
 func (UnimplementedInnerServer) PlayerFetchCsInfo(context.Context, *InnerPlayerFetchCsInfoReq) (*InnerPlayerFetchCsInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerFetchCsInfo not implemented")
+}
+func (UnimplementedInnerServer) PlayerDisconnect(context.Context, *InnerPlayerDisconnectReq) (*InnerPlayerDisconnectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PlayerDisconnect not implemented")
 }
 func (UnimplementedInnerServer) CsFetchPlayerQueue(context.Context, *InnerCsFetchPlayerQueueReq) (*InnerCsFetchPlayerQueueResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CsFetchPlayerQueue not implemented")
@@ -140,6 +154,24 @@ func _Inner_PlayerFetchCsInfo_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(InnerServer).PlayerFetchCsInfo(ctx, req.(*InnerPlayerFetchCsInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Inner_PlayerDisconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InnerPlayerDisconnectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InnerServer).PlayerDisconnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Inner/playerDisconnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InnerServer).PlayerDisconnect(ctx, req.(*InnerPlayerDisconnectReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -226,6 +258,10 @@ var Inner_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "playerFetchCsInfo",
 			Handler:    _Inner_PlayerFetchCsInfo_Handler,
+		},
+		{
+			MethodName: "playerDisconnect",
+			Handler:    _Inner_PlayerDisconnect_Handler,
 		},
 		{
 			MethodName: "csFetchPlayerQueue",

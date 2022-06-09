@@ -26,11 +26,11 @@ func NewPlayerFetchHistoryMsgLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *PlayerFetchHistoryMsgLogic) PlayerFetchHistoryMsg(req *types.PlayerFetchHistoryMsgReq) (resp *types.PlayerFetchHistoryMsgResp, err error) {
-	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	gameId := ctxdata.GetGameIdFromCtx(l.ctx)
+	playerId := ctxdata.GetPlayerIdFromCtx(l.ctx)
 	cmdResp, err := l.svcCtx.CmdRpc.PlayerFetchHistoryMsg(l.ctx, &pb.PlayerFetchHistoryMsgReq{
-		PlayerId: playerId,
 		GameId:   gameId,
+		PlayerId: playerId,
 		Page:     req.Page,
 		Limit:    req.Limit,
 	})

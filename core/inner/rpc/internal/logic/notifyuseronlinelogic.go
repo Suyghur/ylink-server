@@ -32,7 +32,7 @@ func NewNotifyUserOnlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*pb.NotifyUserStatusResp, error) {
 	switch in.Type {
-	case globalkey.CONNECT_TYPE_PLAYER:
+	case globalkey.ConnectTypePlayer:
 		// 修改玩家在线状态
 		if ext.GameOnlinePlayerMap.Contains(in.GameId) {
 			// 有则取出玩家的map
@@ -48,8 +48,8 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 					// 不是vip
 					ts := time.Now().Unix()
 					playerInfo := model.PlayerInfo{
-						PlayerId:  in.Uid,
 						GameId:    in.GameId,
+						PlayerId:  in.Uid,
 						ConnectTs: ts,
 						EnqueueTs: ts,
 					}
@@ -59,7 +59,6 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 					l.Logger.Infof("enqueue waiting list: %s", ext.WaitingList.String())
 				}
 			}
-			l.Logger.Infof("111111")
 		} else {
 			onlinePlayerMap := treemap.New(treemap.WithGoroutineSafe())
 			// 判断是不是vip玩家
@@ -70,8 +69,8 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 				// 不是vip
 				ts := time.Now().Unix()
 				playerInfo := model.PlayerInfo{
-					PlayerId:  in.Uid,
 					GameId:    in.GameId,
+					PlayerId:  in.Uid,
 					ConnectTs: ts,
 					EnqueueTs: ts,
 				}
@@ -81,9 +80,8 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 				l.Logger.Infof("enqueue waiting list: %s", ext.WaitingList.String())
 			}
 			ext.GameOnlinePlayerMap.Insert(in.GameId, onlinePlayerMap)
-			l.Logger.Infof("22222")
 		}
-	case globalkey.CONNECT_TYPE_CS:
+	case globalkey.ConnectTypeCs:
 		if csInfo := ext.GetCsInfo(in.Uid); csInfo != nil {
 			csInfo.OnlineStatus = 1
 		} else {

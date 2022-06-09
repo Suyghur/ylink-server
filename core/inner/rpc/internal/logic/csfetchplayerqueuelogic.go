@@ -47,8 +47,8 @@ func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQu
 	for node := ext.WaitingList.FrontNode(); node != nil && index < queueLen; node = node.Next() {
 		info := node.Value.(*model.PlayerInfo)
 		queue[index] = map[string]interface{}{
-			"player_id": info.PlayerId,
 			"game_id":   info.GameId,
+			"player_id": info.PlayerId,
 			"wait_time": time.Now().Unix() - info.EnqueueTs,
 		}
 		index += 1

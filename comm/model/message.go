@@ -5,6 +5,7 @@
 package model
 
 const (
+	CMD_SEND_MESSAGE = 0
 	CMD_CHAT_TIMEOUT = 2001
 )
 
@@ -20,6 +21,9 @@ type KqMessage struct {
 }
 
 type KqCmdMessage struct {
-	Opt int64       `json:"opt"`
-	Ext interface{} `json:"ext"`
+	Opt        int64  `json:"opt"`
+	ReceiverId string `json:"receiver_id"`
+	GameId     string `json:"game_id"`
+	Uid        string `json:"uid"`
+	Ext        string `json:"ext"`
 }

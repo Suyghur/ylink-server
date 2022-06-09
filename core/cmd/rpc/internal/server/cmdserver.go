@@ -37,6 +37,11 @@ func (s *CmdServer) PlayerSendMsg(ctx context.Context, in *pb.PlayerSendMsgReq) 
 	return l.PlayerSendMsg(in)
 }
 
+func (s *CmdServer) PlayerDisconnect(ctx context.Context, in *pb.PlayerDisconnectReq) (*pb.PlayerDisconnectResp, error) {
+	l := logic.NewPlayerDisconnectLogic(ctx, s.svcCtx)
+	return l.PlayerDisconnect(in)
+}
+
 func (s *CmdServer) CsFetchPlayerQueue(ctx context.Context, in *pb.CsFetchPlayerQueueReq) (*pb.CsFetchPlayerQueueResp, error) {
 	l := logic.NewCsFetchPlayerQueueLogic(ctx, s.svcCtx)
 	return l.CsFetchPlayerQueue(in)

@@ -20,5 +20,4 @@ message CommandResp {
 
 service Flowsrv {
   rpc connect(CommandReq) returns (stream CommandResp);
-  rpc disconnect(CommandReq) returns (CommandResp);
 }

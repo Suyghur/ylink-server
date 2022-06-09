@@ -27,6 +27,11 @@ func (s *InnerServer) PlayerFetchCsInfo(ctx context.Context, in *pb.InnerPlayerF
 	return l.PlayerFetchCsInfo(in)
 }
 
+func (s *InnerServer) PlayerDisconnect(ctx context.Context, in *pb.InnerPlayerDisconnectReq) (*pb.InnerPlayerDisconnectResp, error) {
+	l := logic.NewPlayerDisconnectLogic(ctx, s.svcCtx)
+	return l.PlayerDisconnect(in)
+}
+
 func (s *InnerServer) CsFetchPlayerQueue(ctx context.Context, in *pb.InnerCsFetchPlayerQueueReq) (*pb.InnerCsFetchPlayerQueueResp, error) {
 	l := logic.NewCsFetchPlayerQueueLogic(ctx, s.svcCtx)
 	return l.CsFetchPlayerQueue(in)

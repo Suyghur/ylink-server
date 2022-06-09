@@ -27,8 +27,8 @@ func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.CsConnectPlayerReq) (*pb.C
 	// 调用inner服务建立映射关系
 	_, err := l.svcCtx.InnerRpc.CsConnectPlayer(l.ctx, &inner.InnerCsConnectPlayerReq{
 		CsId:     in.CsId,
-		PlayerId: in.PlayerId,
 		GameId:   in.GameId,
+		PlayerId: in.PlayerId,
 	})
 	if err != nil {
 		return nil, err

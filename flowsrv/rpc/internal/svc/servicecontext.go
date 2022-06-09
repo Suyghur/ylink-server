@@ -5,6 +5,7 @@ import (
 	"github.com/Shopify/sarama"
 	"github.com/bytedance/sonic"
 	"github.com/go-redis/redis/v8"
+	"github.com/gookit/event"
 	"github.com/zeromicro/go-zero/core/logx"
 	gozerotrace "github.com/zeromicro/go-zero/core/trace"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -13,6 +14,7 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	oteltrace "go.opentelemetry.io/otel/trace"
 	"net/http"
+	"ylink/comm/globalkey"
 	"ylink/comm/kafka"
 	"ylink/comm/model"
 	"ylink/comm/trace"
@@ -128,15 +130,14 @@ func (s *ServiceContext) handleCommand(sess sarama.ConsumerGroupSession, msg *sa
 			return
 		}
 		trace.StartTrace(ctx, "FlowsrvServer.handleCommand.PushMessage", func(ctx context.Context) {
-			logx.WithContext(ctx).Infof("recv command: %v", message)
 
-			//// 投递到receiver_id对应的redis队列暂存
-			//intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
-			//if size, err := intCmd.Result(); err != nil {
-			//	logx.WithContext(ctx).Errorf("push message rmq err %v", err)
-			//} else {
-			//	logx.WithContext(ctx).Infof("current rmq size: %d", size)
-			//}
+			// 投递到receiver_id对应的redis队列暂存
+			intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
+			if size, err := intCmd.Result(); err != nil {
+				logx.WithContext(ctx).Errorf("push message rmq err %v", err)
+			} else {
+				logx.WithContext(ctx).Infof("current rmq size: %d", size)
+			}
 
 			sess.MarkMessage(msg, "")
 		}, attribute.String("msg.key", string(msg.Key)))
@@ -146,4 +147,10 @@ func (s *ServiceContext) handleCommand(sess sarama.ConsumerGroupSession, msg *sa
 func (s *ServiceContext) subscribe() {
 	go s.MessageConsumerGroup.RegisterHandleAndConsumer(s)
 	go s.CommandConsumerGroup.RegisterHandleAndConsumer(s)
+
+	// 注册事件
+	event.On(globalkey.EventUnsubscribeRmq, event.ListenerFunc(func(e event.Event) error {
+
+		return nil
+	}), event.High)
 }

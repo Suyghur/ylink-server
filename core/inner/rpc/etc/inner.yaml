@@ -3,29 +3,29 @@ ListenOn: 0.0.0.0:10500
 
 Telemetry:
   Name: inner-rpc
-  Endpoint: http://127.0.0.1:14268/api/traces
+  Endpoint: http://localhost:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
 
 KqMsgBoxConsumerConf:
   Brokers:
-    - 127.0.0.1:9092
+    - localhost:9092
   Topic: send-box-topic
   GroupId: inner-rpc
 
 KqMsgBoxProducerConf:
   Brokers:
-    - 127.0.0.1:9092
+    - localhost:9092
   Topic: recv-box-topic
 
 KqDbBoxProducerConf:
   Brokers:
-    - 127.0.0.1:9092
+    - localhost:9092
   Topic: db-box-topic
 
 KqCmdBoxProducerConf:
   Brokers:
-    - 127.0.0.1:9092
+    - localhost:9092
   Topic: cmd-box-topic
 
 MockFolder: /Users/suyghur/Develop/yyxx/backend/ylink/core/inner/rpc/mock
