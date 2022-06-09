@@ -7,14 +7,9 @@ Telemetry:
   Sampler: 1.0
   Batcher: jaeger
 
-AuthRpcConf:
-  Endpoints:
-    - localhost:10400
-  NonBlock: true
-
 InnerRpcConf:
   Endpoints:
-    - localhost:10500
+    - 127.0.0.1:10500
   NonBlock: true
 
 KqMsgBoxConsumerConf:

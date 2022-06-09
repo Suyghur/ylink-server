@@ -50,21 +50,20 @@ func GetConnectedPlayerInfo(gameId, playerId string) *model.PlayerInfo {
 	return nil
 }
 
+func RemoveConnectedPlayerInfo(gameId, playerId string) {
+	if GameConnectedMap.Contains(gameId) {
+		connectedMap := GameConnectedMap.Get(gameId).(*treemap.Map)
+		if connectedMap.Contains(playerId) {
+			connectedMap.Erase(playerId)
+		}
+	}
+}
+
 func GetOnlinePlayerInfo(gameId, playerId string) *model.PlayerInfo {
 	if GameOnlinePlayerMap.Contains(gameId) {
 		onlinePlayerMap := GameOnlinePlayerMap.Get(gameId).(*treemap.Map)
 		if onlinePlayerMap.Contains(playerId) {
 			return onlinePlayerMap.Get(playerId).(*model.PlayerInfo)
-		}
-	}
-	return nil
-}
-
-func GetWaitingPlayerInfo(gameId, playerId string) *model.PlayerInfo {
-	for n := WaitingList.FrontNode(); n != nil; n = n.Next() {
-		playerInfo := n.Value.(*model.PlayerInfo)
-		if playerInfo.GameId == gameId && playerInfo.PlayerId == playerId {
-			return playerInfo
 		}
 	}
 	return nil

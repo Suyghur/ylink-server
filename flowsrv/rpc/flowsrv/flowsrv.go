@@ -18,7 +18,6 @@ type (
 
 	Flowsrv interface {
 		Connect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (pb.Flowsrv_ConnectClient, error)
-		Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error)
 	}
 
 	defaultFlowsrv struct {
@@ -35,9 +34,4 @@ func NewFlowsrv(cli zrpc.Client) Flowsrv {
 func (m *defaultFlowsrv) Connect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (pb.Flowsrv_ConnectClient, error) {
 	client := pb.NewFlowsrvClient(m.cli.Conn())
 	return client.Connect(ctx, in, opts...)
-}
-
-func (m *defaultFlowsrv) Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error) {
-	client := pb.NewFlowsrvClient(m.cli.Conn())
-	return client.Disconnect(ctx, in, opts...)
 }

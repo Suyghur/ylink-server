@@ -3,7 +3,7 @@ ListenOn: 0.0.0.0:10300
 
 InnerRpcConf:
   Endpoints:
-    - localhost:10500
+    - 127.0.0.1:10500
   NonBlock: true
 
 Telemetry:

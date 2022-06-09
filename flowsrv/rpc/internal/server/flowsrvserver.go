@@ -4,8 +4,6 @@
 package server
 
 import (
-	"context"
-
 	"ylink/flowsrv/rpc/internal/logic"
 	"ylink/flowsrv/rpc/internal/svc"
 	"ylink/flowsrv/rpc/pb"
@@ -25,9 +23,4 @@ func NewFlowsrvServer(svcCtx *svc.ServiceContext) *FlowsrvServer {
 func (s *FlowsrvServer) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServer) error {
 	l := logic.NewConnectLogic(stream.Context(), s.svcCtx)
 	return l.Connect(in, stream)
-}
-
-func (s *FlowsrvServer) Disconnect(ctx context.Context, in *pb.CommandReq) (*pb.CommandResp, error) {
-	l := logic.NewDisconnectLogic(ctx, s.svcCtx)
-	return l.Disconnect(in)
 }

@@ -10,7 +10,7 @@ Telemetry:
 
 CmdRpcConf:
   Endpoints:
-    - localhost:10300
+    - 127.0.0.1:10300
   NonBlock: true
 
 JwtAuth:

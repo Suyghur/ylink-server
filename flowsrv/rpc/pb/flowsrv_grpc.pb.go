@@ -23,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FlowsrvClient interface {
 	Connect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (Flowsrv_ConnectClient, error)
-	Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error)
 }
 
 type flowsrvClient struct {
@@ -66,21 +65,11 @@ func (x *flowsrvConnectClient) Recv() (*CommandResp, error) {
 	return m, nil
 }
 
-func (c *flowsrvClient) Disconnect(ctx context.Context, in *CommandReq, opts ...grpc.CallOption) (*CommandResp, error) {
-	out := new(CommandResp)
-	err := c.cc.Invoke(ctx, "/pb.Flowsrv/disconnect", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // FlowsrvServer is the server API for Flowsrv service.
 // All implementations must embed UnimplementedFlowsrvServer
 // for forward compatibility
 type FlowsrvServer interface {
 	Connect(*CommandReq, Flowsrv_ConnectServer) error
-	Disconnect(context.Context, *CommandReq) (*CommandResp, error)
 	mustEmbedUnimplementedFlowsrvServer()
 }
 
@@ -90,9 +79,6 @@ type UnimplementedFlowsrvServer struct {
 
 func (UnimplementedFlowsrvServer) Connect(*CommandReq, Flowsrv_ConnectServer) error {
 	return status.Errorf(codes.Unimplemented, "method Connect not implemented")
-}
-func (UnimplementedFlowsrvServer) Disconnect(context.Context, *CommandReq) (*CommandResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Disconnect not implemented")
 }
 func (UnimplementedFlowsrvServer) mustEmbedUnimplementedFlowsrvServer() {}
 
@@ -128,36 +114,13 @@ func (x *flowsrvConnectServer) Send(m *CommandResp) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Flowsrv_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CommandReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FlowsrvServer).Disconnect(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Flowsrv/disconnect",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlowsrvServer).Disconnect(ctx, req.(*CommandReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Flowsrv_ServiceDesc is the grpc.ServiceDesc for Flowsrv service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Flowsrv_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.Flowsrv",
 	HandlerType: (*FlowsrvServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "disconnect",
-			Handler:    _Flowsrv_Disconnect_Handler,
-		},
-	},
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "connect",
