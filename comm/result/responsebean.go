@@ -5,7 +5,7 @@
 package result
 
 type ResponseBean struct {
-	Code int64       `json:"code"`
+	Code int32       `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
@@ -17,6 +17,6 @@ func Success(data interface{}) *ResponseBean {
 	return &ResponseBean{0, "success", data}
 }
 
-func Error(code int64, msg string) *ResponseBean {
+func Error(code int32, msg string) *ResponseBean {
 	return &ResponseBean{code, msg, map[string]interface{}{}}
 }

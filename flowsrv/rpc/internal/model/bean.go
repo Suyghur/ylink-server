@@ -5,7 +5,6 @@
 package model
 
 import (
-	"context"
 	"github.com/zeromicro/go-zero/core/logx"
 	"ylink/flowsrv/rpc/internal/svc"
 	"ylink/flowsrv/rpc/pb"
@@ -14,11 +13,10 @@ import (
 type Flow struct {
 	EndFlow chan int
 	Message chan string
-	Ctx     context.Context
 	SvcCtx  *svc.ServiceContext
 	Logger  logx.Logger
 	Stream  pb.Flowsrv_ConnectServer
-	Type    int64
+	Type    int32
 	Uid     string
 	GameId  string
 	FlowId  string

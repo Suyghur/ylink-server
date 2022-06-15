@@ -105,6 +105,7 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 			logx.Errorf("unmarshal msg error: %v", err)
 			return
 		}
+		logx.WithContext(ctx).Infof("handle message: %s", msg.Value)
 		trace.StartTrace(ctx, "FlowsrvServer.handleMessage.PushMessage", func(ctx context.Context) {
 			// 投递到receiver_id对应的redis队列暂存
 			intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
@@ -129,8 +130,8 @@ func (s *ServiceContext) handleCommand(sess sarama.ConsumerGroupSession, msg *sa
 			logx.Errorf("unmarshal msg error: %v", err)
 			return
 		}
+		logx.WithContext(ctx).Infof("handle command: %s", msg.Value)
 		trace.StartTrace(ctx, "FlowsrvServer.handleCommand.PushMessage", func(ctx context.Context) {
-
 			// 投递到receiver_id对应的redis队列暂存
 			intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
 			if size, err := intCmd.Result(); err != nil {

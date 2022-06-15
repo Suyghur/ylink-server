@@ -9,5 +9,5 @@ type CsInfo struct {
 	CsNickname   string `json:"cs_nickname"`
 	CsAvatarUrl  string `json:"cs_avatar_url"`
 	CsSignature  string `json:"cs_signature"`
-	OnlineStatus int64  `json:"online_status"`
+	OnlineStatus int32  `json:"online_status"`
 }

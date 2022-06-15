@@ -21,7 +21,7 @@ type KqMessage struct {
 }
 
 type KqCmdMessage struct {
-	Opt        int64  `json:"opt"`
+	Opt        int32  `json:"opt"`
 	ReceiverId string `json:"receiver_id"`
 	GameId     string `json:"game_id"`
 	Uid        string `json:"uid"`

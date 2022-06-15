@@ -11,19 +11,19 @@ import "fmt"
 */
 
 const (
-	Ok                 int64 = 0
-	ServerCommonError  int64 = 10001
-	RequestParamError  int64 = 10002
-	TokenExpireError   int64 = 10003
-	TokenParseError    int64 = 10004
-	TokenGenerateError int64 = 10005
-	DbError            int64 = 10006
+	Ok                 int32 = 0
+	ServerCommonError  int32 = 10001
+	RequestParamError  int32 = 10002
+	TokenExpireError   int32 = 10003
+	TokenParseError    int32 = 10004
+	TokenGenerateError int32 = 10005
+	DbError            int32 = 10006
 )
 
-var message map[int64]string
+var message map[int32]string
 
 func init() {
-	message = make(map[int64]string)
+	message = make(map[int32]string)
 	message[Ok] = "success"
 	message[ServerCommonError] = "some unknown error has occurred"
 	message[RequestParamError] = "request params error"
@@ -33,7 +33,7 @@ func init() {
 	message[DbError] = "database is busy, please try again late"
 }
 
-func MapErrMsg(code int64) string {
+func MapErrMsg(code int32) string {
 	if msg, ok := message[code]; ok {
 		return msg
 	} else {
@@ -41,7 +41,7 @@ func MapErrMsg(code int64) string {
 	}
 }
 
-func IsCodeErr(code int64) bool {
+func IsCodeErr(code int32) bool {
 	if _, ok := message[code]; ok {
 		return true
 	} else {
@@ -50,11 +50,11 @@ func IsCodeErr(code int64) bool {
 }
 
 type CodeError struct {
-	errCode int64
+	errCode int32
 	errMsg  string
 }
 
-func (e *CodeError) GetErrCode() int64 {
+func (e *CodeError) GetErrCode() int32 {
 	return e.errCode
 }
 
@@ -66,10 +66,10 @@ func (e *CodeError) Error() string {
 	return fmt.Sprintf("code:%d，msg:%s", e.errCode, e.errMsg)
 }
 
-func NewErrCodeMsg(code int64, msg string) *CodeError {
+func NewErrCodeMsg(code int32, msg string) *CodeError {
 	return &CodeError{errCode: code, errMsg: msg}
 }
-func NewErrCode(errCode int64) *CodeError {
+func NewErrCode(errCode int32) *CodeError {
 	return &CodeError{errCode: errCode, errMsg: MapErrMsg(errCode)}
 }
 

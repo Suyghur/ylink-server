@@ -69,7 +69,7 @@ func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (
 		} else {
 			timeoutTs = time.Now().Unix() - playerInfo.LastChatTs
 		}
-		if timeoutTs >= 300 {
+		if timeoutTs >= 3600 {
 			// 释放计时器任务
 			_ = event.MustFire(globalkey.EventRemoveTimeoutJob, event.M{"entry_id": entryId})
 			l.Logger.Infof("trigger timeout event, remove cron job, entry id: %d", entryId)

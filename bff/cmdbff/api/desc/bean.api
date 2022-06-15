@@ -16,17 +16,17 @@ type (
         CsNickname string `json:"cs_nickname"`
         CsAvatarUrl string `json:"cs_avatar_url"`
         CsSignature string `json:"cs_signature"`
-        OnlineStatus int64 `json:"online_status"`
+        OnlineStatus int32 `json:"online_status"`
     }
 
     PlayerFetchHistoryMsgReq {
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
+        Page int32 `json:"page"`
+        Limit int32 `json:"limit"`
     }
 
     PlayerFetchHistoryMsgResp {
-        TotalPage int64 `json:"total_page"`
-        CurrentPage int64 `json:"current_page"`
+        TotalPage int32 `json:"total_page"`
+        CurrentPage int32 `json:"current_page"`
         List []interface{} `json:"list"`
     }
 
@@ -38,7 +38,7 @@ type (
 
 type (
     CsFetchPlayerQueueReq {
-        Limit int64 `json:"limit"`
+        Limit int32 `json:"limit"`
     }
 
     CsFetchPlayerQueueResp {
@@ -51,26 +51,26 @@ type (
     }
 
     CsFetchHistoryChatReq {
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
+        Page int32 `json:"page"`
+        Limit int32 `json:"limit"`
     }
 
     CsFetchHistoryChatResp {
-        TotalPage int64 `json:"total_page"`
-        CurrentPage int64 `json:"current_page"`
+        TotalPage int32 `json:"total_page"`
+        CurrentPage int32 `json:"current_page"`
         List []interface{} `json:"list"`
     }
 
     CsFetchHistoryMsgReq {
         GameId string `json:"game_id"`
         PlayerId string `json:"player_id"`
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
+        Page int32 `json:"page"`
+        Limit int32 `json:"limit"`
     }
 
     CsFetchHistoryMsgResp {
-        TotalPage int64 `json:"total_page"`
-        CurrentPage int64 `json:"current_page"`
+        TotalPage int32 `json:"total_page"`
+        CurrentPage int32 `json:"current_page"`
         List []interface{} `json:"list"`
     }
 
