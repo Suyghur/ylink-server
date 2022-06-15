@@ -48,7 +48,7 @@ func (manager *flowManager) registerFlow(flow *model.Flow) {
 		select {
 		case <-flow.Stream.Context().Done():
 			if manager.Has(flow.FlowId) {
-				flow.Logger.Infof("stream was disconnected abnormally")
+				logx.Info("stream was disconnected abnormally")
 				manager.UnRegister(flow.FlowId)
 				manager.handleUserOffline(flow)
 			}
@@ -62,7 +62,7 @@ func (manager *flowManager) registerFlow(flow *model.Flow) {
 					Data: []byte(msg),
 				})
 			} else {
-				flow.Logger.Error("message channel is close")
+				logx.Error("message channel is close")
 				return
 			}
 		}
@@ -78,7 +78,7 @@ func (manager *flowManager) subscribeRmq(flow *model.Flow) {
 				logx.WithContext(ctx).Infof("unsubscribe rmq...")
 				return
 			default:
-				resultCmd := flow.SvcCtx.RedisClient.BRPop(ctx, 30*time.Second, flow.FlowId)
+				resultCmd := flow.RedisClient.BRPop(ctx, 30*time.Second, flow.FlowId)
 				if message, err := resultCmd.Result(); err != nil {
 					logx.WithContext(ctx).Errorf("get message from redis, key: %s, err: %v", flow.FlowId, err)
 				} else {
@@ -95,7 +95,7 @@ func (manager *flowManager) handleUserOffline(flow *model.Flow) {
 	traceId := ctxdata.GetTraceIdFromCtx(flow.Stream.Context())
 	trace.RunOnTracing(traceId, func(ctx context.Context) {
 		trace.StartTrace(ctx, "FlowsrvServer.flowmgr.handleUserOffline", func(ctx context.Context) {
-			_, err := flow.SvcCtx.InnerRpc.NotifyUserOffline(ctx, &inner.NotifyUserStatusReq{
+			_, err := flow.InnerRpc.NotifyUserOffline(ctx, &inner.NotifyUserStatusReq{
 				Type:   flow.Type,
 				Uid:    flow.Uid,
 				GameId: flow.GameId,
@@ -105,6 +105,10 @@ func (manager *flowManager) handleUserOffline(flow *model.Flow) {
 			}
 		})
 	})
+}
+
+func (manager *flowManager) All() *treemap.Map {
+	return manager.flowMap
 }
 
 func (manager *flowManager) Get(flowId string) *model.Flow {

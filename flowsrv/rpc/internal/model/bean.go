@@ -5,19 +5,19 @@
 package model
 
 import (
-	"github.com/zeromicro/go-zero/core/logx"
-	"ylink/flowsrv/rpc/internal/svc"
+	"github.com/go-redis/redis/v8"
+	"ylink/core/inner/rpc/inner"
 	"ylink/flowsrv/rpc/pb"
 )
 
 type Flow struct {
-	EndFlow chan int
-	Message chan string
-	SvcCtx  *svc.ServiceContext
-	Logger  logx.Logger
-	Stream  pb.Flowsrv_ConnectServer
-	Type    int32
-	Uid     string
-	GameId  string
-	FlowId  string
+	EndFlow     chan int
+	Message     chan string
+	Stream      pb.Flowsrv_ConnectServer
+	RedisClient *redis.Client
+	InnerRpc    inner.Inner
+	Type        int32
+	Uid         string
+	GameId      string
+	FlowId      string
 }

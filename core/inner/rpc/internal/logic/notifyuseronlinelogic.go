@@ -32,63 +32,75 @@ func NewNotifyUserOnlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*pb.NotifyUserStatusResp, error) {
 	switch in.Type {
-	case globalkey.ConnectTypePlayer:
+	case globalkey.ConnectTypeNormalPlayer:
 		// 修改玩家在线状态
 		if ext.GameOnlinePlayerMap.Contains(in.GameId) {
 			// 有则取出玩家的map
 			onlinePlayerMap := ext.GameOnlinePlayerMap.Get(in.GameId).(*treemap.Map)
 			if onlinePlayerMap.Contains(in.Uid) {
-				l.Logger.Error("such player has been connected")
+				l.Logger.Error("该玩家已在线")
 			} else {
-				// 不存在换这个玩家，判断是否vip
-				if playerInfo := ext.GetVipPlayer(in.GameId, in.Uid); playerInfo != nil {
-					playerInfo.ConnectTs = time.Now().Unix()
-					onlinePlayerMap.Insert(in.Uid, playerInfo)
-				} else {
-					// 不是vip
-					ts := time.Now().Unix()
-					playerInfo := model.PlayerInfo{
-						GameId:    in.GameId,
-						PlayerId:  in.Uid,
-						ConnectTs: ts,
-						EnqueueTs: ts,
-					}
-					onlinePlayerMap.Insert(in.Uid, &playerInfo)
-					// 放入等待队列
-					ext.WaitingList.PushBack(&playerInfo)
-					l.Logger.Infof("enqueue waiting list: %s", ext.WaitingList.String())
+				ts := time.Now().Unix()
+				playerInfo := &model.PlayerInfo{
+					GameId:     in.GameId,
+					PlayerId:   in.Uid,
+					IsVip:      0,
+					CsId:       "",
+					ConnectTs:  ts,
+					LastChatTs: 0,
+					EnqueueTs:  ts,
+					DequeueTs:  0,
 				}
+				//if playerInfo == nil {
+				//	l.Logger.Infof("playerInfo is nil")
+				//}
+				onlinePlayerMap.Insert(in.Uid, playerInfo)
+				// 放入等待队列
+				ext.WaitingQueue.Insert(in.GameId+"_"+in.Uid, playerInfo)
+				l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue)
+				//TODO 返回等待信息
 			}
 		} else {
 			onlinePlayerMap := treemap.New(treemap.WithGoroutineSafe())
-			// 判断是不是vip玩家
-			if playerInfo := ext.GetVipPlayer(in.GameId, in.Uid); playerInfo != nil {
-				playerInfo.ConnectTs = time.Now().Unix()
-				onlinePlayerMap.Insert(in.Uid, playerInfo)
-			} else {
-				// 不是vip
-				ts := time.Now().Unix()
-				playerInfo := model.PlayerInfo{
-					GameId:    in.GameId,
-					PlayerId:  in.Uid,
-					ConnectTs: ts,
-					EnqueueTs: ts,
-				}
-				onlinePlayerMap.Insert(in.Uid, &playerInfo)
-				// 放入等待队列
-				ext.WaitingList.PushBack(&playerInfo)
-				l.Logger.Infof("enqueue waiting list: %s", ext.WaitingList.String())
+			ts := time.Now().Unix()
+			playerInfo := &model.PlayerInfo{
+				GameId:    in.GameId,
+				PlayerId:  in.Uid,
+				ConnectTs: ts,
+				EnqueueTs: ts,
 			}
+			onlinePlayerMap.Insert(in.Uid, playerInfo)
+			// 放入等待队列
+			ext.WaitingQueue.Insert(in.GameId+"_"+in.Uid, playerInfo)
+			l.Logger.Infof("enqueue waiting list: %s", ext.WaitingQueue)
 			ext.GameOnlinePlayerMap.Insert(in.GameId, onlinePlayerMap)
+			//TODO 返回等待信息
+
+		}
+	case globalkey.ConnectTypeVipPlayer:
+		var onlinePlayerMap *treemap.Map
+		if ext.GameOnlinePlayerMap.Contains(in.GameId) {
+			onlinePlayerMap = ext.GameOnlinePlayerMap.Get(in.GameId).(*treemap.Map)
+		} else {
+			onlinePlayerMap = treemap.New(treemap.WithGoroutineSafe())
+		}
+
+		if playerInfo := ext.GetVipPlayer(in.GameId, in.Uid); playerInfo != nil {
+			playerInfo.ConnectTs = time.Now().Unix()
+			onlinePlayerMap.Insert(in.Uid, playerInfo)
+			ext.GameOnlinePlayerMap.Insert(in.GameId, onlinePlayerMap)
+		} else {
+			return nil, errors.Wrap(result.NewErrMsg("用户不存在"), "")
 		}
 	case globalkey.ConnectTypeCs:
 		if csInfo := ext.GetCsInfo(in.Uid); csInfo != nil {
 			csInfo.OnlineStatus = 1
+			//TODO 返回等待信息
 		} else {
-			return nil, errors.Wrap(result.NewErrMsg("no such user"), "")
+			return nil, errors.Wrap(result.NewErrMsg("用户不存在"), "")
 		}
 	default:
-		return nil, errors.Wrap(result.NewErrMsg("no such user type"), "")
+		return nil, errors.Wrap(result.NewErrMsg("用户不存在"), "")
 	}
 	return &pb.NotifyUserStatusResp{}, nil
 }

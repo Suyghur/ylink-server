@@ -37,8 +37,7 @@ func (l *PlayerFetchCsInfoLogic) PlayerFetchCsInfo(in *pb.InnerPlayerFetchCsInfo
 				OnlineStatus: csInfo.OnlineStatus,
 			}, nil
 		}
-		return nil, errors.Wrap(result.NewErrMsg("Customer service information does not exist"), "")
+		return nil, errors.Wrap(result.NewErrMsg("查询的客服不存在"), "")
 	}
-	return nil, errors.Wrap(result.NewErrMsg("The player is not connected"), "")
-
+	return nil, errors.Wrap(result.NewErrMsg("玩家未连接"), "")
 }

@@ -5,7 +5,6 @@
 package ext
 
 import (
-	"github.com/liyue201/gostl/ds/list/simplelist"
 	"github.com/liyue201/gostl/ds/map"
 	"ylink/comm/model"
 )
@@ -19,8 +18,8 @@ var (
 	GameOnlinePlayerMap *treemap.Map
 	// GameConnectedMap 已连接客服玩家
 	GameConnectedMap *treemap.Map
-	// WaitingList 玩家等待队列
-	WaitingList *simplelist.List
+	// WaitingQueue 玩家等待队列
+	WaitingQueue *treemap.Map
 )
 
 func GetVipPlayer(gameId, playerId string) *model.PlayerInfo {
