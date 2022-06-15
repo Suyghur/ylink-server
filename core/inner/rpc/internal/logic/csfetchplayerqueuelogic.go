@@ -29,7 +29,7 @@ func NewCsFetchPlayerQueueLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQueueReq) (*pb.InnerCsFetchPlayerQueueResp, error) {
-	queueLen := int64(ext.WaitingList.Len())
+	queueLen := int32(ext.WaitingList.Len())
 	if queueLen == 0 {
 		// 等待队列为空直接返回
 		return &pb.InnerCsFetchPlayerQueueResp{
@@ -37,7 +37,7 @@ func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQu
 		}, nil
 	}
 
-	var index int64 = 0
+	var index int32 = 0
 	if in.Limit != 0 && in.Limit < queueLen {
 		queueLen = in.Limit
 	}

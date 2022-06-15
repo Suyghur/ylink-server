@@ -28,7 +28,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err er
 			msg = e.GetErrMsg()
 		} else {
 			if gStatus, ok := status.FromError(cause); ok {
-				grpcCode := int64(gStatus.Code())
+				grpcCode := int32(gStatus.Code())
 				if IsCodeErr(grpcCode) {
 					code = grpcCode
 					msg = gStatus.Message()

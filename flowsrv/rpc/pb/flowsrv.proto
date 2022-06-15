@@ -8,12 +8,12 @@ import "google/protobuf/struct.proto";
 
 
 message CommandReq {
-  int64 type = 1;
+  int32 type = 1;
   string access_token = 2;
 }
 
 message CommandResp {
-  int64 code = 1;
+  int32 code = 1;
   string  msg = 2;
   bytes data = 3;
 }

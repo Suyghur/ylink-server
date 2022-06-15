@@ -20,12 +20,12 @@ message InnerPlayerFetchCsInfoResp{
   string cs_nickname = 2;
   string cs_avatar_url = 3;
   string cs_signature = 4;
-  int64 online_status = 5;
+  int32 online_status = 5;
 }
 
 message InnerPlayerDisconnectReq{
-  string player_id = 1;
-  string game_id = 2;
+  string game_id = 1;
+  string player_id = 2;
 }
 
 message InnerPlayerDisconnectResp{}
@@ -34,11 +34,11 @@ message InnerPlayerDisconnectResp{}
 Cs Command Request Bean
  */
 message InnerCsFetchPlayerQueueReq {
-  int64 limit = 1;
+  int32 limit = 1;
 }
 
 message InnerCsFetchPlayerQueueResp{
-  int64 total = 1;
+  int32 total = 1;
   google.protobuf.ListValue list = 2;
 }
 
@@ -50,9 +50,8 @@ message InnerCsConnectPlayerReq{
 
 message InnerCsConnectPlayerResp{}
 
-
 message NotifyUserStatusReq{
-  int64 type = 1;
+  int32 type = 1;
   string uid = 2;
   string game_id = 3;
 }

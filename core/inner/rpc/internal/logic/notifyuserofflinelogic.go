@@ -30,6 +30,7 @@ func NewNotifyUserOfflineLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (*pb.NotifyUserStatusResp, error) {
+	l.Logger.Infof("NotifyUserOffline")
 	switch in.Type {
 	case globalkey.ConnectTypePlayer:
 		// 修改玩家在线状态
@@ -39,17 +40,20 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 			if onlinePlayerMap.Contains(in.Uid) {
 				// 有则清除，代表下线
 				onlinePlayerMap.Erase(in.Uid)
+				l.Logger.Infof("清除玩家在线状态")
 			}
 		}
 
-		for n := ext.WaitingList.FrontNode(); n != nil; n = n.Next() {
-			info := n.Value.(*model.PlayerInfo)
-			if info.GameId == in.GameId && info.PlayerId == in.Uid {
-				l.Logger.Infof("remove the player from the queue, game_id: %s, player_id: %s", in.GameId, in.Uid)
-				ext.WaitingList.Remove(nil, n)
-				break
+		go func() {
+			for n := ext.WaitingList.FrontNode(); n != nil; n = n.Next() {
+				info := n.Value.(*model.PlayerInfo)
+				if info.GameId == in.GameId && info.PlayerId == in.Uid {
+					l.Logger.Infof("remove the player from the queue, game_id: %s, player_id: %s", in.GameId, in.Uid)
+					ext.WaitingList.Remove(nil, n)
+					break
+				}
 			}
-		}
+		}()
 	case globalkey.ConnectTypeCs:
 		// 修改客服在线状态
 		if csInfo := ext.GetCsInfo(in.Uid); csInfo != nil {

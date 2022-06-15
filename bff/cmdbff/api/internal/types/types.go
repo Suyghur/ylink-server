@@ -10,17 +10,17 @@ type PlayerFetchCsInfoResp struct {
 	CsNickname   string `json:"cs_nickname"`
 	CsAvatarUrl  string `json:"cs_avatar_url"`
 	CsSignature  string `json:"cs_signature"`
-	OnlineStatus int64  `json:"online_status"`
+	OnlineStatus int32  `json:"online_status"`
 }
 
 type PlayerFetchHistoryMsgReq struct {
-	Page  int64 `json:"page"`
-	Limit int64 `json:"limit"`
+	Page  int32 `json:"page"`
+	Limit int32 `json:"limit"`
 }
 
 type PlayerFetchHistoryMsgResp struct {
-	TotalPage   int64         `json:"total_page"`
-	CurrentPage int64         `json:"current_page"`
+	TotalPage   int32         `json:"total_page"`
+	CurrentPage int32         `json:"current_page"`
 	List        []interface{} `json:"list"`
 }
 
@@ -30,7 +30,7 @@ type PlayerSendMsgReq struct {
 }
 
 type CsFetchPlayerQueueReq struct {
-	Limit int64 `json:"limit"`
+	Limit int32 `json:"limit"`
 }
 
 type CsFetchPlayerQueueResp struct {
@@ -43,26 +43,26 @@ type CsConnectPlayerReq struct {
 }
 
 type CsFetchHistoryChatReq struct {
-	Page  int64 `json:"page"`
-	Limit int64 `json:"limit"`
+	Page  int32 `json:"page"`
+	Limit int32 `json:"limit"`
 }
 
 type CsFetchHistoryChatResp struct {
-	TotalPage   int64         `json:"total_page"`
-	CurrentPage int64         `json:"current_page"`
+	TotalPage   int32         `json:"total_page"`
+	CurrentPage int32         `json:"current_page"`
 	List        []interface{} `json:"list"`
 }
 
 type CsFetchHistoryMsgReq struct {
 	GameId   string `json:"game_id"`
 	PlayerId string `json:"player_id"`
-	Page     int64  `json:"page"`
-	Limit    int64  `json:"limit"`
+	Page     int32  `json:"page"`
+	Limit    int32  `json:"limit"`
 }
 
 type CsFetchHistoryMsgResp struct {
-	TotalPage   int64         `json:"total_page"`
-	CurrentPage int64         `json:"current_page"`
+	TotalPage   int32         `json:"total_page"`
+	CurrentPage int32         `json:"current_page"`
 	List        []interface{} `json:"list"`
 }
 

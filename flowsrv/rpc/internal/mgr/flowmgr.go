@@ -5,10 +5,14 @@
 package mgr
 
 import (
+	"context"
 	treemap "github.com/liyue201/gostl/ds/map"
+	"github.com/zeromicro/go-zero/core/logx"
 	"sync"
 	"time"
+	"ylink/comm/ctxdata"
 	"ylink/comm/result"
+	"ylink/comm/trace"
 	"ylink/core/inner/rpc/inner"
 	"ylink/flowsrv/rpc/internal/model"
 	"ylink/flowsrv/rpc/pb"
@@ -46,11 +50,7 @@ func (manager *flowManager) registerFlow(flow *model.Flow) {
 			if manager.Has(flow.FlowId) {
 				flow.Logger.Infof("stream was disconnected abnormally")
 				manager.UnRegister(flow.FlowId)
-				flow.SvcCtx.InnerRpc.NotifyUserOffline(flow.Ctx, &inner.NotifyUserStatusReq{
-					Type:   flow.Type,
-					Uid:    flow.Uid,
-					GameId: flow.GameId,
-				})
+				manager.handleUserOffline(flow)
 			}
 			flow.EndFlow <- 1
 			return
@@ -70,20 +70,41 @@ func (manager *flowManager) registerFlow(flow *model.Flow) {
 }
 
 func (manager *flowManager) subscribeRmq(flow *model.Flow) {
-	for {
-		select {
-		case <-flow.Stream.Context().Done():
-			flow.Logger.Infof("unsubscribe rmq...")
-			return
-		default:
-			resultCmd := flow.SvcCtx.RedisClient.BRPop(flow.Ctx, 10*time.Second, flow.FlowId)
-			if message, err := resultCmd.Result(); err != nil {
-				flow.Logger.Errorf("get message from redis, key: %s, err: %v", flow.FlowId, err)
-			} else {
-				flow.Message <- message[1]
+	traceId := ctxdata.GetTraceIdFromCtx(flow.Stream.Context())
+	trace.RunOnTracing(traceId, func(ctx context.Context) {
+		for {
+			select {
+			case <-flow.Stream.Context().Done():
+				logx.WithContext(ctx).Infof("unsubscribe rmq...")
+				return
+			default:
+				resultCmd := flow.SvcCtx.RedisClient.BRPop(ctx, 30*time.Second, flow.FlowId)
+				if message, err := resultCmd.Result(); err != nil {
+					logx.WithContext(ctx).Errorf("get message from redis, key: %s, err: %v", flow.FlowId, err)
+				} else {
+					trace.StartTrace(ctx, "FlowsrvServer.flowmgr.handleRmqMessage", func(ctx context.Context) {
+						flow.Message <- message[1]
+					})
+				}
 			}
 		}
-	}
+	})
+}
+
+func (manager *flowManager) handleUserOffline(flow *model.Flow) {
+	traceId := ctxdata.GetTraceIdFromCtx(flow.Stream.Context())
+	trace.RunOnTracing(traceId, func(ctx context.Context) {
+		trace.StartTrace(ctx, "FlowsrvServer.flowmgr.handleUserOffline", func(ctx context.Context) {
+			_, err := flow.SvcCtx.InnerRpc.NotifyUserOffline(ctx, &inner.NotifyUserStatusReq{
+				Type:   flow.Type,
+				Uid:    flow.Uid,
+				GameId: flow.GameId,
+			})
+			if err != nil {
+				logx.WithContext(ctx).Errorf("notify user offline has some error: %v", err)
+			}
+		})
+	})
 }
 
 func (manager *flowManager) Get(flowId string) *model.Flow {

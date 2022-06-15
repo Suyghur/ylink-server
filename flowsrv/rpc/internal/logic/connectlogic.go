@@ -63,7 +63,6 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 		EndFlow: make(chan int),
 		Message: make(chan string),
 		Stream:  stream,
-		Ctx:     l.ctx,
 		SvcCtx:  l.svcCtx,
 		Logger:  l.Logger,
 		Type:    in.Type,
@@ -79,7 +78,6 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 	mgr.GetFlowMgrInstance().Register(flow)
 
 	<-flow.EndFlow
-	l.Logger.Infof("end flow")
 	return nil
 }
 
