@@ -5,11 +5,22 @@
 package globalkey
 
 const (
-	ConnectTypePlayer = 0
-	ConnectTypeCs     = 1
+	ConnectTypeNormalPlayer = 0
+	ConnectTypeVipPlayer    = 1
+	ConnectTypeCs           = 2
 )
 
 const (
-	EventRemoveTimeoutJob = "EventRemoveTimeoutJob"
-	EventUnsubscribeRmq   = "EventUnsubscribeRmq"
+	EventRemoveTimeoutJob     = "EventRemoveTimeoutJob"
+	EventHandleRmqJob         = "EventHandleRmqJob"
+	EventUnsubscribeRmqJob    = "EventUnsubscribeRmq"
+	EventNotifyUserOfflineJob = "EventNotifyUserOfflineJob"
+)
+
+const (
+	All             = "all"
+	AllPlayer       = "all_player"
+	AllVipPlayer    = "all_vip_player"
+	AllNormalPlayer = "all_normal_player"
+	AllCs           = "all_cs"
 )

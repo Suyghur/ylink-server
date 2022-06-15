@@ -52,11 +52,17 @@ message InnerCsConnectPlayerResp{}
 
 message NotifyUserStatusReq{
   int32 type = 1;
-  string uid = 2;
-  string game_id = 3;
+  string game_id = 2;
+  string uid = 3;
 }
 
-message NotifyUserStatusResp{}
+message NotifyUserStatusResp{
+  int32 type = 1;
+  int32 queue_size = 2;
+  string game_id = 3;
+  string uid = 4;
+  string cs_id = 5;
+}
 
 service Inner {
   rpc playerFetchCsInfo (InnerPlayerFetchCsInfoReq) returns (InnerPlayerFetchCsInfoResp);

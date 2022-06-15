@@ -27,7 +27,7 @@ func NewPlayerSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pla
 
 func (l *PlayerSendMsgLogic) PlayerSendMsg(in *pb.PlayerSendMsgReq) (*pb.PlayerSendMsgResp, error) {
 	// 投递到自己的发件箱
-	message := &model.KqMessage{
+	message := &model.ChatMessage{
 		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 		Content:    in.Content,
 		Pic:        in.Pic,
@@ -35,7 +35,12 @@ func (l *PlayerSendMsgLogic) PlayerSendMsg(in *pb.PlayerSendMsgReq) (*pb.PlayerS
 		GameId:     in.GameId,
 		Uid:        in.PlayerId,
 	}
-	kMsg, _ := sonic.MarshalString(message)
+	payload, _ := sonic.MarshalString(message)
+	kMsg, _ := sonic.MarshalString(&model.KqMessage{
+		Opt:     model.CMD_SEND_MESSAGE,
+		Payload: payload,
+		Ext:     "",
+	})
 	_, _, err := l.svcCtx.KqMsgBoxProducer.SendMessage(l.ctx, kMsg, message.SenderId)
 	if err != nil {
 		return nil, err

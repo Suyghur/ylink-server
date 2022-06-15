@@ -29,8 +29,8 @@ func NewCsFetchPlayerQueueLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQueueReq) (*pb.InnerCsFetchPlayerQueueResp, error) {
-	queueLen := int32(ext.WaitingList.Len())
-	if queueLen == 0 {
+	queueSize := int32(ext.WaitingQueue.Size())
+	if queueSize == 0 {
 		// 等待队列为空直接返回
 		return &pb.InnerCsFetchPlayerQueueResp{
 			List: nil,
@@ -38,14 +38,17 @@ func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQu
 	}
 
 	var index int32 = 0
-	if in.Limit != 0 && in.Limit < queueLen {
-		queueLen = in.Limit
+	if in.Limit != 0 && in.Limit < queueSize {
+		queueSize = in.Limit
 	}
 
-	queue := make([]interface{}, queueLen)
+	queue := make([]interface{}, queueSize)
 
-	for node := ext.WaitingList.FrontNode(); node != nil && index < queueLen; node = node.Next() {
-		info := node.Value.(*model.PlayerInfo)
+	for iter := ext.WaitingQueue.Begin(); iter.IsValid(); iter.Next() {
+		if index >= queueSize {
+			break
+		}
+		info := iter.Value().(*model.PlayerInfo)
 		queue[index] = map[string]interface{}{
 			"game_id":   info.GameId,
 			"player_id": info.PlayerId,
@@ -53,6 +56,16 @@ func (l *CsFetchPlayerQueueLogic) CsFetchPlayerQueue(in *pb.InnerCsFetchPlayerQu
 		}
 		index += 1
 	}
+
+	//for node := ext.WaitingQueue.FrontNode(); node != nil && index < queueLen; node = node.Next() {
+	//	info := node.Value.(*model.PlayerInfo)
+	//	queue[index] = map[string]interface{}{
+	//		"game_id":   info.GameId,
+	//		"player_id": info.PlayerId,
+	//		"wait_time": time.Now().Unix() - info.EnqueueTs,
+	//	}
+	//	index += 1
+	//}
 
 	list, err := structpb.NewList(queue)
 	if err != nil {

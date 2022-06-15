@@ -53,22 +53,22 @@ func (l *ConnectLogic) Connect(in *pb.CommandReq, stream pb.Flowsrv_ConnectServe
 	}
 
 	var flowId string
-	if in.Type == globalkey.ConnectTypePlayer {
-		flowId = gameId + "_" + uid
-	} else {
+	if in.Type == globalkey.ConnectTypeCs {
 		flowId = uid
+	} else {
+		flowId = gameId + "_" + uid
 	}
 
 	flow := &model.Flow{
-		EndFlow: make(chan int),
-		Message: make(chan string),
-		Stream:  stream,
-		SvcCtx:  l.svcCtx,
-		Logger:  l.Logger,
-		Type:    in.Type,
-		Uid:     uid,
-		GameId:  gameId,
-		FlowId:  flowId,
+		EndFlow:     make(chan int),
+		Message:     make(chan string),
+		Stream:      stream,
+		RedisClient: l.svcCtx.RedisClient,
+		InnerRpc:    l.svcCtx.InnerRpc,
+		Type:        in.Type,
+		Uid:         uid,
+		GameId:      gameId,
+		FlowId:      flowId,
 	}
 	defer func() {
 		close(flow.EndFlow)
@@ -91,11 +91,11 @@ func (l *ConnectLogic) checkAuth(in *pb.CommandReq) (string, string, error) {
 	if token.Valid {
 		//将获取的token中的Claims强转为MapClaims
 		claims, _ := token.Claims.(jwt.MapClaims)
-		if in.Type == globalkey.ConnectTypePlayer {
+		if in.Type == globalkey.ConnectTypeCs {
+			uid = claims[jwtkey.CsId].(string)
+		} else {
 			uid = claims[jwtkey.PlayerId].(string)
 			gameId = claims[jwtkey.GameId].(string)
-		} else {
-			uid = claims[jwtkey.CsId].(string)
 		}
 		return uid, gameId, nil
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
