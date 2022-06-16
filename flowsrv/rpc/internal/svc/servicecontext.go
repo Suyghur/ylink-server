@@ -24,7 +24,6 @@ import (
 	"ylink/flowsrv/rpc/internal/config"
 	"ylink/flowsrv/rpc/internal/mgr"
 	model2 "ylink/flowsrv/rpc/internal/model"
-	//model2 "ylink/flowsrv/rpc/internal/model"
 )
 
 type ServiceContext struct {
@@ -77,10 +76,8 @@ func (s *ServiceContext) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sa
 	for msg := range claim.Messages() {
 
 		if msg.Topic == s.Config.KqMsgBoxConsumerConf.Topic {
-			logx.Info("handleMessage")
 			s.handleMessage(sess, msg)
 		} else if msg.Topic == s.Config.KqCmdBoxConsumerConf.Topic {
-			logx.Info("handleCommand")
 			s.handleCommand(sess, msg)
 		}
 	}
@@ -116,15 +113,9 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 			return
 		}
 
-		var chatMessage model.ChatMessage
-		if err := sonic.Unmarshal([]byte(message.Payload), &chatMessage); err != nil {
-			logx.WithContext(ctx).Errorf("unmarshal msg error: %v", err)
-			return
-		}
-
 		trace.StartTrace(ctx, "FlowsrvServer.handleMessage.PushMessage", func(ctx context.Context) {
 			// 投递到receiver_id对应的redis队列暂存
-			intCmd := s.RedisClient.LPush(ctx, chatMessage.ReceiverId, string(msg.Value))
+			intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
 			if size, err := intCmd.Result(); err != nil {
 				logx.WithContext(ctx).Errorf("push message rmq err %v", err)
 			} else {
@@ -153,13 +144,8 @@ func (s *ServiceContext) handleCommand(sess sarama.ConsumerGroupSession, msg *sa
 			return
 		}
 
-		var cmdMessage model.CommandMessage
-		if err := sonic.Unmarshal([]byte(message.Payload), &cmdMessage); err != nil {
-			logx.WithContext(ctx).Errorf("unmarshal msg error: %v", err)
-			return
-		}
 		// 投递到receiver_id对应的redis队列暂存
-		switch cmdMessage.ReceiverId {
+		switch message.ReceiverId {
 		case globalkey.All:
 		case globalkey.AllPlayer:
 		case globalkey.AllVipPlayer:
@@ -181,7 +167,7 @@ func (s *ServiceContext) handleCommand(sess sarama.ConsumerGroupSession, msg *sa
 		case globalkey.AllCs:
 		default:
 			trace.StartTrace(ctx, "FlowsrvServer.handleCommand.PushCmdMessage", func(ctx context.Context) {
-				intCmd := s.RedisClient.LPush(ctx, cmdMessage.ReceiverId, string(msg.Value))
+				intCmd := s.RedisClient.LPush(ctx, message.ReceiverId, string(msg.Value))
 				if size, err := intCmd.Result(); err != nil {
 					logx.WithContext(ctx).Errorf("push message rmq err %v", err)
 				} else {
@@ -197,42 +183,4 @@ func (s *ServiceContext) handleCommand(sess sarama.ConsumerGroupSession, msg *sa
 func (s *ServiceContext) subscribe() {
 	go s.MessageConsumerGroup.RegisterHandleAndConsumer(s)
 	go s.CommandConsumerGroup.RegisterHandleAndConsumer(s)
-
-	//event.On(globalkey.EventHandleRmqJob, event.ListenerFunc(func(e event.Event) error {
-	//	resultCmd := flow.SvcCtx.RedisClient.BRPop(ctx, 30*time.Second, flow.FlowId)
-	//	if message, err := resultCmd.Result(); err != nil {
-	//		logx.WithContext(ctx).Errorf("get message from redis, key: %s, err: %v", flow.FlowId, err)
-	//	} else {
-	//		trace.StartTrace(ctx, "FlowsrvServer.flowmgr.handleRmqMessage", func(ctx context.Context) {
-	//			flow.Message <- message[1]
-	//		})
-	//	}
-	//	return nil
-	//}), event.High)
-
-	// 注册事件
-	//event.On(globalkey.EventUnsubscribeRmqJob, event.ListenerFunc(func(e event.Event) error {
-	//
-	//	return nil
-	//}), event.High)
-
-	//event.On(globalkey.EventNotifyUserOfflineJob, event.ListenerFunc(func(e event.Event) error {
-	//	traceId := e.Get("trace_id").(string)
-	//	uType := e.Get("type").(int32)
-	//	uid := e.Get("uid").(string)
-	//	gameId := e.Get("game_id").(string)
-	//	trace.RunOnTracing(traceId, func(ctx context.Context) {
-	//		trace.StartTrace(ctx, "FlowsrvServer.EventNotifyUserOfflineJob.handleUserOffline", func(ctx context.Context) {
-	//			_, err := s.InnerRpc.NotifyUserOffline(ctx, &inner.NotifyUserStatusReq{
-	//				Type:   uType,
-	//				Uid:    uid,
-	//				GameId: gameId,
-	//			})
-	//			if err != nil {
-	//				logx.WithContext(ctx).Errorf("notify user offline has some error: %v", err)
-	//			}
-	//		})
-	//	})
-	//	return nil
-	//}), event.High)
 }

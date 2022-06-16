@@ -74,42 +74,37 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 			logx.WithContext(ctx).Errorf("unmarshal msg error: %v", err)
 			return
 		}
+
 		if message.Opt != model.CMD_SEND_MESSAGE {
 			// 指令异常
 			return
 		}
 
-		var chatMessage model.ChatMessage
-		if err := sonic.Unmarshal([]byte(message.Payload), &chatMessage); err != nil {
-			logx.WithContext(ctx).Errorf("unmarshal msg error: %v", err)
-			return
-		}
-
 		trace.StartTrace(ctx, "InnerServer.handleMessage.SendMessage", func(ctx context.Context) {
-			if len(chatMessage.ReceiverId) == 0 || chatMessage.ReceiverId == "" {
+			if len(message.ReceiverId) == 0 || message.ReceiverId == "" {
 				// receiverId为空代表这条消息是玩家发送的
 				// 玩家发的消息，先从connectedMap找对应的客服，没有则从vipMap找，都没有则丢弃信息不投递
-				if playerInfo := ext.GetConnectedPlayerInfo(chatMessage.GameId, chatMessage.Uid); playerInfo != nil {
-					chatMessage.ReceiverId = playerInfo.CsId
+				if playerInfo := ext.GetConnectedPlayerInfo(message.GameId, message.Uid); playerInfo != nil {
+					message.ReceiverId = playerInfo.CsId
 				} else {
-					if playerInfo := ext.GetVipPlayer(chatMessage.GameId, chatMessage.Uid); playerInfo != nil {
-						chatMessage.ReceiverId = playerInfo.CsId
+					if playerInfo := ext.GetVipPlayer(message.GameId, message.Uid); playerInfo != nil {
+						message.ReceiverId = playerInfo.CsId
 					} else {
-						chatMessage.ReceiverId = ""
+						message.ReceiverId = ""
 					}
 				}
 
 				// 经过填补后receiver_id还是空的则有异常，丢弃信息不投递
-				if len(chatMessage.ReceiverId) != 0 && chatMessage.ReceiverId != "" {
-					logx.WithContext(ctx).Infof("receiver: %s", chatMessage.ReceiverId)
+				if len(message.ReceiverId) != 0 && message.ReceiverId != "" {
+					logx.WithContext(ctx).Infof("receiver: %s", message.ReceiverId)
 					kMsg, _ := sonic.MarshalString(message)
-					s.KqMsgBoxProducer.SendMessage(ctx, kMsg, chatMessage.ReceiverId)
+					s.KqMsgBoxProducer.SendMessage(ctx, kMsg, message.ReceiverId)
 				} else {
 					logx.WithContext(ctx).Errorf("can not find receiver of the sender")
 				}
 			} else {
 				// receiverId不为空代表这条消息是客服发的
-				s.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), chatMessage.ReceiverId)
+				s.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), message.ReceiverId)
 			}
 			sess.MarkMessage(msg, "")
 		}, attribute.String("msg.key", string(msg.Key)))

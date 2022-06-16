@@ -28,22 +28,24 @@ func NewCsSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CsSendM
 
 func (l *CsSendMsgLogic) CsSendMsg(in *pb.CsSendMsgReq) (*pb.CsSendMsgResp, error) {
 	// 投递到自己的发件箱
-	message := &model.ChatMessage{
-		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
+	uniqueId := in.GameId + "_" + in.PlayerId
+	t := time.Now()
+	payload, _ := sonic.MarshalString(&model.ChatMessage{
+		CreateTime: t.Format("2006-01-02 15:04:05"),
 		Content:    in.Content,
 		Pic:        in.Pic,
-		ReceiverId: in.GameId + "_" + in.PlayerId,
+	})
+	kMsg, _ := sonic.MarshalString(&model.KqMessage{
+		Opt:        model.CMD_SEND_MESSAGE,
+		CreateTs:   t.Unix(),
+		Payload:    payload,
 		SenderId:   in.CsId,
+		ReceiverId: uniqueId,
 		GameId:     in.GameId,
 		Uid:        in.CsId,
-	}
-	payload, _ := sonic.MarshalString(message)
-	kMsg, _ := sonic.MarshalString(&model.KqMessage{
-		Opt:     model.CMD_SEND_MESSAGE,
-		Payload: payload,
-		Ext:     "",
+		Ext:        "",
 	})
-	_, _, err := l.svcCtx.KqMsgBoxProducer.SendMessage(l.ctx, kMsg, message.SenderId)
+	_, _, err := l.svcCtx.KqMsgBoxProducer.SendMessage(l.ctx, kMsg, in.CsId)
 	if err != nil {
 		return nil, err
 	}

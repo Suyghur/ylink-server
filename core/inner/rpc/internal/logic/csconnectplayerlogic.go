@@ -53,27 +53,28 @@ func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (
 	}
 
 	// 移除WaitingQueue
-	key := in.GameId + "_" + in.PlayerId
-	if ext.WaitingQueue.Contains(key) {
+	uniqueId := in.GameId + "_" + in.PlayerId
+	if ext.WaitingQueue.Contains(uniqueId) {
 		l.Logger.Infof("remove the player from the queue, game_id: %s, player_id: %s", in.GameId, in.PlayerId)
-		ext.WaitingQueue.Erase(key)
-		//TODO 广播客户端更新等待队列信息
-		queueInfo, _ := sonic.MarshalString(map[string]interface{}{
-			"queue_size": ext.WaitingQueue.Size(),
+		ext.WaitingQueue.Erase(uniqueId)
+
+		// 广播客户端更新等待队列信息
+		payload, _ := sonic.MarshalString(&model.CommandMessage{
+			CmdInfo: map[string]interface{}{
+				"queue_size": ext.WaitingQueue.Size(),
+			},
 		})
-		cmdMessage := &model.CommandMessage{
-			Payload:    queueInfo,
+		kMsg, _ := sonic.MarshalString(&model.KqMessage{
+			Opt:        model.CMD_UPDATE_WAITING_QUEUE,
+			CreateTs:   time.Now().Unix(),
+			Payload:    payload,
+			SenderId:   uniqueId,
 			ReceiverId: globalkey.AllNormalPlayer,
 			GameId:     in.GameId,
 			Uid:        in.PlayerId,
-		}
-		payload, _ := sonic.MarshalString(cmdMessage)
-		message, _ := sonic.MarshalString(&model.KqMessage{
-			Opt:     model.CMD_UPDATE_WAITING_QUEUE,
-			Payload: payload,
-			Ext:     "",
+			Ext:        "",
 		})
-		l.svcCtx.KqCmdBoxProducer.SendMessage(l.ctx, message, globalkey.AllNormalPlayer)
+		l.svcCtx.KqCmdBoxProducer.SendMessage(l.ctx, kMsg, globalkey.AllNormalPlayer)
 	}
 
 	traceId := ctxdata.GetTraceIdFromCtx(l.ctx)
@@ -93,19 +94,21 @@ func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (
 
 				trace.StartTrace(ctx, "InnerServer.CountDownTimer.SendCmdMessage", func(ctx context.Context) {
 					// 发踢下线的command指令
-					cmdMessage := &model.CommandMessage{
-						Payload:    "",
-						ReceiverId: in.GameId + "_" + in.PlayerId,
+					uniqueId := in.GameId + "_" + in.PlayerId
+					payload, _ := sonic.MarshalString(&model.CommandMessage{
+						CmdInfo: "",
+					})
+					kMsg, _ := sonic.MarshalString(&model.KqMessage{
+						Opt:        model.CMD_CHAT_TIMEOUT,
+						CreateTs:   time.Now().Unix(),
+						Payload:    payload,
+						SenderId:   uniqueId,
+						ReceiverId: uniqueId,
 						GameId:     in.GameId,
 						Uid:        in.PlayerId,
-					}
-					payload, _ := sonic.MarshalString(cmdMessage)
-					message, _ := sonic.MarshalString(&model.KqMessage{
-						Opt:     model.CMD_CHAT_TIMEOUT,
-						Payload: payload,
-						Ext:     "",
+						Ext:        "",
 					})
-					l.svcCtx.KqCmdBoxProducer.SendMessage(ctx, message, in.GameId+"_"+in.PlayerId)
+					l.svcCtx.KqCmdBoxProducer.SendMessage(ctx, kMsg, uniqueId)
 				})
 			}
 		})

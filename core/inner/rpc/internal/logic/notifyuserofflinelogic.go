@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"github.com/bytedance/sonic"
 	treemap "github.com/liyue201/gostl/ds/map"
 	"github.com/pkg/errors"
+	"time"
 	"ylink/comm/globalkey"
+	"ylink/comm/model"
 	"ylink/comm/result"
 	"ylink/core/inner/rpc/internal/ext"
 
@@ -43,32 +46,29 @@ func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (
 			}
 		}
 
-		key := in.GameId + "_" + in.Uid
-		if ext.WaitingQueue.Contains(key) {
+		uniqueId := in.GameId + "_" + in.Uid
+		if ext.WaitingQueue.Contains(uniqueId) {
 			l.Logger.Infof("remove the player from the queue, game_id: %s, player_id: %s", in.GameId, in.Uid)
-			ext.WaitingQueue.Erase(key)
+			ext.WaitingQueue.Erase(uniqueId)
 
+			// 广播客户端更新等待队列信息
+			payload, _ := sonic.MarshalString(&model.CommandMessage{
+				CmdInfo: map[string]interface{}{
+					"queue_size": ext.WaitingQueue.Size(),
+				},
+			})
+			kMsg, _ := sonic.MarshalString(&model.KqMessage{
+				Opt:        model.CMD_UPDATE_WAITING_QUEUE,
+				CreateTs:   time.Now().Unix(),
+				Payload:    payload,
+				SenderId:   uniqueId,
+				ReceiverId: globalkey.AllNormalPlayer,
+				GameId:     in.GameId,
+				Uid:        in.Uid,
+				Ext:        "",
+			})
+			l.svcCtx.KqCmdBoxProducer.SendMessage(l.ctx, kMsg, globalkey.AllNormalPlayer)
 		}
-		//for n := ext.WaitingList.FrontNode(); n != nil; n = n.Next() {
-		//	info := n.Value.(*model.PlayerInfo)
-		//	l.Logger.Infof("playerInfo: %v", info)
-		//	if info.GameId == in.GameId && info.PlayerId == in.Uid {
-		//		l.Logger.Infof("remove the player from the queue, game_id: %s, player_id: %s", in.GameId, in.Uid)
-		//		ext.WaitingList.Remove(nil, n)
-		//		//TODO 广播客户端更新等待队列信息
-		//		//queueInfo, _ := sonic.MarshalString(map[string]interface{}{
-		//		//	"queue_size": 10,
-		//		//})
-		//		//message, _ := sonic.MarshalString(&model.KqCmdMessage{
-		//		//	Opt:        model.CMD_UPDATE_WAITING_QUEUE,
-		//		//	ReceiverId: "all",
-		//		//	GameId:     in.GameId,
-		//		//	Uid:        in.Uid,
-		//		//	Ext:        queueInfo,
-		//		//})
-		//		break
-		//	}
-		//}
 	case globalkey.ConnectTypeVipPlayer:
 		// 修改玩家在线状态
 		if ext.GameOnlinePlayerMap.Contains(in.GameId) {

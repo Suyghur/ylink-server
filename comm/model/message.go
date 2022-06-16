@@ -11,23 +11,21 @@ const (
 )
 
 type KqMessage struct {
-	Opt     int32  `json:"opt"`
-	Payload string `json:"payload"`
-	Ext     string `json:"ext"`
+	Opt        int32  `json:"opt"`
+	CreateTs   int64  `json:"create_ts"`
+	Payload    string `json:"payload"`
+	ReceiverId string `json:"receiver_id"`
+	SenderId   string `json:"sender_id"`
+	GameId     string `json:"game_id"`
+	Uid        string `json:"uid"`
+	Ext        string `json:"ext"`
 }
 type ChatMessage struct {
 	CreateTime string `json:"create_time"`
 	Content    string `json:"content"`
 	Pic        string `json:"pic"`
-	ReceiverId string `json:"receiver_id"`
-	SenderId   string `json:"sender_id"`
-	GameId     string `json:"game_id"`
-	Uid        string `json:"uid"`
 }
 
 type CommandMessage struct {
-	Payload    string `json:"payload"`
-	ReceiverId string `json:"receiver_id"`
-	GameId     string `json:"game_id"`
-	Uid        string `json:"uid"`
+	CmdInfo interface{} `json:"cmd_info"`
 }
