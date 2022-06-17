@@ -5,6 +5,7 @@
 package globalkey
 
 const (
+	ConnectTypeError        = -1
 	ConnectTypeNormalPlayer = 0
 	ConnectTypeVipPlayer    = 1
 	ConnectTypeCs           = 2

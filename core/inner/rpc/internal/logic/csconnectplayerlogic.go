@@ -59,11 +59,13 @@ func (l *CsConnectPlayerLogic) CsConnectPlayer(in *pb.InnerCsConnectPlayerReq) (
 		ext.WaitingQueue.Erase(uniqueId)
 
 		// 广播客户端更新等待队列信息
+		//TODO 通知客服也更新
 		payload, _ := sonic.MarshalString(&model.CommandMessage{
 			CmdInfo: map[string]interface{}{
 				"queue_size": ext.WaitingQueue.Size(),
 			},
 		})
+
 		kMsg, _ := sonic.MarshalString(&model.KqMessage{
 			Opt:        model.CMD_UPDATE_WAITING_QUEUE,
 			CreateTs:   time.Now().Unix(),

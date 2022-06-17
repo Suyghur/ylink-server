@@ -1,0 +1,20 @@
+Name: transfer.rpc
+ListenOn: 0.0.0.0:10600
+
+Telemetry:
+  Name: inner-rpc
+  Endpoint: http://localhost:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+KqMsgBoxConsumerConf:
+  Brokers:
+    - localhost:9094
+  Topic: ylink-recv-box-topic
+  GroupId: transfer-rpc
+
+EsConf:
+  Username:
+  Password:
+  Addresses:
+    - http:/localhost:9200

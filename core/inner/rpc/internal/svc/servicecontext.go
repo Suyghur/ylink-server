@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Shopify/sarama"
 	"github.com/bytedance/sonic"
+	"github.com/duke-git/lancet/v2/strutil"
 	"github.com/gookit/event"
 	treemap "github.com/liyue201/gostl/ds/map"
 	"github.com/robfig/cron/v3"
@@ -82,6 +83,7 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 
 		trace.StartTrace(ctx, "InnerServer.handleMessage.SendMessage", func(ctx context.Context) {
 			if len(message.ReceiverId) == 0 || message.ReceiverId == "" {
+
 				// receiverId为空代表这条消息是玩家发送的
 				// 玩家发的消息，先从connectedMap找对应的客服，没有则从vipMap找，都没有则丢弃信息不投递
 				if playerInfo := ext.GetConnectedPlayerInfo(message.GameId, message.Uid); playerInfo != nil {
@@ -104,7 +106,18 @@ func (s *ServiceContext) handleMessage(sess sarama.ConsumerGroupSession, msg *sa
 				}
 			} else {
 				// receiverId不为空代表这条消息是客服发的
-				s.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), message.ReceiverId)
+				playerId := strutil.After(message.ReceiverId, message.GameId+"_")
+				// 判断是不是vip玩家
+				if playerInfo := ext.GetVipPlayer(message.GameId, playerId); playerInfo != nil {
+					s.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), message.ReceiverId)
+				} else {
+					if playerInfo := ext.GetConnectedPlayerInfo(message.GameId, playerId); playerInfo != nil {
+						// 客服连接了这个玩家
+						s.KqMsgBoxProducer.SendMessage(ctx, string(msg.Value), message.ReceiverId)
+					} else {
+						logx.WithContext(ctx).Errorf("this player is not connected, player id: %s", playerId)
+					}
+				}
 			}
 			sess.MarkMessage(msg, "")
 		}, attribute.String("msg.key", string(msg.Key)))

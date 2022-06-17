@@ -4,11 +4,7 @@ option go_package = "./pb";
 
 package pb;
 
-import "google/protobuf/struct.proto";
-
-
 message CommandReq {
-  int32 type = 1;
   string access_token = 2;
 }
 

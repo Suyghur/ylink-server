@@ -32,7 +32,6 @@ func NewNotifyUserOfflineLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *NotifyUserOfflineLogic) NotifyUserOffline(in *pb.NotifyUserStatusReq) (*pb.NotifyUserStatusResp, error) {
-	l.Logger.Infof("NotifyUserOffline")
 	switch in.Type {
 	case globalkey.ConnectTypeNormalPlayer:
 		// 修改玩家在线状态

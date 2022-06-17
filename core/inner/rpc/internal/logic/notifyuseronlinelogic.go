@@ -39,6 +39,7 @@ func (l *NotifyUserOnlineLogic) NotifyUserOnline(in *pb.NotifyUserStatusReq) (*p
 			onlinePlayerMap := ext.GameOnlinePlayerMap.Get(in.GameId).(*treemap.Map)
 			if onlinePlayerMap.Contains(in.Uid) {
 				l.Logger.Error("该玩家已在线")
+				// TODO 单点在线
 			} else {
 				ts := time.Now().Unix()
 				playerInfo := &model.PlayerInfo{

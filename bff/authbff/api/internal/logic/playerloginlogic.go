@@ -28,7 +28,7 @@ func NewPlayerLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Playe
 
 func (l *PlayerLoginLogic) PlayerLogin(req *types.PlayerAuthReq) (resp *types.AuthResp, err error) {
 	now := time.Now().Unix()
-	token, err := l.generatePlayerToken(now, req.PlayerId, req.GameId)
+	token, err := l.generatePlayerToken(now, req.Type, req.GameId, req.PlayerId)
 	if err != nil {
 		return nil, errors.Wrap(result.NewErrCode(result.TokenGenerateError), "")
 	}
@@ -47,14 +47,15 @@ func (l *PlayerLoginLogic) PlayerLogin(req *types.PlayerAuthReq) (resp *types.Au
 //  @return string
 //  @return error
 //
-func (l *PlayerLoginLogic) generatePlayerToken(iat int64, playerId string, gameId string) (string, error) {
+func (l *PlayerLoginLogic) generatePlayerToken(iat int64, cType int32, gameId string, playerId string) (string, error) {
 	secret := l.svcCtx.Config.JwtAuth.AccessSecret
 	expire := l.svcCtx.Config.JwtAuth.AccessExpire
 	claims := make(jwt.MapClaims)
 	claims["iat"] = iat
 	claims["exp"] = iat + expire
-	claims[jwtkey.PlayerId] = playerId
 	claims[jwtkey.GameId] = gameId
+	claims[jwtkey.PlayerId] = playerId
+	claims[jwtkey.Type] = cType
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
 	return token.SignedString([]byte(secret))

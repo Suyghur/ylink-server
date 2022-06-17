@@ -25,6 +25,11 @@ func GetCsIdFromCtx(ctx context.Context) string {
 	return csId
 }
 
+func GetConnectTypeFromCtx(ctx context.Context) int32 {
+	cType, _ := ctx.Value(jwtkey.Type).(int32)
+	return cType
+}
+
 func GetTraceIdFromCtx(ctx context.Context) string {
 	spanCtx := trace.SpanContextFromContext(ctx)
 	if spanCtx.HasTraceID() {

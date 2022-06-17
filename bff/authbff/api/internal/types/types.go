@@ -2,8 +2,9 @@
 package types
 
 type PlayerAuthReq struct {
-	PlayerId string `json:"player_id"`
 	GameId   string `json:"game_id"`
+	PlayerId string `json:"player_id"`
+	Type     int32  `json:"type"`
 }
 
 type CsAuthReq struct {

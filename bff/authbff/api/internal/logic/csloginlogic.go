@@ -8,6 +8,7 @@ import (
 	"time"
 	"ylink/bff/authbff/api/internal/svc"
 	"ylink/bff/authbff/api/internal/types"
+	"ylink/comm/globalkey"
 	"ylink/comm/jwtkey"
 	"ylink/comm/result"
 )
@@ -53,6 +54,7 @@ func (l *CsLoginLogic) generateCsToken(iat int64, csId string) (string, error) {
 	claims["iat"] = iat
 	claims["exp"] = iat + expire
 	claims[jwtkey.CsId] = csId
+	claims[jwtkey.Type] = globalkey.ConnectTypeCs
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
 	return token.SignedString([]byte(secret))

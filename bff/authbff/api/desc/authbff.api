@@ -1,34 +1,35 @@
 syntax = "v1"
 
 info(
-    title: "api前端服务"
-    desc: "api前端服务 "
-    author: "#Suyghur"
-    version: "v1"
+	title: "api前端服务"
+	desc: "api前端服务 "
+	author: "#Suyghur"
+	version: "v1"
 )
 
 type PlayerAuthReq {
-    PlayerId string `json:"player_id"`
-    GameId string `json:"game_id"`
+	GameId   string `json:"game_id"`
+	PlayerId string `json:"player_id"`
+	Type     int32  `json:"type"`
 }
 
 type CsAuthReq {
-    CsId string `json:"cs_id"`
+	CsId string `json:"cs_id"`
 }
 
 type AuthResp {
-    AccessToken string `json:"access_token"`
+	AccessToken string `json:"access_token"`
 }
 
 @server(
-    prefix: api/v1/auth
+	prefix: api/v1/auth
 )
 service authbff {
-    @doc "玩家登录"
-    @handler playerLogin
-    post /player-login (PlayerAuthReq) returns (AuthResp)
-
-    @doc "客服登录"
-    @handler csLogin
-    post /cs-login (CsAuthReq) returns (AuthResp)
+	@doc "玩家登录"
+	@handler playerLogin
+	post /player-login (PlayerAuthReq) returns (AuthResp)
+	
+	@doc "客服登录"
+	@handler csLogin
+	post /cs-login (CsAuthReq) returns (AuthResp)
 }

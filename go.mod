@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/Shopify/sarama v1.33.0
 	github.com/bytedance/sonic v1.3.0
+	github.com/duke-git/lancet/v2 v2.0.9
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/gookit/event v1.0.6
@@ -29,6 +30,7 @@ require (
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
+	github.com/elastic/go-elasticsearch/v7 v7.17.1 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect

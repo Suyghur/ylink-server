@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+message TransferReq{
+  int32 action = 1;
+  bytes data = 2;
+}
+
+message TransferResp{}
+
+service Transfer {
+  rpc invoke (TransferReq) returns (TransferResp);
+}
